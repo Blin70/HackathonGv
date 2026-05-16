@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Providers from "@/components/providers";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           <main className="flex-1">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>
