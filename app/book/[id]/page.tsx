@@ -145,7 +145,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
               </Button>
 
               <p className="text-xs text-center text-muted-foreground mt-4 leading-relaxed">
-                You won't be charged yet. The tradesman will review your request and confirm.
+                You won&apos;t be charged yet. The tradesman will review your request and confirm.
               </p>
             </div>
           </div>
