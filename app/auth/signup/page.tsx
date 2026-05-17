@@ -28,7 +28,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { 
+        data: {
           role,
           firstName,
           lastName,
@@ -48,7 +48,7 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-[calc(100vh-7rem)] flex items-center justify-center py-6">
+      <div className="flex flex-col flex-1 items-center justify-center py-6">
         <Card className="w-full max-w-sm">
           <CardHeader>
             <CardTitle>Check your email</CardTitle>
@@ -62,7 +62,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-7rem)] flex items-center justify-center py-6">
+    <div className="flex flex-col flex-1 items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Create Client Account</CardTitle>
