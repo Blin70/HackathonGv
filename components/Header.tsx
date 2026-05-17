@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -50,13 +50,15 @@ const authLinks = [
 
 export default function Header() {
     const router = useRouter()
+    const pathname = usePathname()
+    if (pathname?.startsWith('/auth')) return null
     const [isOpen, setIsOpen] = React.useState(false)
     const [user, setUser] = React.useState<any>(null)
     const [loading, setLoading] = React.useState(true)
 
     React.useEffect(() => {
         const supabase = createClient()
-        
+
         // Fetch current session and user
         supabase.auth.getUser().then(({ data: { user } }) => {
             setUser(user)
@@ -86,36 +88,36 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-24 items-center justify-between px-4 md:px-8">
-               
-                <Link
-      href="/"
-      className="group inline-flex items-center gap-4 transition-all duration-300 hover:opacity-90"
-    >
-      {/* Logo circle with enhanced animations */}
-      <div className="relative flex-shrink-0 transform transition-all duration-500 group-hover:scale-110 group-hover:-rotate-6 group-active:scale-95">
-        {/* Glow effect on hover */}
-        <div className="absolute -inset-3 rounded-full bg-[#1a7a4a]/0 blur-lg transition-all duration-500 group-hover:bg-[#1a7a4a]/20" />
-        
-        <Image
-          src="/image.svg"
-          alt="Book A Fixer"
-          width={80}
-          height={80}
-          className="relative h-20 w-20 transition-all duration-300 group-hover:drop-shadow-lg group-hover:brightness-110"
-          priority
-        />
-      </div>
 
-      {/* Brand text */}
-      <div className="flex flex-col leading-tight">
-        <span className="text-sm font-semibold uppercase tracking-widest text-[#1a7a4a]/70 transition-all duration-300 group-hover:tracking-wider group-hover:text-[#1a7a4a]">
-          Book A
-        </span>
-        <h1 className="text-4xl font-bold tracking-tight text-foreground transition-all duration-300 group-hover:text-[#1a7a4a]">
-          Fixer
-        </h1>
-      </div>
-    </Link>
+                <Link
+                    href="/"
+                    className="group inline-flex items-center gap-4 transition-all duration-300 hover:opacity-90"
+                >
+                    {/* Logo circle with enhanced animations */}
+                    <div className="relative flex-shrink-0 transform transition-all duration-500 group-hover:scale-110 group-hover:-rotate-6 group-active:scale-95">
+                        {/* Glow effect on hover */}
+                        <div className="absolute -inset-3 rounded-full bg-[#1a7a4a]/0 blur-lg transition-all duration-500 group-hover:bg-[#1a7a4a]/20" />
+
+                        <Image
+                            src="/image.svg"
+                            alt="Book A Fixer"
+                            width={80}
+                            height={80}
+                            className="relative h-20 w-20 transition-all duration-300 group-hover:drop-shadow-lg group-hover:brightness-110"
+                            priority
+                        />
+                    </div>
+
+                    {/* Brand text */}
+                    <div className="flex flex-col leading-tight">
+                        <span className="text-sm font-semibold uppercase tracking-widest text-[#1a7a4a]/70 transition-all duration-300 group-hover:tracking-wider group-hover:text-[#1a7a4a]">
+                            Book A
+                        </span>
+                        <h1 className="text-4xl font-bold tracking-tight text-foreground transition-all duration-300 group-hover:text-[#1a7a4a]">
+                            Fixer
+                        </h1>
+                    </div>
+                </Link>
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex md:items-center md:space-x-4">
@@ -124,8 +126,8 @@ export default function Header() {
                             {navLinks.map((link) => (
                                 <NavigationMenuItem key={link.href}>
                                     <NavigationMenuLink asChild>
-                                        <Link 
-                                            href={link.href} 
+                                        <Link
+                                            href={link.href}
                                             className={cn(
                                                 navigationMenuTriggerStyle(),
                                                 "flex items-center gap-2 font-semibold text-base transition-colors hover:text-primary hover:bg-primary/5 bg-transparent"
@@ -149,7 +151,7 @@ export default function Header() {
                                     <Avatar className="h-10 w-10 cursor-pointer border border-primary/20 transition-all hover:scale-105 hover:shadow-md">
                                         <AvatarImage src={user.user_metadata?.avatar_url || ""} />
                                         <AvatarFallback className="bg-primary/10 font-bold text-primary">
-                                            {user.user_metadata?.firstName 
+                                            {user.user_metadata?.firstName
                                                 ? `${user.user_metadata.firstName.charAt(0)}${user.user_metadata.lastName?.charAt(0) || ""}`.toUpperCase()
                                                 : user.email?.charAt(0).toUpperCase()}
                                         </AvatarFallback>
@@ -243,7 +245,7 @@ export default function Header() {
                                                 <Avatar className="h-12 w-12 border border-primary/20">
                                                     <AvatarImage src={user.user_metadata?.avatar_url || ""} />
                                                     <AvatarFallback className="bg-primary/10 font-bold text-primary text-lg">
-                                                        {user.user_metadata?.firstName 
+                                                        {user.user_metadata?.firstName
                                                             ? `${user.user_metadata.firstName.charAt(0)}${user.user_metadata.lastName?.charAt(0) || ""}`.toUpperCase()
                                                             : user.email?.charAt(0).toUpperCase()}
                                                     </AvatarFallback>

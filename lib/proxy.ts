@@ -13,6 +13,8 @@ const PUBLIC_ROUTES = [
   '/',        // landing page
   '/auth',    // login, signup, callback, error
   '/ai',      // AI Concierge diagnostics
+  '/terms-of-service',
+  '/privacy-policy'
 ]
 
 function isPublicRoute(pathname: string): boolean {

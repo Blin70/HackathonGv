@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { Share2, Sparkles, UserPlus, Briefcase, Info, ShieldCheck, Mail, ArrowRight, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -19,6 +20,9 @@ const authLinks = [
 ]
 
 export default function Footer() {
+    const pathname = usePathname()
+    if (pathname?.startsWith('/auth')) return null
+
     return (
         <footer className="w-full bg-background border-t border-border/40 relative overflow-hidden">
             {/* Background Accent */}
