@@ -8,12 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field'
 
-type Role = 'client' | 'tradesman'
-
 export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole] = useState<Role>('client')
+  const role = 'user'
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -60,33 +58,13 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Create account</CardTitle>
-          <CardDescription>Choose your account type to get started</CardDescription>
+          <CardTitle>Create Client Account</CardTitle>
+          <CardDescription>Sign up to book professional fixers</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSignup}>
           <CardContent>
             <FieldGroup>
-              <Field>
-                <FieldLabel>I am a…</FieldLabel>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    type="button"
-                    variant={role === 'client' ? 'default' : 'outline'}
-                    onClick={() => setRole('client')}
-                  >
-                    Client
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={role === 'tradesman' ? 'default' : 'outline'}
-                    onClick={() => setRole('tradesman')}
-                  >
-                    Tradesman
-                  </Button>
-                </div>
-              </Field>
-
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
@@ -116,7 +94,7 @@ export default function SignupPage() {
             </FieldGroup>
           </CardContent>
 
-          <CardFooter className="flex-col gap-4">
+          <CardFooter className="flex-col gap-4 mt-5">
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Creating account…' : 'Create account'}
             </Button>

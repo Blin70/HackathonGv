@@ -29,8 +29,8 @@ const navLinks = [
 ]
 
 const authLinks = [
-    { title: "Register", href: "/register", icon: <UserPlus className="h-4 w-4" />, variant: "outline" as const },
-    { title: "Register as Tradesman", href: "/register-tradesman", icon: <Briefcase className="h-4 w-4" />, variant: "default" as const },
+    { title: "Register", href: "/auth/signup", icon: <UserPlus className="h-4 w-4" />, variant: "outline" as const },
+    { title: "Register as Tradesman", href: "/auth/signup/tradesman", icon: <Briefcase className="h-4 w-4" />, variant: "default" as const },
 ]
 
 export default function Header() {

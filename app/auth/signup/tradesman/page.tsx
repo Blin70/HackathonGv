@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/client'
 import { Button } from '@/components/ui/button'
@@ -9,39 +8,61 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field'
 
-export default function LoginPage() {
-  const router = useRouter()
+export default function TradesmanSignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const role = 'tradesman'
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { role },
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
+    })
 
     if (error) {
       setError(error.message)
       setLoading(false)
     } else {
-      router.push('/')
-      router.refresh()
+      setSuccess(true)
     }
+  }
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>Check your email</CardTitle>
+            <CardDescription>
+              We sent a confirmation link to <strong>{email}</strong>. Click it to activate your tradesman account.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Enter your email and password to continue</CardDescription>
+          <CardTitle>Register as Tradesman</CardTitle>
+          <CardDescription>Join as a professional fixer and start finding jobs</CardDescription>
         </CardHeader>
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSignup}>
           <CardContent>
             <FieldGroup>
               <Field>
@@ -64,6 +85,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
+                  minLength={6}
                   required
                 />
               </Field>
@@ -74,12 +96,12 @@ export default function LoginPage() {
 
           <CardFooter className="flex-col gap-4 mt-5">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Signing in…' : 'Sign in'}
+              {loading ? 'Creating account…' : 'Create account'}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/signup" className="underline underline-offset-4 hover:text-primary">
-                Sign up
+              Already have an account?{' '}
+              <Link href="/auth/login" className="underline underline-offset-4 hover:text-primary">
+                Sign in
               </Link>
             </p>
           </CardFooter>
