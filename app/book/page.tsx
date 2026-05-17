@@ -205,12 +205,12 @@ export default function TradesmanMarket() {
           </p>
         </div>
 
-        {/* Search bar */}
+        {/* Search bar - Responsive Layout */}
         <div className="sticky top-6 z-50 flex justify-center mb-10">
-          <div className="flex items-center gap-3 bg-white/95 backdrop-blur-md border border-border shadow-xl rounded-3xl px-4 py-3 w-full max-w-3xl">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-3 bg-white/95 backdrop-blur-md border border-border shadow-xl rounded-3xl p-4 w-full max-w-3xl">
 
-            {/* Search */}
-            <div className="relative flex-1 min-w-0">
+            {/* Search - Full width */}
+            <div className="relative flex-1 w-full">
               <Search
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -220,39 +220,42 @@ export default function TradesmanMarket() {
                 placeholder="Search trade or company..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-11 rounded-2xl bg-muted/40 border-border focus-visible:ring-green-600"
+                className="pl-10 h-11 rounded-2xl bg-muted/40 border-border focus-visible:ring-green-600 w-full"
               />
             </div>
 
-            {/* Type */}
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[160px] h-11 rounded-2xl font-semibold">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
+            {/* Filters - Stacked on mobile, side-by-side on desktop */}
+            <div className="flex gap-3 w-full lg:w-auto">
+              {/* Type Dropdown */}
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="flex-1 lg:flex-none lg:w-[140px] h-11 rounded-2xl font-semibold text-sm">
+                  <SelectValue placeholder="Types" />
+                </SelectTrigger>
 
-              <SelectContent>
-                {TYPES.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectContent>
+                  {TYPES.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            {/* Rating */}
-            <Select value={ratingFilter} onValueChange={setRatingFilter}>
-              <SelectTrigger className="w-[160px] h-11 rounded-2xl font-semibold">
-                <SelectValue placeholder="All Ratings" />
-              </SelectTrigger>
+              {/* Rating Dropdown */}
+              <Select value={ratingFilter} onValueChange={setRatingFilter}>
+                <SelectTrigger className="flex-1 lg:flex-none lg:w-[140px] h-11 rounded-2xl font-semibold text-sm">
+                  <SelectValue placeholder="Ratings" />
+                </SelectTrigger>
 
-              <SelectContent>
-                {RATINGS.map((r) => (
-                  <SelectItem key={r.value} value={r.value}>
-                    {r.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectContent>
+                  {RATINGS.map((r) => (
+                    <SelectItem key={r.value} value={r.value}>
+                      {r.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -302,8 +305,8 @@ export default function TradesmanMarket() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
-      </div>
-    </div>
-  );
+        </Dialog> 
+        </div>
+        </div>
+  )
 }

@@ -205,104 +205,146 @@ export default function Header() {
                 <div className="md:hidden">
                     <Sheet open={isOpen} onOpenChange={setIsOpen}>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-12 w-12 hover:bg-primary/10 text-primary">
-                                <Menu className="h-7 w-7" />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-11 w-11 rounded-xl hover:bg-primary/15 text-primary transition-all duration-300 hover:scale-105 active:scale-95"
+                            >
+                                <Menu className="h-6 w-6" />
                                 <span className="sr-only">Toggle menu</span>
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l-primary/20">
-                            <SheetHeader className="text-left border-b border-border/50 pb-6 mb-6">
-                                <SheetTitle>
+                        <SheetContent
+                            side="right"
+                            className="w-full sm:w-[420px] border-l border-border/30 bg-white p-0 overflow-y-auto"
+                        >
+                            {/* Header with logo and close button */}
+                            <div className="sticky top-0 z-10 bg-white border-b border-border/30 px-6 py-5">
+                                <div className="flex items-center justify-between">
                                     <Image
                                         src="/image.svg"
                                         alt="Logo"
-                                        width={180}
-                                        height={60}
-                                        className="h-12 w-auto"
+                                        width={120}
+                                        height={40}
+                                        className="h-10 w-auto"
                                     />
-                                </SheetTitle>
-                            </SheetHeader>
-                            <nav className="flex flex-col space-y-6">
-                                {navLinks.map((link) => (
-                                    <Link
-                                        key={link.href}
-                                        href={link.href}
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         onClick={() => setIsOpen(false)}
-                                        className="flex items-center gap-3 text-xl font-bold py-2 transition-colors hover:text-primary"
+                                        className="h-9 w-9 rounded-lg hover:bg-muted"
                                     >
-                                        <span className="p-2 rounded-md bg-primary/5">
-                                            {link.icon || <Sparkles className="h-5 w-5 opacity-0" />}
-                                        </span>
-                                        {link.title}
-                                    </Link>
-                                ))}
-                                <div className="pt-6 border-t border-border/50 flex flex-col space-y-4">
+                                        <span className="text-2xl">×</span>
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* Navigation content */}
+                            <div className="px-4 py-6 space-y-2">
+                                {/* Main nav links */}
+                                <nav className="space-y-1 mb-6">
+                                    {navLinks.map((link) => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            onClick={() => setIsOpen(false)}
+                                            className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-semibold text-foreground/80 transition-all duration-200 hover:text-primary hover:bg-primary/8 active:bg-primary/12"
+                                        >
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-all group-hover:bg-primary/20">
+                                                {link.icon || <Sparkles className="h-5 w-5" />}
+                                            </div>
+                                            <span>{link.title}</span>
+                                            <span className="ml-auto text-muted-foreground/50">→</span>
+                                        </Link>
+                                    ))}
+                                </nav>
+
+                                {/* Auth section */}
+                                <div className="space-y-3 border-t border-border/30 pt-6">
                                     {loading ? (
-                                        <div className="h-12 w-full animate-pulse rounded-md bg-muted" />
+                                        <div className="space-y-3">
+                                            <div className="h-16 animate-pulse rounded-xl bg-muted" />
+                                            <div className="h-12 animate-pulse rounded-xl bg-muted" />
+                                            <div className="h-12 animate-pulse rounded-xl bg-muted" />
+                                        </div>
                                     ) : user ? (
-                                        <div className="flex flex-col gap-4">
-                                            <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/40">
-                                                <Avatar className="h-12 w-12 border border-primary/20">
-                                                    <AvatarImage src={user.user_metadata?.avatar_url || ""} />
-                                                    <AvatarFallback className="bg-primary/10 font-bold text-primary text-lg">
-                                                        {user.user_metadata?.firstName
-                                                            ? `${user.user_metadata.firstName.charAt(0)}${user.user_metadata.lastName?.charAt(0) || ""}`.toUpperCase()
-                                                            : user.email?.charAt(0).toUpperCase()}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div className="flex flex-col min-w-0">
-                                                    <span className="text-base font-bold text-foreground truncate break-all">
-                                                        {user.user_metadata?.full_name || (user.user_metadata?.firstName ? `${user.user_metadata.firstName} ${user.user_metadata.lastName}` : "User")}
-                                                    </span>
-                                                    <span className="text-xs text-muted-foreground truncate break-all mt-0.5">{user.email}</span>
+                                        <>
+                                            {/* User info card */}
+                                            <div className="rounded-xl bg-gradient-to-br from-primary/8 to-primary/3 border border-primary/20 p-4 mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <Avatar className="h-12 w-12 border-2 border-primary/30 ring-2 ring-primary/10">
+                                                        <AvatarImage src={user.user_metadata?.avatar_url || ""} />
+                                                        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 font-bold text-white text-sm">
+                                                            {user.user_metadata?.firstName
+                                                                ? `${user.user_metadata.firstName.charAt(0)}${user.user_metadata.lastName?.charAt(0) || ""}`.toUpperCase()
+                                                                : user.email?.charAt(0).toUpperCase()}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-bold text-foreground truncate">
+                                                            {user.user_metadata?.full_name || (user.user_metadata?.firstName ? `${user.user_metadata.firstName} ${user.user_metadata.lastName}` : "User")}
+                                                        </p>
+                                                        <p className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</p>
+                                                    </div>
                                                 </div>
                                             </div>
+
+                                            {/* Action buttons */}
                                             <Button
                                                 variant="outline"
                                                 asChild
-                                                className="w-full text-lg py-7 font-bold gap-3 border-primary text-primary hover:bg-primary/10"
+                                                className="w-full h-12 rounded-xl font-semibold gap-3 border-primary/30 text-primary hover:bg-primary/12 hover:border-primary/50 transition-all"
                                                 onClick={() => setIsOpen(false)}
                                             >
-                                                <Link href="/profile">
+                                                <Link href="/profile" className="justify-start">
                                                     <User className="h-5 w-5" />
                                                     My Profile
                                                 </Link>
                                             </Button>
                                             <Button
-                                                variant="destructive"
                                                 onClick={handleSignOut}
-                                                className="w-full text-lg py-7 font-bold gap-3"
+                                                className="w-full h-12 rounded-xl font-semibold gap-3 bg-destructive/90 hover:bg-destructive text-white transition-all"
                                             >
                                                 <LogOut className="h-5 w-5" />
                                                 Sign Out
                                             </Button>
-                                        </div>
+                                        </>
                                     ) : (
-                                        authLinks.map((link) => (
-                                            <Button
-                                                key={link.href}
-                                                variant={link.variant}
-                                                asChild
-                                                className={cn(
-                                                    "w-full justify-start text-lg py-7 px-6 font-bold",
-                                                    link.variant === "default" ? "bg-primary shadow-md" : "border-primary text-primary"
-                                                )}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                <Link href={link.href} className="flex items-center gap-4">
-                                                    <span className={cn("p-2 rounded-md", link.variant === "default" ? "bg-white/20" : "bg-primary/10")}>
-                                                        {link.icon}
-                                                    </span>
-                                                    {link.title}
-                                                </Link>
-                                            </Button>
-                                        ))
+                                        <>
+                                            {authLinks.map((link) => (
+                                                <Button
+                                                    key={link.href}
+                                                    variant={link.variant}
+                                                    asChild
+                                                    className={cn(
+                                                        "w-full h-12 rounded-xl justify-start gap-3 font-semibold text-base transition-all",
+                                                        link.variant === "default"
+                                                            ? "bg-primary hover:bg-primary/90 text-white shadow-md hover:shadow-lg"
+                                                            : "border-primary/30 text-primary hover:bg-primary/12 hover:border-primary/50"
+                                                    )}
+                                                    onClick={() => setIsOpen(false)}
+                                                >
+                                                    <Link href={link.href} className="flex items-center gap-3">
+                                                        <span className={cn(
+                                                            "flex h-9 w-9 items-center justify-center rounded-lg transition-all",
+                                                            link.variant === "default"
+                                                                ? "bg-white/20"
+                                                                : "bg-primary/12"
+                                                        )}>
+                                                            {link.icon}
+                                                        </span>
+                                                        {link.title}
+                                                    </Link>
+                                                </Button>
+                                            ))}
+                                        </>
                                     )}
                                 </div>
-                            </nav>
+                            </div>
                         </SheetContent>
                     </Sheet>
                 </div>
+
             </div>
         </header>
     )
