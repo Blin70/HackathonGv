@@ -12,6 +12,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 const PUBLIC_ROUTES = [
   '/',        // landing page
   '/auth',    // login, signup, callback, error
+  '/ai',      // AI Concierge diagnostics
 ]
 
 function isPublicRoute(pathname: string): boolean {

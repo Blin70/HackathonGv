@@ -6,7 +6,20 @@ import { ArrowRight, ClipboardList, Search, CalendarCheck, Star, Sparkles, Quote
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+
 export default function HomeContent() {
+  const [jobDescription, setJobDescription] = useState("")
+  const router = useRouter()
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (jobDescription.trim()) {
+      router.push(`/ai?prompt=${encodeURIComponent(jobDescription.trim())}`)
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* SECTION 1: Hero */}
@@ -19,16 +32,19 @@ export default function HomeContent() {
           <p className="text-xl text-white mb-4 font-semibold">
             Describe your job
           </p>
-          <div className="relative max-w-md w-full mb-12 shadow-2xl">
+          <form onSubmit={handleSearch} className="relative max-w-md w-full mb-12 shadow-2xl">
             <Input
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
               className="h-16 pl-5 pr-16 bg-white text-black text-lg rounded-sm border-0 focus-visible:ring-2 focus-visible:ring-primary"
               placeholder="e.g. Painting work"
             />
-            <Button className="absolute right-1.5 top-1.5 bottom-1.5 h-13 w-14 bg-primary hover:bg-primary/90 rounded-sm p-0 flex items-center justify-center transition-all hover:scale-105">
+            <Button type="submit" className="absolute right-1.5 top-1.5 bottom-1.5 h-13 w-14 bg-primary hover:bg-primary/90 rounded-sm p-0 flex items-center justify-center transition-all hover:scale-105">
               <ArrowRight className="h-6 w-6 text-white" />
             </Button>
-          </div>
+          </form>
         </div>
+
 
         {/* Right Side (Image & Bounding Box) */}
         <div className="flex-1 relative min-h-[400px] md:min-h-full w-full">
@@ -136,9 +152,11 @@ export default function HomeContent() {
           </div>
 
           <div className="flex justify-center">
-            <Button size="lg" className="h-16 px-10 text-lg font-bold rounded-full group shadow-xl shadow-primary/20 hover:scale-105 transition-all">
-              Ask our AI for more!
-              <Sparkles className="ml-3 h-5 w-5 transition-transform group-hover:rotate-12 group-hover:scale-125" />
+            <Button size="lg" className="h-16 px-10 text-lg font-bold rounded-full group shadow-xl shadow-primary/20 hover:scale-105 transition-all" asChild>
+              <Link href="/ai">
+                Ask our AI for more!
+                <Sparkles className="ml-3 h-5 w-5 transition-transform group-hover:rotate-12 group-hover:scale-125" />
+              </Link>
             </Button>
           </div>
         </div>
