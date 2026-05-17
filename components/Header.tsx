@@ -86,19 +86,36 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-24 items-center justify-between px-4 md:px-8">
-                {/* Logo */}
-                <Link href="/" className="group flex items-center space-x-2">
-                    <div className="relative overflow-hidden rounded-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-primary/30 group-active:scale-95">
-                        <Image
-                            src="/image.svg"
-                            alt="Book A Fixer Logo"
-                            width={220}
-                            height={70}
-                            className="h-16 w-auto transition-all duration-300 group-hover:brightness-110"
-                            priority
-                        />
-                    </div>
-                </Link>
+               
+                <Link
+      href="/"
+      className="group inline-flex items-center gap-4 transition-all duration-300 hover:opacity-90"
+    >
+      {/* Logo circle with enhanced animations */}
+      <div className="relative flex-shrink-0 transform transition-all duration-500 group-hover:scale-110 group-hover:-rotate-6 group-active:scale-95">
+        {/* Glow effect on hover */}
+        <div className="absolute -inset-3 rounded-full bg-[#1a7a4a]/0 blur-lg transition-all duration-500 group-hover:bg-[#1a7a4a]/20" />
+        
+        <Image
+          src="/image.svg"
+          alt="Book A Fixer"
+          width={80}
+          height={80}
+          className="relative h-20 w-20 transition-all duration-300 group-hover:drop-shadow-lg group-hover:brightness-110"
+          priority
+        />
+      </div>
+
+      {/* Brand text */}
+      <div className="flex flex-col leading-tight">
+        <span className="text-sm font-semibold uppercase tracking-widest text-[#1a7a4a]/70 transition-all duration-300 group-hover:tracking-wider group-hover:text-[#1a7a4a]">
+          Book A
+        </span>
+        <h1 className="text-4xl font-bold tracking-tight text-foreground transition-all duration-300 group-hover:text-[#1a7a4a]">
+          Fixer
+        </h1>
+      </div>
+    </Link>
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex md:items-center md:space-x-4">
