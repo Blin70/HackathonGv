@@ -8,12 +8,12 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field'
 
-export default function SignupPage() {
+export default function TradesmanSignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const role = 'user'
+  const role = 'tradesman'
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -53,7 +53,7 @@ export default function SignupPage() {
           <CardHeader>
             <CardTitle>Check your email</CardTitle>
             <CardDescription>
-              We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account.
+              We sent a confirmation link to <strong>{email}</strong>. Click it to activate your tradesman account.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -62,11 +62,11 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center">
+    <div className="flex flex-col flex-1 items-center justify-center py-6">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Create Client Account</CardTitle>
-          <CardDescription>Sign up to book professional fixers</CardDescription>
+          <CardTitle>Register as Tradesman</CardTitle>
+          <CardDescription>Join as a professional fixer and start finding jobs</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSignup}>

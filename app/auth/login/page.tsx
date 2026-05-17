@@ -34,7 +34,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="flex flex-col flex-1 items-center justify-center py-6">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
@@ -72,7 +72,7 @@ export default function LoginPage() {
             </FieldGroup>
           </CardContent>
 
-          <CardFooter className="flex-col gap-4">
+          <CardFooter className="flex-col gap-4 mt-5">
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing in…' : 'Sign in'}
             </Button>
