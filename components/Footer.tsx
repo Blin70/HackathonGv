@@ -93,10 +93,10 @@ export default function Footer() {
                     </div>
 
                     <div className="flex items-center space-x-6">
-                        <Link href="/termsofservice" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-tight flex items-center gap-2">
+                        <Link href="/terms-of-service" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-tight flex items-center gap-2">
                             <ShieldCheck className="h-3 w-3" /> Terms
                         </Link>
-                        <Link href="/privacypolicy" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-tight flex items-center gap-2">
+                        <Link href="/privacy-policy" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-tight flex items-center gap-2">
                             <Info className="h-3 w-3" /> Privacy
                         </Link>
                     </div>
