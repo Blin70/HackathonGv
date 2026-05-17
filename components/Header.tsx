@@ -106,15 +106,18 @@ export default function Header() {
                         <NavigationMenuList className="gap-2">
                             {navLinks.map((link) => (
                                 <NavigationMenuItem key={link.href}>
-                                    <Link href={link.href} legacyBehavior passHref>
-                                        <NavigationMenuLink className={cn(
-                                            navigationMenuTriggerStyle(),
-                                            "flex items-center gap-2 font-semibold text-base transition-colors hover:text-primary hover:bg-primary/5"
-                                        )}>
+                                    <NavigationMenuLink asChild>
+                                        <Link 
+                                            href={link.href} 
+                                            className={cn(
+                                                navigationMenuTriggerStyle(),
+                                                "flex items-center gap-2 font-semibold text-base transition-colors hover:text-primary hover:bg-primary/5 bg-transparent"
+                                            )}
+                                        >
                                             {link.icon}
                                             {link.title}
-                                        </NavigationMenuLink>
-                                    </Link>
+                                        </Link>
+                                    </NavigationMenuLink>
                                 </NavigationMenuItem>
                             ))}
                         </NavigationMenuList>
