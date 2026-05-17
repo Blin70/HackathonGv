@@ -11,6 +11,8 @@ import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field
 export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const role = 'user'
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -26,7 +28,12 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { role },
+        data: { 
+          role,
+          firstName,
+          lastName,
+          full_name: `${firstName} ${lastName}`
+        },
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     })
@@ -41,7 +48,7 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[calc(100vh-7rem)] flex items-center justify-center py-6">
         <Card className="w-full max-w-sm">
           <CardHeader>
             <CardTitle>Check your email</CardTitle>
@@ -55,7 +62,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-[calc(100vh-7rem)] flex items-center justify-center py-6">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Create Client Account</CardTitle>
@@ -65,6 +72,31 @@ export default function SignupPage() {
         <form onSubmit={handleSignup}>
           <CardContent>
             <FieldGroup>
+              <div className="grid grid-cols-2 gap-3">
+                <Field>
+                  <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="John"
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Doe"
+                    required
+                  />
+                </Field>
+              </div>
+
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
