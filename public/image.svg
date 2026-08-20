@@ -1,23 +1,70 @@
-<svg width="100%" viewBox="0 0 680 400" role="img" xmlns="http://www.w3.org/2000/svg" style="">
-  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Book a Fixer Icon</title>
-  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">A modern wrench and checkmark icon in green tones for Book a Fixer, no text</desc>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="fixerBgGrad" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#16a34a"/>
+      <stop offset="50%" stop-color="#15803d"/>
+      <stop offset="100%" stop-color="#0f5229"/>
+    </linearGradient>
 
-  <!-- Background circle -->
-  <circle cx="340" cy="200" r="140" fill="#1a7a4a" style="fill:rgb(26, 122, 74);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+    <!-- Gloss Highlight -->
+    <linearGradient id="glossGrad" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
 
-  <!-- Inner lighter ring -->
-  <circle cx="340" cy="200" r="122" fill="#1f8f56" style="fill:rgb(31, 143, 86);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+    <!-- Icon Metallic Gradient -->
+    <linearGradient id="iconGrad" x1="20" y1="20" x2="108" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
 
-  <!-- Wrench shape -->
-  <g transform="translate(340,200) rotate(-30)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-    <rect x="-12" y="12" width="24" height="95" rx="7" fill="#ffffff" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-    <rect x="-26" y="-65" width="16" height="65" rx="5" fill="#ffffff" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-    <rect x="10" y="-65" width="16" height="65" rx="5" fill="#ffffff" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-    <rect x="-26" y="-74" width="52" height="18" rx="6" fill="#ffffff" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+    <!-- Checkmark Badge Gradient -->
+    <linearGradient id="checkGrad" x1="80" y1="80" x2="116" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </linearGradient>
+
+    <!-- Shadow Filter -->
+    <filter id="dropShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#052e16" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Rounded Container Badge -->
+  <rect x="8" y="8" width="112" height="112" rx="32" fill="url(#fixerBgGrad)" filter="url(#dropShadow)"/>
+
+  <!-- Inner Glowing Rim -->
+  <rect x="8.5" y="8.5" width="111" height="111" rx="31.5" stroke="#4ade80" stroke-opacity="0.4" stroke-width="1.5" fill="none"/>
+
+  <!-- Glass Gloss Highlight -->
+  <path d="M 8 40 C 8 22.327 22.327 8 40 8 L 88 8 C 105.673 8 120 22.327 120 40 L 120 54 C 64 64 20 56 8 40 Z" fill="url(#glossGrad)"/>
+
+  <!-- Center Fixer Gear & Wrench Symbol -->
+  <g transform="translate(64,60)">
+    <!-- House & Gear Shield Silhouette -->
+    <path d="M0 -32 L28 -10 V26 C28 30.4 24.4 34 20 34 H-20 C-24.4 34 -28 30.4 -28 26 V-10 Z" fill="#ffffff" fill-opacity="0.14"/>
+    
+    <!-- Crossed Wrench & Screwdriver -->
+    <!-- Wrench -->
+    <g transform="rotate(-30)">
+      <rect x="-5" y="-24" width="10" height="48" rx="5" fill="url(#iconGrad)"/>
+      <circle cx="0" cy="-22" r="11" fill="url(#iconGrad)"/>
+      <path d="M-4 -30 L4 -30 L5 -20 L-5 -20 Z" fill="url(#fixerBgGrad)"/>
+    </g>
+
+    <!-- Screwdriver -->
+    <g transform="rotate(35)">
+      <rect x="-4" y="-26" width="8" height="50" rx="4" fill="url(#iconGrad)"/>
+      <path d="M-9 -24 L9 -24 L6 -16 L-6 -16 Z" fill="url(#iconGrad)"/>
+    </g>
   </g>
 
-  <!-- Checkmark badge -->
-  <circle cx="438" cy="298" r="32" fill="#0f5c35" style="fill:rgb(15, 92, 53);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-  <circle cx="438" cy="298" r="26" fill="#25c26e" style="fill:rgb(37, 194, 110);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-  <polyline points="426,298 435,308 452,288" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="fill:none;stroke:rgb(255, 255, 255);color:rgb(0, 0, 0);stroke-width:4px;stroke-linecap:round;stroke-linejoin:round;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Verified Checkmark Badge at Bottom Right -->
+  <g transform="translate(94, 94)">
+    <circle cx="0" cy="0" r="18" fill="#ffffff" filter="url(#dropShadow)"/>
+    <circle cx="0" cy="0" r="15" fill="url(#checkGrad)"/>
+    <!-- Checkmark icon -->
+    <path d="M-6 0 L-2 4 L6 -4" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
 </svg>

@@ -186,3 +186,41 @@ export const TYPES = [
   "Cleaner",
   "Flooring",
 ];
+
+export function getStoredCompanies(): Company[] {
+  if (typeof window === "undefined") return COMPANIES;
+  try {
+    const custom = localStorage.getItem("custom_worker_companies");
+    if (custom) {
+      const parsed = JSON.parse(custom) as Company[];
+      // Merge custom companies with defaults (custom first)
+      const defaultIds = new Set(parsed.map((c) => c.id));
+      const remaining = COMPANIES.filter((c) => !defaultIds.has(c.id));
+      return [...parsed, ...remaining];
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return COMPANIES;
+}
+
+export function saveWorkerCompany(company: Company): Company[] {
+  if (typeof window === "undefined") return COMPANIES;
+  try {
+    const current = getStoredCompanies();
+    const index = current.findIndex((c) => c.id === company.id);
+    let updated: Company[];
+    if (index >= 0) {
+      updated = [...current];
+      updated[index] = { ...updated[index], ...company };
+    } else {
+      updated = [company, ...current];
+    }
+    localStorage.setItem("custom_worker_companies", JSON.stringify(updated));
+    return updated;
+  } catch (e) {
+    console.error(e);
+  }
+  return COMPANIES;
+}
+
