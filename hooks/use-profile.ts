@@ -4,21 +4,18 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import { createClient } from "@/lib/client"
-import { getStoredCompanies, saveWorkerCompany } from "@/lib/data"
 import {
-  DEFAULT_WORKER_FORM,
   EMPTY_CLIENT_FORM,
-  deriveCompanyId,
+  EMPTY_WORKER_FORM,
   joinName,
   splitFullName,
-  toCompany,
-  toWorkerForm,
   type ClientProfileForm,
   type ProfileRole,
   type ProfileTab,
   type StatusMessage,
   type WorkerProfileForm,
 } from "@/lib/profile"
+import { fetchWorkerRow, rowToWorkerForm, saveWorkerRow } from "@/lib/workers"
 import { getErrorMessage } from "@/lib/utils"
 
 const WORKER_ROLES = new Set(["tradesman", "worker"])
@@ -42,14 +39,13 @@ export function useProfile() {
 
   const [userId, setUserId] = useState("")
   const [role, setRole] = useState<ProfileRole>("client")
-  const [companyId, setCompanyId] = useState(999)
 
   const [activeTab, setActiveTab] = useState<ProfileTab>(
     searchParams.get("tab") === "worker" ? "worker" : "client"
   )
 
   const [clientForm, setClientForm] = useState<ClientProfileForm>(EMPTY_CLIENT_FORM)
-  const [workerForm, setWorkerForm] = useState<WorkerProfileForm>(DEFAULT_WORKER_FORM)
+  const [workerForm, setWorkerForm] = useState<WorkerProfileForm>(EMPTY_WORKER_FORM)
 
   useEffect(() => {
     let active = true
@@ -96,21 +92,21 @@ export function useProfile() {
           }))
         }
 
-        const derivedId = deriveCompanyId(user.id)
-        if (active) setCompanyId(derivedId)
-
-        const fullName = (user.user_metadata?.full_name ?? "").toLowerCase()
-        const existingCompany = getStoredCompanies().find(
-          (company) => company.id === derivedId || company.name.toLowerCase() === fullName
-        )
-
-        if (existingCompany && active) {
-          setWorkerForm(toWorkerForm(existingCompany))
-        } else if (user.user_metadata?.firstName && active) {
-          setWorkerForm((prev) => ({
-            ...prev,
-            businessName: `${user.user_metadata.firstName}'s Fixer Service`,
-          }))
+        const workerRow = await fetchWorkerRow(user.id)
+        if (!active) return
+        if (workerRow) {
+          setWorkerForm(rowToWorkerForm(workerRow))
+        } else {
+          // No row yet (e.g. signed up before the migration): seed the name from
+          // the signup metadata so the form isn't blank.
+          const seedName =
+            user.user_metadata?.businessName ||
+            user.user_metadata?.displayName ||
+            user.user_metadata?.full_name ||
+            ""
+          if (seedName) {
+            setWorkerForm((prev) => ({ ...prev, businessName: seedName }))
+          }
         }
       } catch (error) {
         console.error("Failed to load profile:", error)
@@ -185,12 +181,14 @@ export function useProfile() {
     }
   }, [supabase, clientForm, userId])
 
-  const saveWorkerProfile = useCallback(() => {
+  const saveWorkerProfile = useCallback(async () => {
     setSaving(true)
     setStatus(null)
 
     try {
-      saveWorkerCompany(toCompany(workerForm, companyId))
+      const { error } = await saveWorkerRow(workerForm, userId)
+      if (error) throw error
+
       setStatus({
         type: "success",
         text: `Worker profile saved & published live! Click "View Live Public Profile" below to see how it looks to clients.`,
@@ -201,14 +199,14 @@ export function useProfile() {
     } finally {
       setSaving(false)
     }
-  }, [companyId, workerForm])
+  }, [workerForm, userId])
 
   return {
     loading,
     saving,
     status,
     role,
-    companyId,
+    workerId: userId,
     activeTab,
     setActiveTab,
     clientForm,

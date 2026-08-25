@@ -2,8 +2,9 @@
 
 import { use, useState, useEffect } from "react";
 import { notFound } from "next/navigation";
-import { getStoredCompanies, Company } from "@/lib/data";
-import { Star, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserPlus, MessageSquarePlus, ThumbsUp } from "lucide-react";
+import { Company } from "@/lib/data";
+import { getCompanyById } from "@/lib/workers";
+import { Star, MapPin, Clock, ShieldCheck, BadgeCheck, CheckCircle2, Lock, UserPlus, MessageSquarePlus, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -28,7 +29,7 @@ export type ReviewItem = {
   color: string;
 };
 
-const DEFAULT_REVIEWS: Record<number, ReviewItem[]> = {
+const DEFAULT_REVIEWS: Record<string, ReviewItem[]> = {
   4: [
     {
       id: "r1",
@@ -117,25 +118,27 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
   const [reviewSuccessMsg, setReviewSuccessMsg] = useState(false);
 
   useEffect(() => {
-    const all = getStoredCompanies();
-    const found = all.find((c) => c.id === parseInt(id));
-    if (found) {
-      setCompany(found);
+    let active = true;
 
-      // Load saved reviews from localStorage or fallback to default
-      try {
-        const stored = localStorage.getItem(`worker_reviews_${found.id}`);
-        if (stored) {
-          setReviewsList(JSON.parse(stored));
-        } else {
-          const initial = DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type);
-          setReviewsList(initial);
+    getCompanyById(id).then((found) => {
+      if (!active) return;
+      if (found) {
+        setCompany(found);
+
+        // Load saved reviews from localStorage or fallback to default
+        try {
+          const stored = localStorage.getItem(`worker_reviews_${found.id}`);
+          if (stored) {
+            setReviewsList(JSON.parse(stored));
+          } else {
+            setReviewsList(DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type));
+          }
+        } catch {
+          setReviewsList(DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type));
         }
-      } catch (e) {
-        setReviewsList(DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type));
       }
-    }
-    setLoadingCompany(false);
+      setLoadingCompany(false);
+    });
 
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -153,6 +156,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
     });
 
     return () => {
+      active = false;
       subscription.unsubscribe();
     };
   }, [id]);
@@ -252,6 +256,15 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
                   <ShieldCheck size={18} className="text-green-400" />
                   <span>Verified Professional</span>
                 </div>
+                {company.isVerified && (
+                  <>
+                    <div className="h-1.5 w-1.5 rounded-full bg-white/50" />
+                    <div className="flex items-center gap-1.5">
+                      <BadgeCheck size={18} className="text-emerald-400" />
+                      <span>Registered Business</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

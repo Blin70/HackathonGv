@@ -19,7 +19,7 @@ export function ProfileWorkspace() {
     saving,
     status,
     role,
-    companyId,
+    workerId,
     activeTab,
     setActiveTab,
     clientForm,
@@ -53,7 +53,7 @@ export function ProfileWorkspace() {
                 size="sm"
                 className="bg-[#1a7a4a] text-white font-bold rounded-xl gap-1.5 shadow-sm"
               >
-                <Link href={`/book/${companyId}`} target="_blank">
+                <Link href={`/book/${workerId}`} target="_blank">
                   <ExternalLink size={14} /> View Live Profile
                 </Link>
               </Button>
@@ -79,10 +79,10 @@ export function ProfileWorkspace() {
             onAddService={addService}
             onRemoveService={removeService}
             saving={saving}
-            companyId={companyId}
+            workerId={workerId}
             onSubmit={saveWorkerProfile}
           />
-          <WorkerCardPreview form={workerForm} companyId={companyId} />
+          <WorkerCardPreview form={workerForm} workerId={workerId} />
         </div>
       )}
     </div>

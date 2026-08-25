@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/dialog";
 
 import Link from "next/link";
-import { COMPANIES, TYPES, Company, getStoredCompanies } from "@/lib/data";
-type RatingsMap = Record<number, number>;
+import { TYPES, Company } from "@/lib/data";
+import { getMarketplaceCompanies } from "@/lib/workers";
+type RatingsMap = Record<string, number>;
 
 const RATINGS = [
   { label: "All Ratings", value: "0" },
@@ -39,10 +40,10 @@ function StarRating({
   userRatings,
   onRate,
 }: {
-  companyId: number;
+  companyId: number | string;
   baseRating: number;
   userRatings: RatingsMap;
-  onRate: (id: number, stars: number) => void;
+  onRate: (id: number | string, stars: number) => void;
 }) {
   const [hovered, setHovered] = useState(0);
   const current = userRatings[companyId] ?? baseRating;
@@ -82,7 +83,7 @@ function CompanyCard({
 }: {
   company: Company;
   userRatings: RatingsMap;
-  onRate: (id: number, stars: number) => void;
+  onRate: (id: number | string, stars: number) => void;
   onBook: (name: string) => void;
   isLoggedIn: boolean;
 }) {
@@ -174,7 +175,7 @@ export default function TradesmanMarket() {
   const [companiesList, setCompaniesList] = useState<Company[]>([]);
 
   useEffect(() => {
-    setCompaniesList(getStoredCompanies());
+    getMarketplaceCompanies().then(setCompaniesList);
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
@@ -189,7 +190,7 @@ export default function TradesmanMarket() {
     };
   }, []);
 
-  const handleRate = (id: number, stars: number) => {
+  const handleRate = (id: number | string, stars: number) => {
     if (!user) {
       const company = companiesList.find(c => c.id === id);
       setShowAuthRequiredModal(company?.name || "this fixer");
