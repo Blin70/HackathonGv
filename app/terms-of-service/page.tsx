@@ -34,7 +34,7 @@ export default function TermsOfService() {
                     <section className="space-y-4">
                         <h2 className="text-2xl md:text-3xl font-bold text-foreground">2. Description of Service</h2>
                         <p className="text-muted-foreground leading-relaxed text-lg">
-                            FixForce acts as a marketplace that connects users seeking home repair services ("Customers") with independent professionals ("Tradespeople" or "Fixers"). We do not directly provide the repair services ourselves but facilitate the booking and payment process.
+                            FixForce acts as a marketplace that connects users seeking home repair services (&quot;Customers&quot;) with independent professionals (&quot;Tradespeople&quot; or &quot;Fixers&quot;). We do not directly provide the repair services ourselves but facilitate the booking and payment process.
                         </p>
                     </section>
 
