@@ -46,6 +46,7 @@ export function useProfile() {
 
   const [clientForm, setClientForm] = useState<ClientProfileForm>(EMPTY_CLIENT_FORM)
   const [workerForm, setWorkerForm] = useState<WorkerProfileForm>(EMPTY_WORKER_FORM)
+  const [isVerified, setIsVerified] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -96,6 +97,7 @@ export function useProfile() {
         if (!active) return
         if (workerRow) {
           setWorkerForm(rowToWorkerForm(workerRow))
+          setIsVerified(workerRow.is_verified)
         } else {
           // No row yet (e.g. signed up before the migration): seed the name from
           // the signup metadata so the form isn't blank.
@@ -156,19 +158,15 @@ export function useProfile() {
     setStatus(null)
 
     try {
-      // Supabase resolves with an `error` field instead of throwing, so it must
-      // be checked explicitly — otherwise failed writes look like successes.
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          full_name: joinName(clientForm.firstName, clientForm.lastName),
-          phone_number: clientForm.phone,
-          address_line_1: clientForm.address,
-          city: clientForm.city,
-          postal_code: clientForm.postalCode,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", userId)
+      const { error } = await supabase.from("profiles").upsert({
+        id: userId,
+        full_name: joinName(clientForm.firstName, clientForm.lastName),
+        phone_number: clientForm.phone,
+        address_line_1: clientForm.address,
+        city: clientForm.city,
+        postal_code: clientForm.postalCode,
+        updated_at: new Date().toISOString(),
+      })
 
       if (error) throw error
 
@@ -207,6 +205,7 @@ export function useProfile() {
     status,
     role,
     workerId: userId,
+    isVerified,
     activeTab,
     setActiveTab,
     clientForm,

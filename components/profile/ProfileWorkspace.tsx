@@ -20,6 +20,7 @@ export function ProfileWorkspace() {
     status,
     role,
     workerId,
+    isVerified,
     activeTab,
     setActiveTab,
     clientForm,
@@ -82,7 +83,7 @@ export function ProfileWorkspace() {
             workerId={workerId}
             onSubmit={saveWorkerProfile}
           />
-          <WorkerCardPreview form={workerForm} workerId={workerId} />
+          <WorkerCardPreview form={workerForm} workerId={workerId} isVerified={isVerified} />
         </div>
       )}
     </div>

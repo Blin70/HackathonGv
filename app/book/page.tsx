@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Star, CheckCircle2, Lock, UserPlus, ShieldCheck, HelpCircle, Sparkles, Filter, SlidersHorizontal, RefreshCw } from "lucide-react";
+import { Search, Star, CheckCircle2, Lock, UserPlus, BadgeCheck, HelpCircle, Sparkles, Filter, SlidersHorizontal, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -106,10 +106,12 @@ function CompanyCard({
             {company.type}
           </Badge>
 
-          <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-extrabold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">
-            <ShieldCheck size={12} className="text-emerald-400" />
-            <span>Verified</span>
-          </div>
+          {company.isVerified && (
+            <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-extrabold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">
+              <BadgeCheck size={12} className="text-emerald-400" />
+              <span>Registered</span>
+            </div>
+          )}
         </div>
 
         {/* Content */}

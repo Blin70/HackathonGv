@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Star } from "lucide-react"
+import { BadgeCheck, Star } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,9 +11,10 @@ import { FALLBACK_BANNER_IMAGE, formatPrice, type WorkerProfileForm } from "@/li
 interface WorkerCardPreviewProps {
   form: WorkerProfileForm
   workerId: string
+  isVerified: boolean
 }
 
-export function WorkerCardPreview({ form, workerId }: WorkerCardPreviewProps) {
+export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPreviewProps) {
   return (
     <div className="lg:col-span-4 space-y-6">
       <div className="sticky top-24 space-y-6">
@@ -50,9 +51,11 @@ export function WorkerCardPreview({ form, workerId }: WorkerCardPreviewProps) {
                 <span className="font-bold">4.9</span>
                 <span className="text-muted-foreground">(189 reviews)</span>
               </div>
-              <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                Verified
-              </span>
+              {isVerified && (
+                <span className="flex items-center gap-1 text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                  <BadgeCheck size={12} /> Registered
+                </span>
+              )}
             </div>
           </CardContent>
 
