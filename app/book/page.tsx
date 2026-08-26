@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Star, CheckCircle2, Lock, UserPlus, ShieldCheck, HelpCircle, Sparkles, Filter, SlidersHorizontal, RefreshCw } from "lucide-react";
+import { Search, Star, CheckCircle2, Lock, UserPlus, BadgeCheck, HelpCircle, Sparkles, Filter, SlidersHorizontal, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/dialog";
 
 import Link from "next/link";
-import { COMPANIES, TYPES, Company, getStoredCompanies } from "@/lib/data";
-type RatingsMap = Record<number, number>;
+import { TYPES, Company } from "@/lib/data";
+import { getMarketplaceCompanies } from "@/lib/workers";
+type RatingsMap = Record<string, number>;
 
 const RATINGS = [
   { label: "All Ratings", value: "0" },
@@ -39,10 +40,10 @@ function StarRating({
   userRatings,
   onRate,
 }: {
-  companyId: number;
+  companyId: number | string;
   baseRating: number;
   userRatings: RatingsMap;
-  onRate: (id: number, stars: number) => void;
+  onRate: (id: number | string, stars: number) => void;
 }) {
   const [hovered, setHovered] = useState(0);
   const current = userRatings[companyId] ?? baseRating;
@@ -82,7 +83,7 @@ function CompanyCard({
 }: {
   company: Company;
   userRatings: RatingsMap;
-  onRate: (id: number, stars: number) => void;
+  onRate: (id: number | string, stars: number) => void;
   onBook: (name: string) => void;
   isLoggedIn: boolean;
 }) {
@@ -105,10 +106,12 @@ function CompanyCard({
             {company.type}
           </Badge>
 
-          <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-extrabold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">
-            <ShieldCheck size={12} className="text-emerald-400" />
-            <span>Verified</span>
-          </div>
+          {company.isVerified && (
+            <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-extrabold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">
+              <BadgeCheck size={12} className="text-emerald-400" />
+              <span>Registered</span>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -174,7 +177,7 @@ export default function TradesmanMarket() {
   const [companiesList, setCompaniesList] = useState<Company[]>([]);
 
   useEffect(() => {
-    setCompaniesList(getStoredCompanies());
+    getMarketplaceCompanies().then(setCompaniesList);
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
@@ -189,7 +192,7 @@ export default function TradesmanMarket() {
     };
   }, []);
 
-  const handleRate = (id: number, stars: number) => {
+  const handleRate = (id: number | string, stars: number) => {
     if (!user) {
       const company = companiesList.find(c => c.id === id);
       setShowAuthRequiredModal(company?.name || "this fixer");

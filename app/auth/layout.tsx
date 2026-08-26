@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none -ml-48 -mb-48" />
 
       {/* Top Bar with Back Button */}
-      <header className="w-full px-6 py-6 md:px-12 md:py-8 flex items-center justify-between z-10 relative">
+      <header className="w-full px-6 py-4 md:px-12 md:py-5 flex items-center justify-between z-10 relative">
         <Link
           href="/"
           className="group inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-all duration-300 bg-white/80 dark:bg-muted/30 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5"
@@ -21,8 +21,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col justify-center items-center px-4 md:px-8 py-8 md:py-12 z-10 relative">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex flex-col justify-center items-center px-4 md:px-8 py-4 md:py-6 z-10 relative">
+        <div className="w-full max-w-2xl">
           {children}
         </div>
       </div>

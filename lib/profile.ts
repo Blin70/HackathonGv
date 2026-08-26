@@ -1,9 +1,7 @@
-import type { Company } from "@/lib/data"
-
 /**
  * Profile-domain models, defaults, and pure helpers.
- * Lives beside `lib/data.ts` (which owns the `Company` catalogue) so the whole
- * fixer/worker domain stays in one place and can be imported anywhere.
+ * Data access to Supabase lives in `lib/workers.ts`; this module stays free of
+ * React and network concerns so it's trivial to reuse and test.
  */
 
 export type ProfileTab = "client" | "worker"
@@ -68,17 +66,15 @@ export const EMPTY_CLIENT_FORM: ClientProfileForm = {
   postalCode: "",
 }
 
-/** Demo defaults that pre-fill the worker form until a saved profile is loaded. */
-export const DEFAULT_WORKER_FORM: WorkerProfileForm = {
-  businessName: "Oak & Timber Carpentry",
-  tradeType: "Carpenter",
-  price: "$120",
-  tagline: "Custom built-ins, doors, decking & structural woodwork.",
-  aboutUs:
-    "Master craftsmen dedicated to creating beautiful, enduring woodwork. We build custom solutions tailored precisely to your space.",
-  bannerImage: FALLBACK_BANNER_IMAGE,
-  availableDays: "Monday - Saturday (8am - 6pm)",
-  services: ["Custom Built-ins", "Deck Construction", "Door Installation", "Structural Framing"],
+export const EMPTY_WORKER_FORM: WorkerProfileForm = {
+  businessName: "",
+  tradeType: "",
+  price: "",
+  tagline: "",
+  aboutUs: "",
+  bannerImage: "",
+  availableDays: "",
+  services: [],
 }
 
 export function splitFullName(fullName?: string | null): { firstName: string; lastName: string } {
@@ -92,49 +88,6 @@ export function splitFullName(fullName?: string | null): { firstName: string; la
 
 export function joinName(firstName: string, lastName: string): string {
   return `${firstName} ${lastName}`.trim()
-}
-
-/**
- * Deterministically maps a Supabase user id to a stable public company id, so
- * the same user always resolves to the same `/book/[id]` page (range 100–10099).
- */
-export function deriveCompanyId(userId: string): number {
-  const checksum = userId
-    .replace(/-/g, "")
-    .split("")
-    .reduce<number>((sum, char) => sum + char.charCodeAt(0), 0)
-  return (Math.abs(checksum) % 10000) + 100
-}
-
-/** Builds a persistable `Company` from the worker form state. */
-export function toCompany(form: WorkerProfileForm, companyId: number): Company {
-  return {
-    id: companyId,
-    name: form.businessName || "Pro Worker",
-    type: form.tradeType,
-    desc: form.tagline || "Professional repair and fix service.",
-    aboutUs: form.aboutUs || "Dedicated professional providing top quality work.",
-    services: form.services.length ? form.services : ["General Repairs"],
-    availableDays: form.availableDays || "Monday - Saturday",
-    rating: 4.9,
-    reviews: 189,
-    price: formatPrice(form.price),
-    image: form.bannerImage,
-  }
-}
-
-/** Maps a stored `Company` back onto the editable worker form model. */
-export function toWorkerForm(company: Company): WorkerProfileForm {
-  return {
-    businessName: company.name,
-    tradeType: company.type,
-    price: company.price,
-    tagline: company.desc,
-    aboutUs: company.aboutUs,
-    bannerImage: company.image,
-    availableDays: company.availableDays,
-    services: company.services?.length ? company.services : DEFAULT_WORKER_FORM.services,
-  }
 }
 
 /** Ensures a price string is rendered with a leading `$`. */

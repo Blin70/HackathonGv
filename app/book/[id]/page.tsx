@@ -2,8 +2,9 @@
 
 import { use, useState, useEffect } from "react";
 import { notFound } from "next/navigation";
-import { getStoredCompanies, Company } from "@/lib/data";
-import { Star, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserPlus, MessageSquarePlus, ThumbsUp } from "lucide-react";
+import { Company } from "@/lib/data";
+import { getCompanyById } from "@/lib/workers";
+import { Star, Clock, BadgeCheck, CheckCircle2, Lock, UserPlus, MessageSquarePlus, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -28,7 +29,7 @@ export type ReviewItem = {
   color: string;
 };
 
-const DEFAULT_REVIEWS: Record<number, ReviewItem[]> = {
+const DEFAULT_REVIEWS: Record<string, ReviewItem[]> = {
   4: [
     {
       id: "r1",
@@ -100,7 +101,7 @@ function getGenericReviews(companyName: string, tradeType: string): ReviewItem[]
 
 export default function TradesmanProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  
+
   const [company, setCompany] = useState<Company | null>(null);
   const [loadingCompany, setLoadingCompany] = useState(true);
   const [booked, setBooked] = useState(false);
@@ -117,25 +118,27 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
   const [reviewSuccessMsg, setReviewSuccessMsg] = useState(false);
 
   useEffect(() => {
-    const all = getStoredCompanies();
-    const found = all.find((c) => c.id === parseInt(id));
-    if (found) {
-      setCompany(found);
+    let active = true;
 
-      // Load saved reviews from localStorage or fallback to default
-      try {
-        const stored = localStorage.getItem(`worker_reviews_${found.id}`);
-        if (stored) {
-          setReviewsList(JSON.parse(stored));
-        } else {
-          const initial = DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type);
-          setReviewsList(initial);
+    getCompanyById(id).then((found) => {
+      if (!active) return;
+      if (found) {
+        setCompany(found);
+
+        // Load saved reviews from localStorage or fallback to default
+        try {
+          const stored = localStorage.getItem(`worker_reviews_${found.id}`);
+          if (stored) {
+            setReviewsList(JSON.parse(stored));
+          } else {
+            setReviewsList(DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type));
+          }
+        } catch {
+          setReviewsList(DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type));
         }
-      } catch (e) {
-        setReviewsList(DEFAULT_REVIEWS[found.id] || getGenericReviews(found.name, found.type));
       }
-    }
-    setLoadingCompany(false);
+      setLoadingCompany(false);
+    });
 
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -153,6 +156,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
     });
 
     return () => {
+      active = false;
       subscription.unsubscribe();
     };
   }, [id]);
@@ -231,7 +235,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        
+
         <div className="absolute bottom-0 w-full">
           <div className="max-w-5xl mx-auto px-6 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="text-white">
@@ -247,11 +251,15 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
                   <span className="font-bold">{currentAverageRating}</span>
                   <span className="opacity-75">({reviewsList.length} reviews)</span>
                 </div>
-                <div className="h-1.5 w-1.5 rounded-full bg-white/50" />
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck size={18} className="text-green-400" />
-                  <span>Verified Professional</span>
-                </div>
+                {company.isVerified && (
+                  <>
+                    <div className="h-1.5 w-1.5 rounded-full bg-white/50" />
+                    <div className="flex items-center gap-1.5">
+                      <BadgeCheck size={18} className="text-emerald-400" />
+                      <span>Registered Business</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -261,10 +269,10 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
       {/* Main Content Grid */}
       <div className="max-w-5xl mx-auto px-6 mt-8 md:mt-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
-          
+
           {/* Left Column: Details & Reviews */}
           <div className="lg:col-span-2 space-y-10">
-            
+
             {/* About Section */}
             <section>
               <h2 className="text-2xl font-extrabold mb-4 text-foreground">About Us</h2>
@@ -373,7 +381,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
           {/* Right Column: Booking Card */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 bg-white rounded-3xl p-6 border border-border shadow-xl">
-              
+
               {!user && (
                 <div className="mb-6 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-semibold flex items-center gap-2.5 leading-snug">
                   <Lock size={18} className="text-amber-600 shrink-0" />
@@ -404,7 +412,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={handleBook}
                 disabled={booked}
                 className="w-full h-14 rounded-2xl font-bold text-base shadow-lg shadow-[#1a7a4a]/20 hover:scale-[1.02] transition-transform gap-2 text-white"

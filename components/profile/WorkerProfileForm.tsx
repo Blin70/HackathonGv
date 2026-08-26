@@ -39,7 +39,7 @@ interface WorkerProfileFormProps {
   onAddService: (value: string) => void
   onRemoveService: (value: string) => void
   saving: boolean
-  companyId: number
+  workerId: string
   onSubmit: () => void
 }
 
@@ -49,7 +49,7 @@ export function WorkerProfileForm({
   onAddService,
   onRemoveService,
   saving,
-  companyId,
+  workerId,
   onSubmit,
 }: WorkerProfileFormProps) {
   const [newService, setNewService] = useState("")
@@ -301,7 +301,7 @@ export function WorkerProfileForm({
               variant="outline"
               className="w-full sm:w-auto h-12 rounded-2xl font-bold border-border gap-2"
             >
-              <Link href={`/book/${companyId}`} target="_blank">
+              <Link href={`/book/${workerId}`} target="_blank">
                 <ExternalLink size={16} />
                 Preview Live Page
               </Link>
