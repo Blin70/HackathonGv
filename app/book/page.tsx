@@ -25,6 +25,8 @@ import {
 import Link from "next/link";
 import { TYPES, Company } from "@/lib/data";
 import { getMarketplaceCompanies } from "@/lib/workers";
+import { createBooking } from "@/lib/bookings";
+import { toast } from "sonner";
 type RatingsMap = Record<string, number>;
 
 const RATINGS = [
@@ -79,12 +81,14 @@ function CompanyCard({
   userRatings,
   onRate,
   onBook,
+  booking,
   isLoggedIn,
 }: {
   company: Company;
   userRatings: RatingsMap;
   onRate: (id: number | string, stars: number) => void;
-  onBook: (name: string) => void;
+  onBook: (company: Company) => void;
+  booking: boolean;
   isLoggedIn: boolean;
 }) {
   return (
@@ -150,16 +154,17 @@ function CompanyCard({
         </div>
 
         <Button
-          onClick={(e) => { 
-            e.preventDefault(); 
-            e.stopPropagation(); 
-            onBook(company.name); 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onBook(company);
           }}
+          disabled={booking}
           className="rounded-2xl px-4 h-10 font-bold text-xs text-white hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
           style={{ background: "#1a7a4a" }}
         >
           {!isLoggedIn && <Lock size={12} className="opacity-80" />}
-          Book Now
+          {booking ? "Sending..." : "Book Now"}
         </Button>
       </CardFooter>
     </Card>
@@ -172,6 +177,7 @@ export default function TradesmanMarket() {
   const [ratingFilter, setRatingFilter] = useState("0");
   const [userRatings, setUserRatings] = useState<RatingsMap>({});
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [bookingId, setBookingId] = useState<string | number | null>(null);
   const [user, setUser] = useState<any>(null);
   const [showAuthRequiredModal, setShowAuthRequiredModal] = useState<string | null>(null);
   const [companiesList, setCompaniesList] = useState<Company[]>([]);
@@ -201,12 +207,29 @@ export default function TradesmanMarket() {
     setUserRatings((prev) => ({ ...prev, [id]: stars }));
   };
 
-  const handleBook = (name: string) => {
+  const handleBook = async (company: Company) => {
     if (!user) {
-      setShowAuthRequiredModal(name);
+      setShowAuthRequiredModal(company.name);
       return;
     }
-    setSelectedCompany(name);
+    if (bookingId) return;
+
+    setBookingId(company.id);
+    const { error } = await createBooking({
+      clientId: user.id,
+      clientName: user.user_metadata?.full_name || user.email?.split("@")[0] || "Client",
+      workerId: String(company.id),
+      workerName: company.name,
+      tradeType: company.type,
+    });
+    setBookingId(null);
+
+    if (error) {
+      console.error(error);
+      toast.error("Couldn't send your request. Please try again.");
+    } else {
+      setSelectedCompany(company.name);
+    }
   };
 
   const filtered = companiesList.filter((c) => {
@@ -289,6 +312,7 @@ export default function TradesmanMarket() {
                     userRatings={userRatings}
                     onRate={handleRate}
                     onBook={handleBook}
+                    booking={bookingId === company.id}
                     isLoggedIn={!!user}
                   />
                 ))}

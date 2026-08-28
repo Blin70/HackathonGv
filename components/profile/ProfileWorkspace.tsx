@@ -3,13 +3,13 @@
 import Link from "next/link"
 import { ExternalLink } from "lucide-react"
 
+import { LoadingState } from "@/components/LoadingState"
 import { StatusBanner } from "@/components/StatusBanner"
 import { Button } from "@/components/ui/button"
 import { useProfile } from "@/hooks/use-profile"
 
 import { ClientProfileForm } from "./ClientProfileForm"
 import { ProfileHeader } from "./ProfileHeader"
-import { ProfileLoading } from "./ProfileLoading"
 import { WorkerCardPreview } from "./WorkerCardPreview"
 import { WorkerProfileForm } from "./WorkerProfileForm"
 
@@ -34,7 +34,7 @@ export function ProfileWorkspace() {
   } = useProfile()
 
   if (loading) {
-    return <ProfileLoading />
+    return <LoadingState label="Loading profile..." />
   }
 
   const showLiveProfileAction = activeTab === "worker" && status?.type === "success"
