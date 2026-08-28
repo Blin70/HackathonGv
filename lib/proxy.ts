@@ -10,10 +10,11 @@ import { NextResponse, type NextRequest } from 'next/server'
  * Add a new entry here to make a route publicly accessible.
  */
 const PUBLIC_ROUTES = [
-  '/',        // landing page
-  '/auth',    // login, signup, callback, error
-  '/ai',      // AI Concierge diagnostics
-  '/book',    // worker market & worker profiles
+  '/',         // landing page
+  '/auth',     // login, signup, callback, error
+  '/ai',       // AI Concierge diagnostics
+  '/api/ai',   // AI Concierge endpoint (guests can use the concierge)
+  '/book',     // worker market & worker profiles
   '/terms-of-service',
   '/privacy-policy'
 ]
