@@ -7,7 +7,7 @@ import Image from "next/image"
 import { Sparkles, Send, Bot, User, ArrowLeft, RefreshCw, Hammer, Zap, Droplets, ShieldAlert, BookOpen, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { cn, getErrorMessage } from "@/lib/utils"
 
 // Types
 type Message = {
@@ -117,63 +117,19 @@ function ChatContainer() {
     setLoading(true)
 
     try {
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
-      if (!apiKey) {
-        throw new Error("Gemini API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in .env.local.")
-      }
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: userText
-                  }
-                ]
-              }
-            ],
-            systemInstruction: {
-              parts: [
-                {
-                  text: `You are the Book A Fixer AI Concierge, a helpful assistant built for our website 'Book A Fixer'.
-Your goal is to help users diagnose home repair issues, explain options, estimate costs, and suggest the right tradesman category.
-The available categories are:
-- Plumber (emergency repairs, pipe fitting, bathroom installs)
-- Electrician (rewiring, panels, smart home setups)
-- Painter (interior & exterior painting)
-- Carpenter (custom built-ins, doors, decking, structural woodwork)
-- Gardener (landscaping, lawn care, planting)
-- Roofer (roof repairs, full replacements, gutters, waterproofing)
-- Tiler (bathroom, kitchen & floor tiling)
-- HVAC (heating, cooling, ventilation, gas safety)
-- Mason (stone walls, concrete, patios, brick restoration)
-- Locksmith (emergency lockouts, smart locks)
-- Cleaner (deep home cleaning, office cleaning)
-- Flooring (laminate, hardwood, luxury vinyl)
-
-When recommending a professional, ALWAYS suggest one of these categories and advise the user to visit our '/book' page to search and book.
-Format your responses using clean Markdown structure, bold headers, and bullet points where helpful. Keep responses friendly, structured, concise, and professional.`
-                }
-              ]
-            }
-          })
-        }
-      )
+      const response = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText }),
+      })
 
       const data = await response.json()
-      
+
       if (!response.ok) {
-        throw new Error(data.error?.message || `HTTP Error ${response.status}`);
+        throw new Error(data.error || `HTTP Error ${response.status}`)
       }
 
-      const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I was unable to formulate a response. Please try again."
+      const aiText = data.text || "I was unable to formulate a response. Please try again."
 
       setMessages((prev) => [
         ...prev,
@@ -183,13 +139,13 @@ Format your responses using clean Markdown structure, bold headers, and bullet p
           timestamp: new Date()
         }
       ])
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          text: `⚠️ **Error Assistant:** ${err.message || "An unexpected error occurred while contacting the AI model. Please ensure the Gemini API key is valid."}`,
+          text: `⚠️ **Error Assistant:** ${getErrorMessage(err, "An unexpected error occurred while contacting the AI. Please try again.")}`,
           timestamp: new Date()
         }
       ])
