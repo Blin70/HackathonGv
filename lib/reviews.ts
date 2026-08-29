@@ -6,6 +6,7 @@ import type { Company } from "@/lib/data"
 
 export interface ReviewItem {
   id: string
+  authorId: string | null
   name: string
   rating: number
   date: string
@@ -61,6 +62,7 @@ function rowToReviewItem(row: ReviewRow): ReviewItem {
   }
   return {
     id: row.id,
+    authorId: row.author_id,
     name,
     rating: row.rating,
     date,
@@ -72,10 +74,11 @@ function rowToReviewItem(row: ReviewRow): ReviewItem {
 }
 
 /** A local, unsaved review item for optimistic display right after posting. */
-export function createReviewItem(input: NewReview, tradeType: string): ReviewItem {
+export function createReviewItem(input: NewReview, tradeType: string, authorId: string): ReviewItem {
   const name = input.name.trim() || "Verified Client"
   return {
     id: `local-${Date.now()}`,
+    authorId,
     name,
     rating: input.rating,
     date: "just now",
@@ -99,17 +102,23 @@ export async function fetchReviews(workerId: Company["id"]): Promise<ReviewItem[
   return ((data as ReviewRow[] | null) ?? []).map(rowToReviewItem)
 }
 
-/** Inserts a review as the signed-in user. Returns Supabase's `{ error }`. */
-export async function insertReview(input: NewReview, company: Company, user: User) {
+/**
+ * Creates or updates the signed-in user's review of a worker (one per user per
+ * worker, enforced by a unique constraint). Returns Supabase's `{ error }`.
+ */
+export async function upsertReview(input: NewReview, company: Company, user: User) {
   const supabase = createClient()
-  return supabase.from("reviews").insert({
-    worker_id: String(company.id),
-    author_id: user.id,
-    author_name: input.name.trim() || "Verified Client",
-    rating: input.rating,
-    comment: input.comment.trim(),
-    trade: company.type,
-  })
+  return supabase.from("reviews").upsert(
+    {
+      worker_id: String(company.id),
+      author_id: user.id,
+      author_name: input.name.trim() || "Verified Client",
+      rating: input.rating,
+      comment: input.comment.trim(),
+      trade: company.type,
+    },
+    { onConflict: "worker_id,author_id" }
+  )
 }
 
 /** Average rating + review count per worker, aggregated across all reviews. */

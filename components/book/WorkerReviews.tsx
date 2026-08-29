@@ -9,10 +9,16 @@ import type { ReviewItem } from "@/lib/reviews"
 interface WorkerReviewsProps {
   reviews: ReviewItem[]
   averageRating: string
+  hasReviewed: boolean
   onWriteReview: () => void
 }
 
-export function WorkerReviews({ reviews, averageRating, onWriteReview }: WorkerReviewsProps) {
+export function WorkerReviews({
+  reviews,
+  averageRating,
+  hasReviewed,
+  onWriteReview,
+}: WorkerReviewsProps) {
   return (
     <section className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -35,7 +41,7 @@ export function WorkerReviews({ reviews, averageRating, onWriteReview }: WorkerR
           className="rounded-2xl h-11 px-5 font-bold text-sm bg-[#1a7a4a] text-white hover:opacity-90 transition-all gap-2 self-start sm:self-auto"
         >
           <MessageSquarePlus size={18} />
-          Write a Review
+          {hasReviewed ? "Edit your review" : "Write a Review"}
         </Button>
       </div>
 

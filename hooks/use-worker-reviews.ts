@@ -9,12 +9,12 @@ import {
   averageRating,
   createReviewItem,
   fetchReviews,
-  insertReview,
+  upsertReview,
   type NewReview,
   type ReviewItem,
 } from "@/lib/reviews"
 
-/** Loads a worker's reviews from the DB, and posts new ones as the signed-in user. */
+/** Loads a worker's reviews and lets the signed-in user post or edit their own (one per worker). */
 export function useWorkerReviews(company: Company | null, user: User | null) {
   const [items, setItems] = useState<ReviewItem[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -32,20 +32,26 @@ export function useWorkerReviews(company: Company | null, user: User | null) {
     }
   }, [company])
 
-  const addReview = async (input: NewReview) => {
+  const myReview = user ? items.find((review) => review.authorId === user.id) ?? null : null
+
+  const submitReview = async (input: NewReview) => {
     if (!company || !user) return
 
-    const { error } = await insertReview(input, company, user)
+    const editing = Boolean(myReview)
+    const { error } = await upsertReview(input, company, user)
     if (error) {
       console.error("Failed to publish review:", error)
       toast.error("Couldn't publish your review. Please try again.")
       return
     }
 
-    // Optimistically show it (the insert succeeded).
-    setItems((prev) => [createReviewItem(input, company.type), ...prev])
+    // Optimistically replace the user's existing review, or add a new one.
+    const item = createReviewItem(input, company.type, user.id)
+    setItems((prev) => [item, ...prev.filter((review) => review.authorId !== user.id)])
     setDialogOpen(false)
-    toast.success("Review published", { description: "Thanks for sharing your feedback!" })
+    toast.success(editing ? "Review updated" : "Review published", {
+      description: "Thanks for sharing your feedback!",
+    })
   }
 
   return {
@@ -53,6 +59,7 @@ export function useWorkerReviews(company: Company | null, user: User | null) {
     average: averageRating(items, company?.rating ?? 0),
     dialogOpen,
     setDialogOpen,
-    addReview,
+    submitReview,
+    myReview,
   }
 }

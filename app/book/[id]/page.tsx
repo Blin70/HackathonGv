@@ -82,6 +82,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
             <WorkerReviews
               reviews={reviews.items}
               averageRating={reviews.average}
+              hasReviewed={Boolean(reviews.myReview)}
               onWriteReview={handleWriteReview}
             />
           </div>
@@ -110,11 +111,15 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
         companyName={company.name}
       />
       <WriteReviewDialog
+        key={reviews.myReview?.id ?? user?.id ?? "anon"}
         open={reviews.dialogOpen}
         onOpenChange={reviews.setDialogOpen}
         companyName={company.name}
+        editing={Boolean(reviews.myReview)}
         defaultName={reviewerName}
-        onSubmit={reviews.addReview}
+        defaultRating={reviews.myReview?.rating ?? 5}
+        defaultComment={reviews.myReview?.comment ?? ""}
+        onSubmit={reviews.submitReview}
       />
     </main>
   )
