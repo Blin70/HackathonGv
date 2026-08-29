@@ -18,7 +18,7 @@ import { useWorkerReviews } from "@/hooks/use-worker-reviews"
 export default function TradesmanProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { company, loading, user } = useWorkerDetail(id)
-  const reviews = useWorkerReviews(company)
+  const reviews = useWorkerReviews(company, user)
 
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [booked, setBooked] = useState(false)
