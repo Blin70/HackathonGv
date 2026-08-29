@@ -20,8 +20,11 @@ const PUBLIC_ROUTES = [
 ]
 
 function isPublicRoute(pathname: string): boolean {
+  // Match a whole path segment so '/book' doesn't accidentally cover '/bookings'.
   return PUBLIC_ROUTES.some((route) =>
-    route === '/' ? pathname === '/' : pathname.startsWith(route)
+    route === '/'
+      ? pathname === '/'
+      : pathname === route || pathname.startsWith(route + '/')
   )
 }
 

@@ -6,6 +6,8 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User, CalendarCheck, Home, ArrowRight } from "lucide-react"
 
+import type { User as SupabaseUser } from "@supabase/supabase-js"
+
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/client"
 import {
@@ -49,7 +51,7 @@ export default function Header() {
     const router = useRouter()
     const pathname = usePathname()
     const [isOpen, setIsOpen] = React.useState(false)
-    const [user, setUser] = React.useState<any>(null)
+    const [user, setUser] = React.useState<SupabaseUser | null>(null)
     const [loading, setLoading] = React.useState(true)
 
     React.useEffect(() => {
@@ -180,7 +182,7 @@ export default function Header() {
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link href="/book" className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer font-semibold text-sm w-full transition-colors hover:bg-primary/10 hover:text-primary">
+                                        <Link href="/bookings" className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer font-semibold text-sm w-full transition-colors hover:bg-primary/10 hover:text-primary">
                                             <CalendarCheck className="h-4 w-4 text-primary" />
                                             My Bookings
                                         </Link>
@@ -335,6 +337,18 @@ export default function Header() {
                                                     <Link href="/profile">
                                                         <User className="h-5 w-5" />
                                                         My Profile
+                                                    </Link>
+                                                </Button>
+
+                                                <Button
+                                                    variant="outline"
+                                                    asChild
+                                                    className="w-full h-12 rounded-xl font-bold justify-start gap-3 border-primary/30 text-primary hover:bg-primary/10 transition-all"
+                                                    onClick={() => setIsOpen(false)}
+                                                >
+                                                    <Link href="/bookings">
+                                                        <CalendarCheck className="h-5 w-5" />
+                                                        My Bookings
                                                     </Link>
                                                 </Button>
 

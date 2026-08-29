@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Star, CheckCircle2, Lock, UserPlus, BadgeCheck, HelpCircle, Sparkles, Filter, SlidersHorizontal, RefreshCw } from "lucide-react";
+import { Search, CheckCircle2, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +25,10 @@ import {
 import Link from "next/link";
 import { TYPES, Company } from "@/lib/data";
 import { getMarketplaceCompanies } from "@/lib/workers";
+import { createBooking } from "@/lib/bookings";
+import { StarRating } from "@/components/StarRating";
+import { toast } from "sonner";
+import type { User } from "@supabase/supabase-js";
 type RatingsMap = Record<string, number>;
 
 const RATINGS = [
@@ -34,57 +38,19 @@ const RATINGS = [
   { label: "3+ Stars", value: "3" },
 ];
 
-function StarRating({
-  companyId,
-  baseRating,
-  userRatings,
-  onRate,
-}: {
-  companyId: number | string;
-  baseRating: number;
-  userRatings: RatingsMap;
-  onRate: (id: number | string, stars: number) => void;
-}) {
-  const [hovered, setHovered] = useState(0);
-  const current = userRatings[companyId] ?? baseRating;
-  const display = hovered || current;
-
-  return (
-    <div className="flex items-center gap-1">
-      {[1, 2, 3, 4, 5].map((s) => (
-        <Star
-          key={s}
-          size={15}
-          className="cursor-pointer transition-transform hover:scale-125"
-          fill={s <= Math.round(display) ? "#f59e0b" : "transparent"}
-          color={s <= Math.round(display) ? "#f59e0b" : "#d1d5db"}
-          onMouseEnter={() => setHovered(s)}
-          onMouseLeave={() => setHovered(0)}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onRate(companyId, s);
-          }}
-        />
-      ))}
-      <span className="text-xs text-muted-foreground ml-1">
-        {current.toFixed(1)}
-      </span>
-    </div>
-  );
-}
-
 function CompanyCard({
   company,
   userRatings,
   onRate,
   onBook,
+  booking,
   isLoggedIn,
 }: {
   company: Company;
   userRatings: RatingsMap;
   onRate: (id: number | string, stars: number) => void;
-  onBook: (name: string) => void;
+  onBook: (company: Company) => void;
+  booking: boolean;
   isLoggedIn: boolean;
 }) {
   return (
@@ -126,12 +92,22 @@ function CompanyCard({
           </div>
 
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
-            <StarRating
-              companyId={company.id}
-              baseRating={company.rating}
-              userRatings={userRatings}
-              onRate={onRate}
-            />
+            <div
+              className="flex items-center gap-1"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <StarRating
+                value={userRatings[company.id] ?? company.rating}
+                onChange={(stars) => onRate(company.id, stars)}
+                size={15}
+              />
+              <span className="text-xs text-muted-foreground ml-1">
+                {(userRatings[company.id] ?? company.rating).toFixed(1)}
+              </span>
+            </div>
             <span className="text-xs text-muted-foreground font-semibold">
               {company.reviews.toLocaleString()} reviews
             </span>
@@ -150,16 +126,17 @@ function CompanyCard({
         </div>
 
         <Button
-          onClick={(e) => { 
-            e.preventDefault(); 
-            e.stopPropagation(); 
-            onBook(company.name); 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onBook(company);
           }}
+          disabled={booking}
           className="rounded-2xl px-4 h-10 font-bold text-xs text-white hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
           style={{ background: "#1a7a4a" }}
         >
           {!isLoggedIn && <Lock size={12} className="opacity-80" />}
-          Book Now
+          {booking ? "Sending..." : "Book Now"}
         </Button>
       </CardFooter>
     </Card>
@@ -172,7 +149,8 @@ export default function TradesmanMarket() {
   const [ratingFilter, setRatingFilter] = useState("0");
   const [userRatings, setUserRatings] = useState<RatingsMap>({});
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [bookingId, setBookingId] = useState<string | number | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [showAuthRequiredModal, setShowAuthRequiredModal] = useState<string | null>(null);
   const [companiesList, setCompaniesList] = useState<Company[]>([]);
 
@@ -201,12 +179,29 @@ export default function TradesmanMarket() {
     setUserRatings((prev) => ({ ...prev, [id]: stars }));
   };
 
-  const handleBook = (name: string) => {
+  const handleBook = async (company: Company) => {
     if (!user) {
-      setShowAuthRequiredModal(name);
+      setShowAuthRequiredModal(company.name);
       return;
     }
-    setSelectedCompany(name);
+    if (bookingId) return;
+
+    setBookingId(company.id);
+    const { error } = await createBooking({
+      clientId: user.id,
+      clientName: user.user_metadata?.full_name || user.email?.split("@")[0] || "Client",
+      workerId: String(company.id),
+      workerName: company.name,
+      tradeType: company.type,
+    });
+    setBookingId(null);
+
+    if (error) {
+      console.error(error);
+      toast.error("Couldn't send your request. Please try again.");
+    } else {
+      setSelectedCompany(company.name);
+    }
   };
 
   const filtered = companiesList.filter((c) => {
@@ -269,10 +264,10 @@ export default function TradesmanMarket() {
 
         {/* Layout Grid: Left Area is Main Grid, Right Area is Sticky Filters Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Main Card Listings Area (9 columns) */}
           <div className="lg:col-span-9 space-y-6">
-            
+
             {/* Search results summary */}
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground font-bold uppercase tracking-wider">
@@ -289,6 +284,7 @@ export default function TradesmanMarket() {
                     userRatings={userRatings}
                     onRate={handleRate}
                     onBook={handleBook}
+                    booking={bookingId === company.id}
                     isLoggedIn={!!user}
                   />
                 ))}
@@ -309,13 +305,13 @@ export default function TradesmanMarket() {
           {/* Sticky Sidebar filters (3 columns) - Stays sticky at the right side of viewport */}
           <div className="lg:col-span-3 lg:sticky lg:top-28 z-30">
             <div className="bg-white border border-border/70 rounded-3xl p-6 shadow-xl space-y-6">
-              
+
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="font-black text-sm uppercase tracking-wider flex items-center gap-1.5 text-foreground">
                   <SlidersHorizontal size={16} className="text-[#1a7a4a]" />
                   Filters
                 </span>
-                
+
                 {(typeFilter !== "All Types" || ratingFilter !== "0") && (
                   <button
                     onClick={() => {
@@ -406,7 +402,7 @@ export default function TradesmanMarket() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog> 
+        </Dialog>
 
         {/* Auth Required Modal */}
         <Dialog open={!!showAuthRequiredModal} onOpenChange={(open) => !open && setShowAuthRequiredModal(null)}>
