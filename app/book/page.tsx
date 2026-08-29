@@ -26,7 +26,6 @@ import Link from "next/link";
 import { TYPES, Company } from "@/lib/data";
 import { getMarketplaceCompanies } from "@/lib/workers";
 import { createBooking } from "@/lib/bookings";
-import { fetchReviewStats } from "@/lib/reviews";
 import { StarRating } from "@/components/StarRating";
 import { toast } from "sonner";
 import type { User } from "@supabase/supabase-js";
@@ -88,15 +87,23 @@ function CompanyCard({
           </div>
 
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
-            <div className="flex items-center gap-1">
-              <StarRating value={company.rating} size={15} />
-              <span className="text-xs text-muted-foreground ml-1">
-                {company.rating.toFixed(1)}
+            {company.reviews > 0 ? (
+              <>
+                <div className="flex items-center gap-1">
+                  <StarRating value={company.rating} size={15} />
+                  <span className="text-xs text-muted-foreground ml-1">
+                    {company.rating.toFixed(1)}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground font-semibold">
+                  {company.reviews.toLocaleString()} reviews
+                </span>
+              </>
+            ) : (
+              <span className="flex items-center gap-1 text-xs font-bold text-[#1a7a4a] bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-1">
+                <Sparkles size={12} className="text-emerald-400" /> New
               </span>
-            </div>
-            <span className="text-xs text-muted-foreground font-semibold">
-              {company.reviews.toLocaleString()} reviews
-            </span>
+            )}
           </div>
         </CardContent>
       </Link>
@@ -140,15 +147,7 @@ export default function TradesmanMarket() {
   const [companiesList, setCompaniesList] = useState<Company[]>([]);
 
   useEffect(() => {
-    // Merge each worker's real review aggregates (avg rating + count) into the listing.
-    Promise.all([getMarketplaceCompanies(), fetchReviewStats()]).then(([companies, stats]) => {
-      setCompaniesList(
-        companies.map((c) => {
-          const stat = stats.get(String(c.id));
-          return stat ? { ...c, rating: stat.rating, reviews: stat.count } : c;
-        })
-      );
-    });
+    getMarketplaceCompanies().then(setCompaniesList);
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);

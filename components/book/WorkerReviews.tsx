@@ -19,9 +19,11 @@ export function WorkerReviews({ reviews, averageRating, onWriteReview }: WorkerR
         <div>
           <h2 className="text-2xl font-extrabold text-foreground flex items-center gap-2">
             Customer Reviews
-            <Badge className="bg-amber-100 text-amber-900 border-amber-200 text-xs font-bold px-2.5 py-0.5 rounded-full">
-              ★ {averageRating}
-            </Badge>
+            {reviews.length > 0 && (
+              <Badge className="bg-amber-100 text-amber-900 border-amber-200 text-xs font-bold px-2.5 py-0.5 rounded-full">
+                ★ {averageRating}
+              </Badge>
+            )}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             Read genuine feedback from verified clients or leave your own review.
@@ -37,36 +39,45 @@ export function WorkerReviews({ reviews, averageRating, onWriteReview }: WorkerR
         </Button>
       </div>
 
-      <div className="space-y-4">
-        {reviews.map((review) => (
-          <div
-            key={review.id}
-            className="p-6 rounded-3xl bg-white border border-border shadow-sm space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className={`text-sm font-bold ${review.color}`}>
-                    {review.initial}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h4 className="font-extrabold text-foreground text-sm">{review.name}</h4>
-                  <p className="text-xs text-muted-foreground font-medium">
-                    {review.trade} • {review.date}
-                  </p>
+      {reviews.length > 0 ? (
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <div
+              key={review.id}
+              className="p-6 rounded-3xl bg-white border border-border shadow-sm space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className={`text-sm font-bold ${review.color}`}>
+                      {review.initial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h4 className="font-extrabold text-foreground text-sm">{review.name}</h4>
+                    <p className="text-xs text-muted-foreground font-medium">
+                      {review.trade} • {review.date}
+                    </p>
+                  </div>
                 </div>
+
+                <StarRating value={review.rating} size={15} />
               </div>
 
-              <StarRating value={review.rating} size={15} />
+              <p className="text-sm text-muted-foreground leading-relaxed pt-1">
+                &quot;{review.comment}&quot;
+              </p>
             </div>
-
-            <p className="text-sm text-muted-foreground leading-relaxed pt-1">
-              &quot;{review.comment}&quot;
-            </p>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-border bg-white p-8 text-center shadow-sm">
+          <p className="font-bold text-foreground">No reviews yet</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Be the first to share your experience with this fixer.
+          </p>
+        </div>
+      )}
     </section>
   )
 }

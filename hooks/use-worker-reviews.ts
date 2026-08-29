@@ -22,7 +22,7 @@ export function useWorkerReviews(company: Company | null, user: User | null) {
   useEffect(() => {
     if (!company) return
     let active = true
-    fetchReviews(company)
+    fetchReviews(company.id)
       .then((reviews) => {
         if (active) setItems(reviews)
       })
