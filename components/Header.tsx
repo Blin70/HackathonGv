@@ -6,6 +6,8 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User, CalendarCheck, Home, ArrowRight } from "lucide-react"
 
+import type { User as SupabaseUser } from "@supabase/supabase-js"
+
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/client"
 import {
@@ -49,7 +51,7 @@ export default function Header() {
     const router = useRouter()
     const pathname = usePathname()
     const [isOpen, setIsOpen] = React.useState(false)
-    const [user, setUser] = React.useState<any>(null)
+    const [user, setUser] = React.useState<SupabaseUser | null>(null)
     const [loading, setLoading] = React.useState(true)
 
     React.useEffect(() => {

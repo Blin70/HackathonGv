@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/card"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -180,13 +181,13 @@ export function WorkerProfileForm({
                 <FieldLabel htmlFor="aboutUs" className="font-bold text-foreground">
                   About Us / Detailed Description <span className="text-red-500">*</span>
                 </FieldLabel>
-                <textarea
+                <Textarea
                   id="aboutUs"
                   rows={4}
                   value={form.aboutUs}
                   onChange={(e) => onChange("aboutUs", e.target.value)}
                   placeholder="Describe your background, years of experience, and dedication to quality craftsmen..."
-                  className="w-full p-4 rounded-2xl bg-secondary/30 border border-border focus-visible:ring-2 focus-visible:ring-[#1a7a4a] text-sm leading-relaxed"
+                  className="p-4 rounded-2xl bg-secondary/30 border border-border focus-visible:ring-2 focus-visible:ring-[#1a7a4a] text-sm leading-relaxed"
                   required
                 />
               </Field>
