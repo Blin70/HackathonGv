@@ -1,4 +1,4 @@
-import { BadgeCheck, Star } from "lucide-react"
+import { BadgeCheck, Sparkles, Star } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import type { Company } from "@/lib/data"
@@ -30,11 +30,19 @@ export function WorkerHero({ company, averageRating, reviewCount }: WorkerHeroPr
               {company.name}
             </h1>
             <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-medium opacity-90">
-              <div className="flex items-center gap-1.5">
-                <Star className="fill-yellow-400 text-yellow-400" size={18} />
-                <span className="font-bold">{averageRating}</span>
-                <span className="opacity-75">({reviewCount} reviews)</span>
-              </div>
+              {reviewCount > 0 ? (
+                <div className="flex items-center gap-1.5">
+                  <Star className="fill-yellow-400 text-yellow-400" size={18} />
+                  <span className="font-bold">{averageRating}</span>
+                  <span className="opacity-75">({reviewCount} reviews)</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="text-emerald-400" size={18} />
+                  <span className="font-bold">New</span>
+                  <span className="opacity-75">— no reviews yet</span>
+                </div>
+              )}
               {company.isVerified && (
                 <>
                   <div className="h-1.5 w-1.5 rounded-full bg-white/50" />

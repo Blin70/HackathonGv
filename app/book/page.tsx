@@ -29,7 +29,6 @@ import { createBooking } from "@/lib/bookings";
 import { StarRating } from "@/components/StarRating";
 import { toast } from "sonner";
 import type { User } from "@supabase/supabase-js";
-type RatingsMap = Record<string, number>;
 
 const RATINGS = [
   { label: "All Ratings", value: "0" },
@@ -40,15 +39,11 @@ const RATINGS = [
 
 function CompanyCard({
   company,
-  userRatings,
-  onRate,
   onBook,
   booking,
   isLoggedIn,
 }: {
   company: Company;
-  userRatings: RatingsMap;
-  onRate: (id: number | string, stars: number) => void;
   onBook: (company: Company) => void;
   booking: boolean;
   isLoggedIn: boolean;
@@ -92,25 +87,23 @@ function CompanyCard({
           </div>
 
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
-            <div
-              className="flex items-center gap-1"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <StarRating
-                value={userRatings[company.id] ?? company.rating}
-                onChange={(stars) => onRate(company.id, stars)}
-                size={15}
-              />
-              <span className="text-xs text-muted-foreground ml-1">
-                {(userRatings[company.id] ?? company.rating).toFixed(1)}
+            {company.reviews > 0 ? (
+              <>
+                <div className="flex items-center gap-1">
+                  <StarRating value={company.rating} size={15} />
+                  <span className="text-xs text-muted-foreground ml-1">
+                    {company.rating.toFixed(1)}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground font-semibold">
+                  {company.reviews.toLocaleString()} reviews
+                </span>
+              </>
+            ) : (
+              <span className="flex items-center gap-1 text-xs font-bold text-[#1a7a4a] bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-1">
+                <Sparkles size={12} className="text-emerald-400" /> New
               </span>
-            </div>
-            <span className="text-xs text-muted-foreground font-semibold">
-              {company.reviews.toLocaleString()} reviews
-            </span>
+            )}
           </div>
         </CardContent>
       </Link>
@@ -147,7 +140,6 @@ export default function TradesmanMarket() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All Types");
   const [ratingFilter, setRatingFilter] = useState("0");
-  const [userRatings, setUserRatings] = useState<RatingsMap>({});
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [bookingId, setBookingId] = useState<string | number | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -169,15 +161,6 @@ export default function TradesmanMarket() {
       subscription.unsubscribe();
     };
   }, []);
-
-  const handleRate = (id: number | string, stars: number) => {
-    if (!user) {
-      const company = companiesList.find(c => c.id === id);
-      setShowAuthRequiredModal(company?.name || "this fixer");
-      return;
-    }
-    setUserRatings((prev) => ({ ...prev, [id]: stars }));
-  };
 
   const handleBook = async (company: Company) => {
     if (!user) {
@@ -215,17 +198,12 @@ export default function TradesmanMarket() {
     const matchType =
       typeFilter === "All Types" || c.type === typeFilter;
 
-    const effectiveRating = userRatings[c.id] ?? c.rating;
     const matchRating =
       Number(ratingFilter) === 0 ||
-      effectiveRating >= Number(ratingFilter);
+      c.rating >= Number(ratingFilter);
 
     return matchSearch && matchType && matchRating;
-  }).sort(
-    (a, b) =>
-      (userRatings[b.id] ?? b.rating) -
-      (userRatings[a.id] ?? a.rating)
-  );
+  }).sort((a, b) => b.rating - a.rating);
 
   return (
     <div className="min-h-screen bg-[#f7f6f2]">
@@ -281,8 +259,6 @@ export default function TradesmanMarket() {
                   <CompanyCard
                     key={company.id}
                     company={company}
-                    userRatings={userRatings}
-                    onRate={handleRate}
                     onBook={handleBook}
                     booking={bookingId === company.id}
                     isLoggedIn={!!user}

@@ -1,7 +1,12 @@
+import { formatDistanceToNow } from "date-fns"
+import type { User } from "@supabase/supabase-js"
+
+import { createClient } from "@/lib/client"
 import type { Company } from "@/lib/data"
 
 export interface ReviewItem {
   id: string
+  authorId: string | null
   name: string
   rating: number
   date: string
@@ -18,119 +23,124 @@ export interface NewReview {
   comment: string
 }
 
-type CompanyId = Company["id"]
-
-const reviewsKey = (id: CompanyId) => `worker_reviews_${id}`
-
-const DEFAULT_REVIEWS: Record<string, ReviewItem[]> = {
-  4: [
-    {
-      id: "r1",
-      name: "Elvira K.",
-      rating: 5,
-      date: "2 days ago",
-      comment:
-        "Master craftsmen indeed! Simon built custom oak shelving and fitted our exterior doors flawlessly. The attention to detail is remarkable.",
-      trade: "Custom Built-ins",
-      initial: "E",
-      color: "bg-blue-100 text-blue-700",
-    },
-    {
-      id: "r2",
-      name: "Arjan M.",
-      rating: 5,
-      date: "1 week ago",
-      comment:
-        "Arrived exactly on time, brought all heavy duty tools, and completed our deck framing ahead of schedule. Very clean job site afterwards.",
-      trade: "Deck Construction",
-      initial: "A",
-      color: "bg-amber-100 text-amber-800",
-    },
-    {
-      id: "r3",
-      name: "Sara D.",
-      rating: 4.8,
-      date: "3 weeks ago",
-      comment:
-        "Solid woodwork and fair pricing. The door frame installation looks fantastic. Will definitely hire again for future projects.",
-      trade: "Door Installation",
-      initial: "S",
-      color: "bg-emerald-100 text-emerald-800",
-    },
-  ],
+export interface ReviewStat {
+  rating: number
+  count: number
 }
 
-function getGenericReviews(companyName: string, tradeType: string): ReviewItem[] {
-  return [
-    {
-      id: "r-gen-1",
-      name: "Elvira K.",
-      rating: 5,
-      date: "3 days ago",
-      comment: `Extremely professional ${tradeType.toLowerCase()} service! Arrived promptly and completed the job with great precision.`,
-      trade: `${tradeType} Work`,
-      initial: "E",
-      color: "bg-blue-100 text-blue-700",
-    },
-    {
-      id: "r-gen-2",
-      name: "Arjan M.",
-      rating: 5,
-      date: "2 weeks ago",
-      comment: `Fair pricing, transparent quote, and high-quality workmanship from ${companyName}. Highly recommended!`,
-      trade: "Home Repair",
-      initial: "A",
-      color: "bg-amber-100 text-amber-800",
-    },
-    {
-      id: "r-gen-3",
-      name: "Sara D.",
-      rating: 4.7,
-      date: "1 month ago",
-      comment:
-        "Great experience overall. Friendly customer service and solid attention to detail throughout.",
-      trade: "General Service",
-      initial: "S",
-      color: "bg-emerald-100 text-emerald-800",
-    },
-  ]
+interface ReviewRow {
+  id: string
+  worker_id: string
+  author_id: string | null
+  author_name: string
+  rating: number
+  comment: string
+  trade: string | null
+  created_at: string
 }
 
-/** Loads a worker's reviews from localStorage, seeding demo/generic ones first. */
-export function loadReviews(id: CompanyId, name: string, tradeType: string): ReviewItem[] {
-  const seed = DEFAULT_REVIEWS[id] ?? getGenericReviews(name, tradeType)
-  if (typeof window === "undefined") return seed
+const AVATAR_COLORS = [
+  "bg-blue-100 text-blue-700",
+  "bg-amber-100 text-amber-800",
+  "bg-emerald-100 text-emerald-800",
+  "bg-purple-100 text-purple-700",
+  "bg-rose-100 text-rose-700",
+]
+
+function avatarColor(name: string): string {
+  const sum = [...name].reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return AVATAR_COLORS[sum % AVATAR_COLORS.length]
+}
+
+function rowToReviewItem(row: ReviewRow): ReviewItem {
+  const name = row.author_name || "Verified Client"
+  let date = ""
   try {
-    const stored = localStorage.getItem(reviewsKey(id))
-    if (stored) return JSON.parse(stored) as ReviewItem[]
-  } catch (error) {
-    console.error(error)
+    date = formatDistanceToNow(new Date(row.created_at), { addSuffix: true })
+  } catch {
+    date = ""
   }
-  return seed
-}
-
-export function saveReviews(id: CompanyId, reviews: ReviewItem[]): void {
-  if (typeof window === "undefined") return
-  try {
-    localStorage.setItem(reviewsKey(id), JSON.stringify(reviews))
-  } catch (error) {
-    console.error(error)
+  return {
+    id: row.id,
+    authorId: row.author_id,
+    name,
+    rating: row.rating,
+    date,
+    comment: row.comment,
+    trade: row.trade || "Service",
+    initial: name.charAt(0).toUpperCase(),
+    color: avatarColor(name),
   }
 }
 
-/** Builds a `ReviewItem` from viewer input. */
-export function createReview(input: NewReview, tradeType: string): ReviewItem {
+/** A local, unsaved review item for optimistic display right after posting. */
+export function createReviewItem(input: NewReview, tradeType: string, authorId: string): ReviewItem {
   const name = input.name.trim() || "Verified Client"
   return {
-    id: `rev-${Date.now()}`,
+    id: `local-${Date.now()}`,
+    authorId,
     name,
     rating: input.rating,
-    date: "Just now",
+    date: "just now",
     comment: input.comment.trim(),
     trade: tradeType,
     initial: name.charAt(0).toUpperCase(),
-    color: "bg-emerald-100 text-emerald-800",
+    color: avatarColor(name),
   }
+}
+
+/** Loads a worker's reviews from the DB (newest first). */
+export async function fetchReviews(workerId: Company["id"]): Promise<ReviewItem[]> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*")
+    .eq("worker_id", String(workerId))
+    .order("created_at", { ascending: false })
+
+  if (error) console.error("Failed to load reviews:", error)
+  return ((data as ReviewRow[] | null) ?? []).map(rowToReviewItem)
+}
+
+/**
+ * Creates or updates the signed-in user's review of a worker (one per user per
+ * worker, enforced by a unique constraint). Returns Supabase's `{ error }`.
+ */
+export async function upsertReview(input: NewReview, company: Company, user: User) {
+  const supabase = createClient()
+  return supabase.from("reviews").upsert(
+    {
+      worker_id: String(company.id),
+      author_id: user.id,
+      author_name: input.name.trim() || "Verified Client",
+      rating: input.rating,
+      comment: input.comment.trim(),
+      trade: company.type,
+    },
+    { onConflict: "worker_id,author_id" }
+  )
+}
+
+/** Average rating + review count per worker, aggregated across all reviews. */
+export async function fetchReviewStats(): Promise<Map<string, ReviewStat>> {
+  const supabase = createClient()
+  const { data, error } = await supabase.from("reviews").select("worker_id, rating")
+  if (error) {
+    console.error("Failed to load review stats:", error)
+    return new Map()
+  }
+
+  const totals = new Map<string, { total: number; count: number }>()
+  for (const row of (data as { worker_id: string; rating: number }[] | null) ?? []) {
+    const current = totals.get(row.worker_id) ?? { total: 0, count: 0 }
+    totals.set(row.worker_id, { total: current.total + row.rating, count: current.count + 1 })
+  }
+
+  const stats = new Map<string, ReviewStat>()
+  for (const [workerId, { total, count }] of totals) {
+    stats.set(workerId, { rating: total / count, count })
+  }
+  return stats
 }
 
 export function averageRating(reviews: ReviewItem[], fallback: number): string {

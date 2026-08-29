@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/client"
 import { COMPANIES, type Company } from "@/lib/data"
 import { FALLBACK_BANNER_IMAGE, formatPrice, type WorkerProfileForm } from "@/lib/profile"
+import { fetchReviewStats, type ReviewStat } from "@/lib/reviews"
 
 /** Shape of a `public.worker_profiles` row. */
 export interface WorkerProfileRow {
@@ -32,7 +33,9 @@ export function rowToCompany(row: WorkerProfileRow): Company {
     aboutUs: row.about_us || "",
     services: row.services ?? [],
     availableDays: row.available_days || "By appointment",
-    rating: 5.0,
+    // Real rating + count are folded in by getMarketplaceCompanies from the
+    // reviews table; 0 here means "no reviews yet" → renders as a "New" badge.
+    rating: 0,
     reviews: 0,
     price: row.price || "$—",
     image: row.banner_image || FALLBACK_BANNER_IMAGE,
@@ -78,22 +81,34 @@ function workerFormToRow(form: WorkerProfileForm, userId: string) {
   }
 }
 
-/** All marketplace listings: real workers first, then the seeded demo catalogue. */
-export async function getMarketplaceCompanies(): Promise<Company[]> {
-  try {
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from("worker_profiles")
-      .select("*")
-      .order("updated_at", { ascending: false })
+/** Overlays each listing's real review aggregate (avg rating + count) from the reviews table. */
+function applyReviewStats(companies: Company[], stats: Map<string, ReviewStat>): Company[] {
+  return companies.map((company) => {
+    const stat = stats.get(String(company.id))
+    return { ...company, rating: stat?.rating ?? 0, reviews: stat?.count ?? 0 }
+  })
+}
 
-    if (error) throw error
-    const workers = (data as WorkerProfileRow[]).map(rowToCompany)
-    return [...workers, ...COMPANIES]
-  } catch (err) {
-    console.error("Failed to load worker profiles, falling back to demo data:", err)
-    return COMPANIES
+/**
+ * All marketplace listings (real workers first, then the demo catalogue), each
+ * with its real review rating + count folded in. Unreviewed listings come back
+ * with 0/0, which the UI renders as a "New" badge.
+ */
+export async function getMarketplaceCompanies(): Promise<Company[]> {
+  const supabase = createClient()
+  const [workers, stats] = await Promise.all([
+    supabase.from("worker_profiles").select("*").order("updated_at", { ascending: false }),
+    fetchReviewStats(),
+  ])
+
+  let companies: Company[]
+  if (workers.error) {
+    console.error("Failed to load worker profiles, falling back to demo data:", workers.error)
+    companies = COMPANIES
+  } else {
+    companies = [...(workers.data as WorkerProfileRow[]).map(rowToCompany), ...COMPANIES]
   }
+  return applyReviewStats(companies, stats)
 }
 
 /** A single listing by id — a seeded demo company (numeric id) or a real worker (uuid). */
