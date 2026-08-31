@@ -39,6 +39,7 @@ export function rowToCompany(row: WorkerProfileRow): Company {
     reviews: 0,
     price: row.price || "$—",
     image: row.banner_image || FALLBACK_BANNER_IMAGE,
+    city: row.city || "",
     isVerified: row.is_verified,
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, CheckCircle2, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Search, MapPin, CheckCircle2, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -84,6 +84,11 @@ function CompanyCard({
             <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-2">
               {company.desc}
             </p>
+            {company.city && (
+              <p className="flex items-center gap-1 text-xs font-semibold text-muted-foreground mt-2">
+                <MapPin size={12} className="text-[#1a7a4a]" /> {company.city}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
@@ -140,6 +145,7 @@ export default function TradesmanMarket() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All Types");
   const [ratingFilter, setRatingFilter] = useState("0");
+  const [cityFilter, setCityFilter] = useState("All Cities");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [bookingId, setBookingId] = useState<string | number | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -187,6 +193,8 @@ export default function TradesmanMarket() {
     }
   };
 
+  const cityOptions = [...new Set(companiesList.map((c) => c.city).filter(Boolean))].sort();
+
   const filtered = companiesList.filter((c) => {
     const q = search.toLowerCase();
     const matchSearch =
@@ -202,7 +210,10 @@ export default function TradesmanMarket() {
       Number(ratingFilter) === 0 ||
       c.rating >= Number(ratingFilter);
 
-    return matchSearch && matchType && matchRating;
+    const matchCity =
+      cityFilter === "All Cities" || c.city === cityFilter;
+
+    return matchSearch && matchType && matchRating && matchCity;
   }).sort((a, b) => b.rating - a.rating);
 
   return (
@@ -288,11 +299,12 @@ export default function TradesmanMarket() {
                   Filters
                 </span>
 
-                {(typeFilter !== "All Types" || ratingFilter !== "0") && (
+                {(typeFilter !== "All Types" || ratingFilter !== "0" || cityFilter !== "All Cities") && (
                   <button
                     onClick={() => {
                       setTypeFilter("All Types");
                       setRatingFilter("0");
+                      setCityFilter("All Cities");
                     }}
                     className="text-xs font-bold text-[#1a7a4a] hover:underline"
                   >
@@ -333,6 +345,28 @@ export default function TradesmanMarket() {
                     {RATINGS.map((r) => (
                       <SelectItem key={r.value} value={r.value} className="font-semibold">
                         {r.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* City / Service Area filter */}
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  City
+                </label>
+                <Select value={cityFilter} onValueChange={setCityFilter}>
+                  <SelectTrigger className="w-full h-11 rounded-2xl font-bold text-sm bg-secondary/40 border-0 text-foreground">
+                    <SelectValue placeholder="All Cities" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Cities" className="font-semibold">
+                      All Cities
+                    </SelectItem>
+                    {cityOptions.map((city) => (
+                      <SelectItem key={city} value={city} className="font-semibold">
+                        {city}
                       </SelectItem>
                     ))}
                   </SelectContent>
