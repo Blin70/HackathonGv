@@ -11,6 +11,7 @@ export type Company = {
   reviews: number;
   price: string;
   image: string;
+  city: string;
   isVerified?: boolean;
 };
 
@@ -26,6 +27,7 @@ export const COMPANIES: Company[] = [
     rating: 4.9,
     reviews: 312,
     price: "$90",
+    city: "Skopje",
     image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -39,6 +41,7 @@ export const COMPANIES: Company[] = [
     rating: 4.8,
     reviews: 278,
     price: "$110",
+    city: "Skopje",
     image: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -52,6 +55,7 @@ export const COMPANIES: Company[] = [
     rating: 4.7,
     reviews: 214,
     price: "$80",
+    city: "Bitola",
     image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -65,6 +69,7 @@ export const COMPANIES: Company[] = [
     rating: 4.9,
     reviews: 189,
     price: "$120",
+    city: "Skopje",
     image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -78,6 +83,7 @@ export const COMPANIES: Company[] = [
     rating: 4.6,
     reviews: 301,
     price: "$70",
+    city: "Tetovo",
     image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -91,6 +97,7 @@ export const COMPANIES: Company[] = [
     rating: 4.8,
     reviews: 156,
     price: "$150",
+    city: "Bitola",
     image: "https://images.unsplash.com/photo-1632759145351-1d592919f522?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -104,6 +111,7 @@ export const COMPANIES: Company[] = [
     rating: 4.7,
     reviews: 245,
     price: "$95",
+    city: "Skopje",
     image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -117,6 +125,7 @@ export const COMPANIES: Company[] = [
     rating: 4.5,
     reviews: 198,
     price: "$130",
+    city: "Kumanovo",
     image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -130,6 +139,7 @@ export const COMPANIES: Company[] = [
     rating: 4.8,
     reviews: 173,
     price: "$115",
+    city: "Bitola",
     image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -143,6 +153,7 @@ export const COMPANIES: Company[] = [
     rating: 4.9,
     reviews: 142,
     price: "$85",
+    city: "Skopje",
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -156,6 +167,7 @@ export const COMPANIES: Company[] = [
     rating: 4.6,
     reviews: 388,
     price: "$55",
+    city: "Tetovo",
     image: "https://images.unsplash.com/photo-1585421514738-01798e348b17?q=80&w=1200&auto=format&fit=crop",
   },
   {
@@ -169,6 +181,7 @@ export const COMPANIES: Company[] = [
     rating: 4.8,
     reviews: 221,
     price: "$105",
+    city: "Kumanovo",
     image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop",
   },
 ];
