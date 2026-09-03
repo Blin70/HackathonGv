@@ -132,7 +132,7 @@ export default function SignupPage() {
             </Button>
             <p className="text-center text-sm text-muted-foreground">
               Already have an account?{' '}
-              <Link href="/auth/login" className="underline underline-offset-4 hover:text-primary">
+              <Link href="/auth/login?role=client" className="underline underline-offset-4 hover:text-primary font-semibold">
                 Sign in
               </Link>
             </p>
