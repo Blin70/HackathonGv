@@ -44,6 +44,37 @@ export function rowToCompany(row: WorkerProfileRow): Company {
   }
 }
 
+/** One requirement on a worker's listing, used to score profile completeness. */
+export interface ProfileChecklistItem {
+  label: string
+  done: boolean
+}
+
+/**
+ * The listing fields that make a worker discoverable and bookable.
+ *
+ * Deliberately excludes verification: that is opt-in and positive-only, so
+ * scoring it here would pressure unregistered tradespeople into disclosing
+ * their status just to clear the meter.
+ */
+export function profileChecklist(row: WorkerProfileRow): ProfileChecklistItem[] {
+  return [
+    { label: "Trade category", done: Boolean(row.trade_type) },
+    { label: "Starting rate", done: Boolean(row.price) },
+    { label: "Tagline", done: Boolean(row.tagline) },
+    { label: "About", done: Boolean(row.about_us) },
+    { label: "Services", done: (row.services?.length ?? 0) > 0 },
+    { label: "Availability", done: Boolean(row.available_days) },
+    { label: "Cover image", done: Boolean(row.banner_image) },
+  ]
+}
+
+/** Share of checklist items completed, as a whole percentage. */
+export function profileCompleteness(items: ProfileChecklistItem[]): number {
+  if (items.length === 0) return 100
+  return Math.round((items.filter((item) => item.done).length / items.length) * 100)
+}
+
 /** Maps a DB row onto the editable worker form model. */
 export function rowToWorkerForm(row: WorkerProfileRow): WorkerProfileForm {
   return {

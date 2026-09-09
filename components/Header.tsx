@@ -4,7 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
-import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User, CalendarCheck, Home, ArrowRight } from "lucide-react"
+import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User, CalendarCheck, LayoutDashboard, Home, ArrowRight } from "lucide-react"
 
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
@@ -82,6 +82,9 @@ export default function Header() {
         router.push('/')
         router.refresh()
     }
+
+    const isWorker =
+        user?.user_metadata?.role === "tradesman" || user?.user_metadata?.role === "worker"
 
     if (pathname?.startsWith('/auth')) return null
 
@@ -175,6 +178,14 @@ export default function Header() {
                                         <span className="truncate block mt-0.5 text-muted-foreground">{user.email}</span>
                                     </div>
                                     <DropdownMenuSeparator className="my-1" />
+                                    {isWorker && (
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/dashboard" className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer font-semibold text-sm w-full transition-colors hover:bg-primary/10 hover:text-primary">
+                                                <LayoutDashboard className="h-4 w-4 text-primary" />
+                                                Dashboard
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    )}
                                     <DropdownMenuItem asChild>
                                         <Link href="/profile" className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer font-semibold text-sm w-full transition-colors hover:bg-primary/10 hover:text-primary">
                                             <User className="h-4 w-4 text-primary" />
@@ -327,6 +338,20 @@ export default function Header() {
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                {isWorker && (
+                                                    <Button
+                                                        variant="outline"
+                                                        asChild
+                                                        className="w-full h-12 rounded-xl font-bold justify-start gap-3 border-primary/30 text-primary hover:bg-primary/10 transition-all"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        <Link href="/dashboard">
+                                                            <LayoutDashboard className="h-5 w-5" />
+                                                            Dashboard
+                                                        </Link>
+                                                    </Button>
+                                                )}
 
                                                 <Button
                                                     variant="outline"
