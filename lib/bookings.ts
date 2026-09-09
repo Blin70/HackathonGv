@@ -1,3 +1,5 @@
+import { format } from "date-fns"
+
 import { createClient } from "@/lib/client"
 
 /**
@@ -80,6 +82,49 @@ export async function fetchUserBookings(
     fetchReceivedBookings(userId),
   ])
   return { sent, received }
+}
+
+/** One month of request volume, split by whether the worker won the job. */
+export interface BookingActivityPoint {
+  month: string
+  confirmed: number
+  other: number
+}
+
+/** Groups a date into the calendar month it belongs to. */
+function monthKey(date: Date): string {
+  return `${date.getFullYear()}-${date.getMonth()}`
+}
+
+/**
+ * Buckets bookings into the last `months` calendar months, oldest first. Empty
+ * months are kept so the chart shows a continuous timeline rather than
+ * collapsing gaps and implying activity that never happened.
+ */
+export function monthlyBookingActivity(
+  bookings: Booking[],
+  months = 6
+): BookingActivityPoint[] {
+  const now = new Date()
+  const buckets = new Map<string, BookingActivityPoint>()
+
+  for (let offset = months - 1; offset >= 0; offset--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - offset, 1)
+    buckets.set(monthKey(date), { month: format(date, "MMM"), confirmed: 0, other: 0 })
+  }
+
+  for (const booking of bookings) {
+    const created = new Date(booking.created_at)
+    if (Number.isNaN(created.getTime())) continue
+
+    const point = buckets.get(monthKey(created))
+    if (!point) continue // older than the window we chart
+
+    if (booking.status === "confirmed") point.confirmed += 1
+    else point.other += 1
+  }
+
+  return [...buckets.values()]
 }
 
 /** Updates a booking's status (worker confirm/decline, or client cancel). */

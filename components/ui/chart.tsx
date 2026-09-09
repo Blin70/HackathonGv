@@ -242,7 +242,10 @@ function ChartTooltipContent({
                     )}
                     <div
                       className={cn(
-                        "flex flex-1 justify-between leading-none",
+                        // gap-3 keeps a long series name (e.g. "Not confirmed")
+                        // from butting up against its value, which justify-between
+                        // alone allows once the content outgrows the min width.
+                        "flex flex-1 justify-between gap-3 leading-none",
                         nestLabel ? "items-end" : "items-center"
                       )}
                     >

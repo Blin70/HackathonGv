@@ -4,14 +4,21 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import { createClient } from "@/lib/client"
-import { fetchWorkerRow, type WorkerProfileRow } from "@/lib/workers"
+import {
+  fetchWorkerRow,
+  profileChecklist,
+  profileCompleteness,
+  type WorkerProfileRow,
+} from "@/lib/workers"
 import {
   fetchReceivedBookings,
+  monthlyBookingActivity,
   updateBookingStatus,
   type Booking,
   type BookingStatus,
 } from "@/lib/bookings"
 import { averageRating, fetchReviews, type ReviewItem } from "@/lib/reviews"
+import { getErrorMessage } from "@/lib/utils"
 
 /**
  * Loads everything a signed-in worker needs for their dashboard — their listing,
@@ -23,13 +30,18 @@ export function useWorkerDashboard() {
   const supabase = useMemo(() => createClient(), [])
 
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [userId, setUserId] = useState("")
   const [listing, setListing] = useState<WorkerProfileRow | null>(null)
   const [received, setReceived] = useState<Booking[]>([])
   const [reviews, setReviews] = useState<ReviewItem[]>([])
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
+    // `active` discards the result of a run that was already cleaned up (React
+    // Strict Mode double-mounts in dev, and `reload` re-runs this effect), so an
+    // aborted run can't clobber state or surface a spurious error.
     let active = true
 
     async function load() {
@@ -55,8 +67,11 @@ export function useWorkerDashboard() {
         setListing(listingRow)
         setReceived(bookings)
         setReviews(reviewItems)
-      } catch (error) {
-        console.error("Failed to load dashboard:", error)
+      } catch (err) {
+        if (active) {
+          console.error("Failed to load dashboard:", err)
+          setError(getErrorMessage(err, "We couldn't load your dashboard. Please try again."))
+        }
       } finally {
         if (active) setLoading(false)
       }
@@ -67,18 +82,25 @@ export function useWorkerDashboard() {
     return () => {
       active = false
     }
-  }, [supabase, router])
+  }, [supabase, router, refreshKey])
+
+  /** Re-runs the load — used to retry after a transient failure. */
+  const reload = useCallback(() => {
+    setLoading(true)
+    setError(null)
+    setRefreshKey((key) => key + 1)
+  }, [])
 
   const applyStatus = useCallback(async (id: string, status: BookingStatus) => {
     setBusyId(id)
     try {
-      const { error } = await updateBookingStatus(id, status)
-      if (error) throw error
+      const { error: updateError } = await updateBookingStatus(id, status)
+      if (updateError) throw updateError
       setReceived((prev) =>
         prev.map((booking) => (booking.id === id ? { ...booking, status } : booking))
       )
-    } catch (error) {
-      console.error("Failed to update booking:", error)
+    } catch (err) {
+      console.error("Failed to update booking:", err)
     } finally {
       setBusyId(null)
     }
@@ -88,27 +110,36 @@ export function useWorkerDashboard() {
   const declineBooking = useCallback((id: string) => applyStatus(id, "declined"), [applyStatus])
 
   const pending = received.filter((booking) => booking.status === "pending")
-  const confirmed = received.filter((booking) => booking.status === "confirmed").length
+  const confirmed = received.filter((booking) => booking.status === "confirmed")
   const declined = received.filter((booking) => booking.status === "declined").length
-  const responded = confirmed + declined
+  const responded = confirmed.length + declined
+
+  const checklist = listing ? profileChecklist(listing) : []
 
   const stats = {
     rating: averageRating(reviews, 0),
     reviewCount: reviews.length,
     pending: pending.length,
-    confirmed,
+    confirmed: confirmed.length,
     total: received.length,
     // Share of decided requests that were accepted; null until there's data.
-    acceptanceRate: responded > 0 ? Math.round((confirmed / responded) * 100) : null,
+    acceptanceRate: responded > 0 ? Math.round((confirmed.length / responded) * 100) : null,
+    completeness: profileCompleteness(checklist),
   }
 
   return {
     loading,
+    error,
+    reload,
     userId,
     listing,
+    received,
     pending,
+    confirmed,
     reviews,
+    checklist,
     stats,
+    activity: monthlyBookingActivity(received),
     busyId,
     confirmBooking,
     declineBooking,
