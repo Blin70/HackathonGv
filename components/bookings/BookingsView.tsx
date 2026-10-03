@@ -11,17 +11,8 @@ import { useBookings } from "@/hooks/use-bookings"
 import { BookingCard } from "./BookingCard"
 
 export function BookingsView() {
-  const {
-    loading,
-    error,
-    sent,
-    received,
-    busyId,
-    reload,
-    confirmBooking,
-    declineBooking,
-    cancelBooking,
-  } = useBookings()
+  const { loading, error, sent, received, busyId, reload, transitionReceived, transitionSent } =
+    useBookings()
 
   if (loading) {
     return <LoadingState label="Loading bookings..." />
@@ -71,8 +62,7 @@ export function BookingsView() {
                     booking={booking}
                     perspective="received"
                     busy={busyId === booking.id}
-                    onConfirm={confirmBooking}
-                    onDecline={declineBooking}
+                    onTransition={transitionReceived}
                   />
                 ))}
               </div>
@@ -93,7 +83,7 @@ export function BookingsView() {
                     booking={booking}
                     perspective="sent"
                     busy={busyId === booking.id}
-                    onCancel={cancelBooking}
+                    onTransition={transitionSent}
                   />
                 ))}
               </div>

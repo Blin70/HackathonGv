@@ -16,6 +16,7 @@ import {
   updateBookingStatus,
   type Booking,
   type BookingStatus,
+  type StatusChangeOptions,
 } from "@/lib/bookings"
 import { averageRating, fetchReviews, type ReviewItem } from "@/lib/reviews"
 import { getErrorMessage } from "@/lib/utils"
@@ -91,28 +92,32 @@ export function useWorkerDashboard() {
     setRefreshKey((key) => key + 1)
   }, [])
 
-  const applyStatus = useCallback(async (id: string, status: BookingStatus) => {
-    setBusyId(id)
-    try {
-      const { error: updateError } = await updateBookingStatus(id, status)
-      if (updateError) throw updateError
-      setReceived((prev) =>
-        prev.map((booking) => (booking.id === id ? { ...booking, status } : booking))
-      )
-    } catch (err) {
-      console.error("Failed to update booking:", err)
-    } finally {
-      setBusyId(null)
-    }
-  }, [])
-
-  const confirmBooking = useCallback((id: string) => applyStatus(id, "confirmed"), [applyStatus])
-  const declineBooking = useCallback((id: string) => applyStatus(id, "declined"), [applyStatus])
+  const transitionBooking = useCallback(
+    async (id: string, status: BookingStatus, options?: StatusChangeOptions) => {
+      setBusyId(id)
+      try {
+        const { error: updateError } = await updateBookingStatus(id, status, options)
+        if (updateError) throw updateError
+        // Refetch: the row now carries milestone timestamps the card renders.
+        setRefreshKey((key) => key + 1)
+      } catch (err) {
+        console.error("Failed to update booking:", err)
+      } finally {
+        setBusyId(null)
+      }
+    },
+    []
+  )
 
   const pending = received.filter((booking) => booking.status === "pending")
-  const confirmed = received.filter((booking) => booking.status === "confirmed")
+  // "Scheduled" is work the worker has taken on but not yet finished.
+  const scheduled = received.filter(
+    (booking) => booking.status === "confirmed" || booking.status === "in_progress"
+  )
+  const completed = received.filter((booking) => booking.status === "completed")
   const declined = received.filter((booking) => booking.status === "declined").length
-  const responded = confirmed.length + declined
+  const accepted = scheduled.length + completed.length
+  const responded = accepted + declined
 
   const checklist = listing ? profileChecklist(listing) : []
 
@@ -120,10 +125,11 @@ export function useWorkerDashboard() {
     rating: averageRating(reviews, 0),
     reviewCount: reviews.length,
     pending: pending.length,
-    confirmed: confirmed.length,
+    scheduled: scheduled.length,
+    completed: completed.length,
     total: received.length,
     // Share of decided requests that were accepted; null until there's data.
-    acceptanceRate: responded > 0 ? Math.round((confirmed.length / responded) * 100) : null,
+    acceptanceRate: responded > 0 ? Math.round((accepted / responded) * 100) : null,
     completeness: profileCompleteness(checklist),
   }
 
@@ -135,13 +141,13 @@ export function useWorkerDashboard() {
     listing,
     received,
     pending,
-    confirmed,
+    scheduled,
+    completed,
     reviews,
     checklist,
     stats,
     activity: monthlyBookingActivity(received),
     busyId,
-    confirmBooking,
-    declineBooking,
+    transitionBooking,
   }
 }

@@ -5,15 +5,15 @@ import { Inbox } from "lucide-react"
 import { EmptyState } from "@/components/EmptyState"
 import { BookingCard } from "@/components/bookings/BookingCard"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { Booking } from "@/lib/bookings"
+import type { Booking, BookingStatus, StatusChangeOptions } from "@/lib/bookings"
 
 interface RequestsPanelProps {
   pending: Booking[]
-  confirmed: Booking[]
+  scheduled: Booking[]
+  completed: Booking[]
   all: Booking[]
   busyId: string | null
-  onConfirm: (id: string) => void
-  onDecline: (id: string) => void
+  onTransition: (id: string, status: BookingStatus, options?: StatusChangeOptions) => void
 }
 
 /**
@@ -23,11 +23,11 @@ interface RequestsPanelProps {
  */
 export function RequestsPanel({
   pending,
-  confirmed,
+  scheduled,
+  completed,
   all,
   busyId,
-  onConfirm,
-  onDecline,
+  onTransition,
 }: RequestsPanelProps) {
   const tabs = [
     {
@@ -38,11 +38,18 @@ export function RequestsPanel({
       emptyDescription: "New booking requests from clients will show up here.",
     },
     {
-      value: "confirmed",
-      label: "Confirmed",
-      bookings: confirmed,
-      emptyTitle: "No confirmed jobs yet",
+      value: "scheduled",
+      label: "Scheduled",
+      bookings: scheduled,
+      emptyTitle: "No scheduled jobs yet",
       emptyDescription: "Requests you accept will be listed here as your upcoming work.",
+    },
+    {
+      value: "completed",
+      label: "Completed",
+      bookings: completed,
+      emptyTitle: "No completed jobs yet",
+      emptyDescription: "Jobs you finish will be kept here as your work history.",
     },
     {
       value: "all",
@@ -82,8 +89,7 @@ export function RequestsPanel({
                   booking={booking}
                   perspective="received"
                   busy={busyId === booking.id}
-                  onConfirm={onConfirm}
-                  onDecline={onDecline}
+                  onTransition={onTransition}
                 />
               ))
             ) : (

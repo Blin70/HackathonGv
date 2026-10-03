@@ -7,11 +7,12 @@ import { LoadingState } from "@/components/LoadingState"
 import { AuthRequiredDialog } from "@/components/book/AuthRequiredDialog"
 import { BookingConfirmationDialog } from "@/components/book/BookingConfirmationDialog"
 import { BookingPanel } from "@/components/book/BookingPanel"
+import { BookingRequestDialog } from "@/components/book/BookingRequestDialog"
 import { WorkerDetails } from "@/components/book/WorkerDetails"
 import { WorkerHero } from "@/components/book/WorkerHero"
 import { WorkerReviews } from "@/components/book/WorkerReviews"
 import { WriteReviewDialog } from "@/components/book/WriteReviewDialog"
-import { createBooking } from "@/lib/bookings"
+import { useBookingRequest } from "@/hooks/use-booking-request"
 import { useWorkerDetail } from "@/hooks/use-worker-detail"
 import { useWorkerReviews } from "@/hooks/use-worker-reviews"
 
@@ -21,9 +22,8 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
   const reviews = useWorkerReviews(company, user)
 
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [booked, setBooked] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
-  const [bookingError, setBookingError] = useState<string | null>(null)
+  const [requestOpen, setRequestOpen] = useState(false)
+  const booking = useBookingRequest(company, user, requestOpen)
 
   if (loading) {
     return <LoadingState label="Loading worker profile..." />
@@ -34,32 +34,18 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
 
   const reviewerName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || ""
 
-  const handleBook = async () => {
+  const handleBook = () => {
     if (!user) {
       setShowAuthModal(true)
       return
     }
-    if (submitting) return
+    setRequestOpen(true)
+  }
 
-    setSubmitting(true)
-    setBookingError(null)
-
-    const { error } = await createBooking({
-      clientId: user.id,
-      clientName: reviewerName || "Client",
-      workerId: String(company.id),
-      workerName: company.name,
-      tradeType: company.type,
-    })
-
-    setSubmitting(false)
-
-    if (error) {
-      console.error(error)
-      setBookingError("Couldn't send your request. Please try again.")
-    } else {
-      setBooked(true)
-    }
+  /** Dismissing the success dialog clears the form so it's clean if reopened. */
+  const handleConfirmationClose = () => {
+    setRequestOpen(false)
+    booking.reset()
   }
 
   const handleWriteReview = () => {
@@ -91,18 +77,29 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
             <BookingPanel
               company={company}
               isLoggedIn={Boolean(user)}
-              booked={booked}
-              submitting={submitting}
-              bookingError={bookingError}
+              booked={booking.booked}
               onBook={handleBook}
             />
           </div>
         </div>
       </div>
 
+      {/* The form yields to the success dialog the moment the request lands. */}
+      <BookingRequestDialog
+        open={requestOpen && !booking.booked}
+        onOpenChange={setRequestOpen}
+        companyName={company.name}
+        form={booking.form}
+        errors={booking.errors}
+        submitting={booking.submitting}
+        submitError={booking.submitError}
+        alreadyOpen={booking.alreadyOpen}
+        onFieldChange={booking.setField}
+        onSubmit={booking.submit}
+      />
       <BookingConfirmationDialog
-        open={booked}
-        onClose={() => setBooked(false)}
+        open={booking.booked}
+        onClose={handleConfirmationClose}
         companyName={company.name}
       />
       <AuthRequiredDialog
