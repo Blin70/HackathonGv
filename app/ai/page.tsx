@@ -1,10 +1,9 @@
 "use client"
 
-import { useState, useEffect, useRef, Suspense } from "react"
+import { useCallback, useState, useEffect, useRef, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
-import { Sparkles, Send, Bot, User, ArrowLeft, RefreshCw, Hammer, Zap, Droplets, ShieldAlert, BookOpen, AlertCircle } from "lucide-react"
+import { Sparkles, Send, Bot, User, ArrowLeft, RefreshCw, Hammer, Zap, Droplets, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn, getErrorMessage } from "@/lib/utils"
@@ -19,7 +18,7 @@ type Message = {
 // Custom simple markdown formatter to output beautiful, structured HTML
 function formatResponse(text: string) {
   // Replace double asterisks for bolding
-  let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-white text-emerald-300">$1</strong>')
+  const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-white text-emerald-300">$1</strong>')
   
   // Format line breaks and lists
   const lines = formatted.split("\n")
@@ -91,16 +90,7 @@ function ChatContainer() {
     scrollToBottom()
   }, [messages, loading])
 
-  // Handle initial prompt from landing page
-  const processedInitial = useRef(false)
-  useEffect(() => {
-    if (initialPrompt && !processedInitial.current) {
-      processedInitial.current = true
-      sendMessage(initialPrompt)
-    }
-  }, [initialPrompt])
-
-  const sendMessage = async (promptText: string) => {
+  const sendMessage = useCallback(async (promptText: string) => {
     const userText = promptText.trim()
     if (!userText) return
 
@@ -152,7 +142,16 @@ function ChatContainer() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [input])
+
+  // Handle initial prompt from landing page
+  const processedInitial = useRef(false)
+  useEffect(() => {
+    if (initialPrompt && !processedInitial.current) {
+      processedInitial.current = true
+      sendMessage(initialPrompt)
+    }
+  }, [initialPrompt, sendMessage])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -192,7 +191,7 @@ function ChatContainer() {
           </p>
           <div className="flex items-center justify-between text-xs text-emerald-400 bg-emerald-950/20 border border-emerald-900/20 p-2.5 rounded-xl">
             <span className="flex items-center gap-1.5 font-bold">
-              <Sparkles className="h-3.5 w-3.5 fill-emerald-400" /> Powered by Gemini
+              <Sparkles className="h-3.5 w-3.5 fill-emerald-400" /> Powered by OpenAI
             </span>
             <button 
               onClick={resetChat} 

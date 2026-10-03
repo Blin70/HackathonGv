@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
+import OpenAI from "openai"
 
-const GEMINI_MODEL = "gemini-2.5-flash"
+const DEFAULT_OPENAI_MODEL = "gpt-6-luna"
 const MAX_MESSAGE_LENGTH = 2000
 
 const SYSTEM_INSTRUCTION = `You are the Book A Fixer AI Concierge, a helpful assistant built for our website 'Book A Fixer'.
@@ -70,10 +71,10 @@ export async function POST(request: Request) {
     )
   }
 
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
+  const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) {
     return NextResponse.json(
-      { error: "The AI concierge is not configured yet. Please set GEMINI_API_KEY." },
+      { error: "The AI concierge is not configured yet. Please set OPENAI_API_KEY." },
       { status: 503 }
     )
   }
@@ -94,38 +95,31 @@ export async function POST(request: Request) {
   }
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: message }] }],
-          systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-        }),
-      }
-    )
-
-    const data = await response.json()
-
-    if (!response.ok) {
-      console.error("Gemini API error:", data)
-      return NextResponse.json(
-        { error: "The AI service returned an error. Please try again." },
-        { status: 502 }
-      )
-    }
+    const openai = new OpenAI({ apiKey, timeout: 30_000, maxRetries: 1 })
+    const response = await openai.responses.create({
+      model: process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL,
+      instructions: SYSTEM_INSTRUCTION,
+      input: message,
+      max_output_tokens: 700,
+    })
 
     const text =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "I was unable to formulate a response. Please try again."
+      response.output_text.trim() || "I was unable to formulate a response. Please try again."
 
     return NextResponse.json({ text })
   } catch (error) {
-    console.error("AI route failed:", error)
+    if (error instanceof OpenAI.APIError) {
+      console.error("OpenAI API request failed:", {
+        status: error.status,
+        code: error.code,
+        requestId: error.requestID,
+      })
+    } else {
+      console.error(
+        "OpenAI route failed:",
+        error instanceof Error ? error.message : "Unknown error"
+      )
+    }
     return NextResponse.json(
       { error: "Failed to reach the AI service. Please try again." },
       { status: 502 }
