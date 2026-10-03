@@ -1,7 +1,7 @@
 import { Lock } from "lucide-react"
 
 export default function PrivacyPolicy() {
-    const lastUpdated = "May 17, 2026";
+    const lastUpdated = "October 3, 2026";
 
     return (
         <main className="flex-1 bg-background">
@@ -31,7 +31,7 @@ export default function PrivacyPolicy() {
                         </p>
                         <ul className="list-disc list-outside ml-6 text-muted-foreground text-lg space-y-2">
                             <li><strong className="text-foreground">Personal Information:</strong> Name, email address, phone number, and physical address provided during registration or booking.</li>
-                            <li><strong className="text-foreground">Job Details:</strong> Descriptions of your home repair issues and photos you upload for AI analysis.</li>
+                            <li><strong className="text-foreground">Job Details:</strong> Descriptions of your home repair issues, the city selected for matching, and photos you choose to upload for AI analysis.</li>
                             <li><strong className="text-foreground">Usage Data:</strong> Information about how you use our platform, device information, and IP addresses.</li>
                         </ul>
                     </section>
@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
                     <section className="space-y-4">
                         <h2 className="text-2xl md:text-3xl font-bold text-foreground">3. Information Sharing</h2>
                         <p className="text-muted-foreground leading-relaxed text-lg">
-                            We do not sell your personal information to third parties. We only share your information with tradespeople when you confirm a booking, providing them with your address and job details so they can fulfill the service. We may also share data with secure payment processors and legal authorities if required by law.
+                            We do not sell your personal information to third parties. When you use the repair assistant, your repair description, selected city, text from that conversation, and any photo you attach are sent to OpenAI through its API to generate an assessment. Book A Fixer does not save uploaded repair photos to your account. We also share booking details with tradespeople when you submit a booking request so they can respond to it. We may share data with service providers that help us operate the platform and with legal authorities if required by law.
                         </p>
                     </section>
 

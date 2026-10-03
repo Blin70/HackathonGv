@@ -16,7 +16,7 @@ const popularTrades = [
 ]
 
 const mainNavLinks = [
-  { title: "Home", href: "/" },
+  { title: "Home", href: "/home" },
   { title: "Book a Fixer", href: "/book" },
   { title: "AI", href: "/ai", badge: "AI Powered" },
 ]

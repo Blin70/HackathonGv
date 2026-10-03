@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
+import { checkAiRateLimit, getClientIp } from "@/lib/ai/rate-limit"
 
 const DEFAULT_OPENAI_MODEL = "gpt-6-luna"
 const MAX_MESSAGE_LENGTH = 2000
@@ -30,46 +31,8 @@ When recommending a professional, ALWAYS suggest one of these categories and adv
 Format your responses using clean Markdown structure, bold headers, and bullet points where helpful. Keep responses friendly, structured, concise, and professional.`
 
 
-const RATE_LIMIT_WINDOW_MS = 60_000
-const RATE_LIMIT_MAX = 15
-const rateLimitHits = new Map<string, { count: number; resetAt: number }>()
-
-function getClientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for")
-  if (forwarded) return forwarded.split(",")[0].trim()
-  return request.headers.get("x-real-ip") ?? "unknown"
-}
-
-/**
- * Best-effort per-IP throttle to curb abuse of this public endpoint. It lives in
- * process memory (per-instance only) — fine for dev/preview, but we could move to a shared
- * store (Upstash / Vercel KV) for real production traffic.
- */
-function checkRateLimit(ip: string): { allowed: boolean; retryAfter: number } {
-  const now = Date.now()
-  const entry = rateLimitHits.get(ip)
-
-  if (!entry || now > entry.resetAt) {
-    // Opportunistically drop expired buckets so the map can't grow unbounded.
-    if (rateLimitHits.size > 10_000) {
-      for (const [key, value] of rateLimitHits) {
-        if (now > value.resetAt) rateLimitHits.delete(key)
-      }
-    }
-    rateLimitHits.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
-    return { allowed: true, retryAfter: 0 }
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return { allowed: false, retryAfter: Math.ceil((entry.resetAt - now) / 1000) }
-  }
-
-  entry.count += 1
-  return { allowed: true, retryAfter: 0 }
-}
-
 export async function POST(request: Request) {
-  const { allowed, retryAfter } = checkRateLimit(getClientIp(request))
+  const { allowed, retryAfter } = checkAiRateLimit(getClientIp(request))
   if (!allowed) {
     return NextResponse.json(
       { error: "You're sending messages too quickly. Please wait a moment." },

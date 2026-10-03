@@ -37,7 +37,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 const navLinks = [
-    { title: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
+    { title: "Home", href: "/home", icon: <Home className="h-4 w-4" /> },
     { title: "Book a Fixer", href: "/book", icon: <CalendarCheck className="h-4 w-4" /> },
     { 
         title: "AI Concierge", 
