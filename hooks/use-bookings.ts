@@ -9,6 +9,7 @@ import {
   updateBookingStatus,
   type Booking,
   type BookingStatus,
+  type StatusChangeOptions,
 } from "@/lib/bookings"
 import { getErrorMessage } from "@/lib/utils"
 
@@ -74,12 +75,20 @@ export function useBookings() {
   }, [])
 
   const applyStatus = useCallback(
-    async (id: string, status: BookingStatus, bucket: "sent" | "received") => {
+    async (
+      id: string,
+      status: BookingStatus,
+      bucket: "sent" | "received",
+      options?: StatusChangeOptions
+    ) => {
       setBusyId(id)
       const setter = bucket === "sent" ? setSent : setReceived
       try {
-        const { error: updateError } = await updateBookingStatus(id, status)
+        const { error: updateError } = await updateBookingStatus(id, status, options)
         if (updateError) throw updateError
+        // Refetch rather than patching locally: the row now carries server-set
+        // milestone timestamps the card renders.
+        setRefreshKey((key) => key + 1)
         setter((prev) =>
           prev.map((booking) => (booking.id === id ? { ...booking, status } : booking))
         )
@@ -92,16 +101,17 @@ export function useBookings() {
     []
   )
 
-  const confirmBooking = useCallback(
-    (id: string) => applyStatus(id, "confirmed", "received"),
+  /** Moves a request the user received (as a worker) along the lifecycle. */
+  const transitionReceived = useCallback(
+    (id: string, status: BookingStatus, options?: StatusChangeOptions) =>
+      applyStatus(id, status, "received", options),
     [applyStatus]
   )
-  const declineBooking = useCallback(
-    (id: string) => applyStatus(id, "declined", "received"),
-    [applyStatus]
-  )
-  const cancelBooking = useCallback(
-    (id: string) => applyStatus(id, "cancelled", "sent"),
+
+  /** Moves a request the user sent (as a client) — in practice, cancelling. */
+  const transitionSent = useCallback(
+    (id: string, status: BookingStatus, options?: StatusChangeOptions) =>
+      applyStatus(id, status, "sent", options),
     [applyStatus]
   )
 
@@ -112,8 +122,7 @@ export function useBookings() {
     received,
     busyId,
     reload,
-    confirmBooking,
-    declineBooking,
-    cancelBooking,
+    transitionReceived,
+    transitionSent,
   }
 }

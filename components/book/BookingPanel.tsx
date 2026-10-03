@@ -7,21 +7,12 @@ interface BookingPanelProps {
   company: Company
   isLoggedIn: boolean
   booked: boolean
-  submitting: boolean
-  bookingError: string | null
   onBook: () => void
 }
 
 const GUARANTEES = ["No hidden fees", "Cancel anytime before 24h", "100% Satisfaction Guarantee"]
 
-export function BookingPanel({
-  company,
-  isLoggedIn,
-  booked,
-  submitting,
-  bookingError,
-  onBook,
-}: BookingPanelProps) {
+export function BookingPanel({ company, isLoggedIn, booked, onBook }: BookingPanelProps) {
   return (
     <div className="sticky top-24 bg-white rounded-3xl p-6 border border-border shadow-xl">
       {!isLoggedIn && (
@@ -52,23 +43,13 @@ export function BookingPanel({
 
       <Button
         onClick={onBook}
-        disabled={booked || submitting}
+        disabled={booked}
         className="w-full h-14 rounded-2xl font-bold text-base shadow-lg shadow-[#1a7a4a]/20 hover:scale-[1.02] transition-transform gap-2 text-white"
         style={{ background: "#1a7a4a" }}
       >
         {!isLoggedIn && <Lock size={16} />}
-        {booked
-          ? "Booking Request Sent!"
-          : submitting
-            ? "Sending Request..."
-            : isLoggedIn
-              ? "Book This Pro"
-              : "Sign In to Book"}
+        {booked ? "Booking Request Sent!" : isLoggedIn ? "Request Booking" : "Sign In to Book"}
       </Button>
-
-      {bookingError && (
-        <p className="text-xs text-center text-red-600 font-semibold mt-3">{bookingError}</p>
-      )}
 
       <p className="text-xs text-center text-muted-foreground mt-4 leading-relaxed">
         {isLoggedIn

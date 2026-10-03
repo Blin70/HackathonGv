@@ -24,14 +24,14 @@ export function DashboardView() {
     listing,
     received,
     pending,
-    confirmed,
+    scheduled,
+    completed,
     reviews,
     checklist,
     stats,
     activity,
     busyId,
-    confirmBooking,
-    declineBooking,
+    transitionBooking,
   } = useWorkerDashboard()
 
   if (loading) {
@@ -89,8 +89,8 @@ export function DashboardView() {
 
       <StatGrid
         pending={stats.pending}
-        confirmed={stats.confirmed}
-        total={stats.total}
+        scheduled={stats.scheduled}
+        completed={stats.completed}
         acceptanceRate={stats.acceptanceRate}
       />
 
@@ -101,11 +101,11 @@ export function DashboardView() {
 
       <RequestsPanel
         pending={pending}
-        confirmed={confirmed}
+        scheduled={scheduled}
+        completed={completed}
         all={received}
         busyId={busyId}
-        onConfirm={confirmBooking}
-        onDecline={declineBooking}
+        onTransition={transitionBooking}
       />
 
       <RecentReviews reviews={reviews} />

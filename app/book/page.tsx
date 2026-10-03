@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, MapPin, CheckCircle2, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Search, MapPin, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +25,10 @@ import {
 import Link from "next/link";
 import { TYPES, Company } from "@/lib/data";
 import { getMarketplaceCompanies } from "@/lib/workers";
-import { createBooking } from "@/lib/bookings";
+import { BookingConfirmationDialog } from "@/components/book/BookingConfirmationDialog";
+import { BookingRequestDialog } from "@/components/book/BookingRequestDialog";
+import { useBookingRequest } from "@/hooks/use-booking-request";
 import { StarRating } from "@/components/StarRating";
-import { toast } from "sonner";
 import type { User } from "@supabase/supabase-js";
 
 const RATINGS = [
@@ -146,11 +147,11 @@ export default function TradesmanMarket() {
   const [typeFilter, setTypeFilter] = useState("All Types");
   const [ratingFilter, setRatingFilter] = useState("0");
   const [cityFilter, setCityFilter] = useState("All Cities");
-  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [bookingId, setBookingId] = useState<string | number | null>(null);
+  const [requestCompany, setRequestCompany] = useState<Company | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [showAuthRequiredModal, setShowAuthRequiredModal] = useState<string | null>(null);
   const [companiesList, setCompaniesList] = useState<Company[]>([]);
+  const booking = useBookingRequest(requestCompany, user, Boolean(requestCompany));
 
   useEffect(() => {
     getMarketplaceCompanies().then(setCompaniesList);
@@ -168,29 +169,19 @@ export default function TradesmanMarket() {
     };
   }, []);
 
-  const handleBook = async (company: Company) => {
+  // Booking now needs job details, so the button opens the shared request form
+  // rather than firing a blank request.
+  const handleBook = (company: Company) => {
     if (!user) {
       setShowAuthRequiredModal(company.name);
       return;
     }
-    if (bookingId) return;
+    setRequestCompany(company);
+  };
 
-    setBookingId(company.id);
-    const { error } = await createBooking({
-      clientId: user.id,
-      clientName: user.user_metadata?.full_name || user.email?.split("@")[0] || "Client",
-      workerId: String(company.id),
-      workerName: company.name,
-      tradeType: company.type,
-    });
-    setBookingId(null);
-
-    if (error) {
-      console.error(error);
-      toast.error("Couldn't send your request. Please try again.");
-    } else {
-      setSelectedCompany(company.name);
-    }
+  const closeRequest = () => {
+    setRequestCompany(null);
+    booking.reset();
   };
 
   const cityOptions = [...new Set(companiesList.map((c) => c.city).filter(Boolean))].sort();
@@ -271,7 +262,7 @@ export default function TradesmanMarket() {
                     key={company.id}
                     company={company}
                     onBook={handleBook}
-                    booking={bookingId === company.id}
+                    booking={requestCompany?.id === company.id && booking.submitting}
                     isLoggedIn={!!user}
                   />
                 ))}
@@ -394,25 +385,27 @@ export default function TradesmanMarket() {
 
         </div>
 
-        {/* Booking Successful Modal */}
-        <Dialog open={!!selectedCompany} onOpenChange={(open) => !open && setSelectedCompany(null)}>
-          <DialogContent className="sm:max-w-md rounded-3xl p-8 border-0 shadow-2xl">
-            <DialogHeader>
-              <div className="h-16 w-16 bg-green-100 text-green-600 flex items-center justify-center rounded-full mb-4 mx-auto">
-                <CheckCircle2 size={32} className="text-[#1a7a4a]" />
-              </div>
-              <DialogTitle className="text-2xl font-black mb-2 text-center text-foreground">Booking Requested!</DialogTitle>
-              <DialogDescription className="text-base text-center text-muted-foreground leading-relaxed mt-2">
-                Your request for <strong className="text-foreground">{selectedCompany}</strong> has been successfully sent. A professional will contact you shortly to confirm details.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="mt-8 flex justify-center">
-              <Button onClick={() => setSelectedCompany(null)} className="rounded-2xl w-full h-12 font-bold bg-[#1a7a4a] text-white hover:opacity-90 transition-all">
-                Close
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* Job details form — yields to the success dialog once the request lands */}
+        {requestCompany && (
+          <BookingRequestDialog
+            open={!booking.booked}
+            onOpenChange={(next) => !next && closeRequest()}
+            companyName={requestCompany.name}
+            form={booking.form}
+            errors={booking.errors}
+            submitting={booking.submitting}
+            submitError={booking.submitError}
+            alreadyOpen={booking.alreadyOpen}
+            onFieldChange={booking.setField}
+            onSubmit={booking.submit}
+          />
+        )}
+
+        <BookingConfirmationDialog
+          open={booking.booked}
+          onClose={closeRequest}
+          companyName={requestCompany?.name ?? ""}
+        />
 
         {/* Auth Required Modal */}
         <Dialog open={!!showAuthRequiredModal} onOpenChange={(open) => !open && setShowAuthRequiredModal(null)}>
