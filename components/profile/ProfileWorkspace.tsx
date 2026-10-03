@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { ExternalLink } from "lucide-react"
+import { BriefcaseBusiness, ExternalLink } from "lucide-react"
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { LoadingState } from "@/components/LoadingState"
 import { StatusBanner } from "@/components/StatusBanner"
 import { Button } from "@/components/ui/button"
@@ -72,6 +73,14 @@ export function ProfileWorkspace() {
           saving={saving}
           onSubmit={saveClientProfile}
         />
+      ) : role !== "tradesman" ? (
+        <Alert className="mx-auto max-w-2xl rounded-2xl border-amber-200 bg-amber-50 p-6 text-amber-950 [&>svg]:text-amber-700">
+          <BriefcaseBusiness />
+          <AlertTitle className="font-bold">Worker account required</AlertTitle>
+          <AlertDescription className="text-amber-900">
+            You&apos;re signed in as a client. Sign in with a worker or company account to view or edit worker profile details.
+          </AlertDescription>
+        </Alert>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <WorkerProfileForm

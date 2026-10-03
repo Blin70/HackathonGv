@@ -93,21 +93,23 @@ export function useProfile() {
           }))
         }
 
-        const workerRow = await fetchWorkerRow(user.id)
-        if (!active) return
-        if (workerRow) {
-          setWorkerForm(rowToWorkerForm(workerRow))
-          setIsVerified(workerRow.is_verified)
-        } else {
-          // No row yet (e.g. signed up before the migration): seed the name from
-          // the signup metadata so the form isn't blank.
-          const seedName =
-            user.user_metadata?.businessName ||
-            user.user_metadata?.displayName ||
-            user.user_metadata?.full_name ||
-            ""
-          if (seedName) {
-            setWorkerForm((prev) => ({ ...prev, businessName: seedName }))
+        if (resolvedRole === "tradesman") {
+          const workerRow = await fetchWorkerRow(user.id)
+          if (!active) return
+          if (workerRow) {
+            setWorkerForm(rowToWorkerForm(workerRow))
+            setIsVerified(workerRow.is_verified)
+          } else {
+            // No row yet (e.g. signed up before the migration): seed the name from
+            // the signup metadata so the form isn't blank.
+            const seedName =
+              user.user_metadata?.businessName ||
+              user.user_metadata?.displayName ||
+              user.user_metadata?.full_name ||
+              ""
+            if (seedName) {
+              setWorkerForm((prev) => ({ ...prev, businessName: seedName }))
+            }
           }
         }
       } catch (error) {
@@ -180,6 +182,8 @@ export function useProfile() {
   }, [supabase, clientForm, userId])
 
   const saveWorkerProfile = useCallback(async () => {
+    if (role !== "tradesman") return
+
     setSaving(true)
     setStatus(null)
 
@@ -197,7 +201,7 @@ export function useProfile() {
     } finally {
       setSaving(false)
     }
-  }, [workerForm, userId])
+  }, [workerForm, userId, role])
 
   return {
     loading,
