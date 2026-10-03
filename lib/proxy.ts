@@ -4,8 +4,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 /**
  * PUBLIC ROUTES — everything else is protected and requires a logged-in user.
  *
- * Strings are matched as prefixes, so '/auth' covers '/auth/login',
- * '/auth/signup', '/auth/callback', etc.
+ * Entries match whole path segments, so '/auth' covers '/auth/login',
+ * '/auth/signup', '/auth/callback', etc. without matching '/authorize'.
  *
  * Add a new entry here to make a route publicly accessible.
  */

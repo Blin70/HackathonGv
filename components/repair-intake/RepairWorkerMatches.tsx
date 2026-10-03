@@ -1,7 +1,8 @@
 import Link from "next/link"
-import { ArrowRight, BadgeCheck, MapPin, Star, Users } from "lucide-react"
+import { ArrowRight, BadgeCheck, MapPin, Users } from "lucide-react"
 
 import { EmptyState } from "@/components/EmptyState"
+import { StarRating } from "@/components/StarRating"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,7 +47,7 @@ export function RepairWorkerMatches({ companies, city, tradeCategory, loading, e
           <EmptyState title="Workers could not be loaded" description={error} />
         ) : matches.length === 0 ? (
           <EmptyState
-            title={`No ${tradeCategory.toLowerCase()}s listed in ${city} yet`}
+            title={`No matching listings in ${city} yet`}
             description="You can still browse all available trades and cities on the marketplace."
             action={<Button asChild variant="outline" className="mt-2 rounded-xl"><Link href="/book">Browse all workers</Link></Button>}
           />
@@ -69,8 +70,9 @@ export function RepairWorkerMatches({ companies, city, tradeCategory, loading, e
                         <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{company.desc}</p>
                       </div>
                       {company.reviews > 0 ? (
-                        <div className="flex shrink-0 items-center gap-1 text-xs font-semibold text-foreground" aria-label={`${company.rating.toFixed(1)} out of 5 from ${company.reviews} reviews`}>
-                          <Star className="size-3.5 fill-amber-400 text-amber-400" /> {company.rating.toFixed(1)}
+                        <div className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-foreground" aria-label={`${company.rating.toFixed(1)} out of 5 from ${company.reviews} reviews`}>
+                          <StarRating value={company.rating} size={12} />
+                          <span>{company.rating.toFixed(1)} <span className="font-normal text-muted-foreground">({company.reviews})</span></span>
                         </div>
                       ) : (
                         <Badge variant="secondary" className="shrink-0 rounded-full text-[10px]">New</Badge>

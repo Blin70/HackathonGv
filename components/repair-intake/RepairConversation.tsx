@@ -248,7 +248,7 @@ export function RepairConversation({ messages, loading, error, onSubmit, onReset
           </div>
 
           <p className="text-xs leading-relaxed text-muted-foreground">
-            Photos are sent to OpenAI for analysis and aren&apos;t saved to your Book A Fixer account. Avoid including faces, documents, or sensitive details. See our{" "}
+            Your repair description, selected city, and optional photo are sent to OpenAI for analysis. Photos aren&apos;t saved to your Book A Fixer account. Avoid including faces, documents, or sensitive details. See our{" "}
             <Link href="/privacy-policy" className="font-medium text-primary underline underline-offset-2">privacy policy</Link>.
           </p>
         </form>
