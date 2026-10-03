@@ -186,8 +186,7 @@ export const COMPANIES: Company[] = [
   },
 ];
 
-export const TYPES = [
-  "All Types",
+export const TRADE_CATEGORIES = [
   "Plumber",
   "Electrician",
   "Painter",
@@ -200,7 +199,9 @@ export const TYPES = [
   "Locksmith",
   "Cleaner",
   "Flooring",
-];
+] as const;
+
+export const TYPES = ["All Types", ...TRADE_CATEGORIES];
 
 export const CITIES = [
   "Skopje",
@@ -228,6 +229,6 @@ export const CITIES = [
   "Resen",
   "Berovo",
   "Probištip",
-];
+] as const;
 
 
