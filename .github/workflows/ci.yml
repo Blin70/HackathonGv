@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A new push to the same branch makes an in-flight run obsolete.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, lint and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Run all three even when an earlier one fails, so a single push tells
+      # you everything that is wrong rather than only the first thing.
+      - name: Typecheck
+        id: typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        id: lint
+        if: ${{ !cancelled() }}
+        run: pnpm lint
+
+      - name: Test
+        id: test
+        if: ${{ !cancelled() }}
+        run: pnpm test
+
+      # next build catches what the other three cannot: a server/client
+      # boundary violation, a bad route export, a failed static render.
+      - name: Build
+        if: ${{ !cancelled() }}
+        env:
+          # Build-time placeholders. The real values live in the host's
+          # environment; these only need to exist so module initialisation
+          # does not throw during the build.
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder-publishable-key
+        run: pnpm build

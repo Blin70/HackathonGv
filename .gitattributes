@@ -1,0 +1,17 @@
+# Normalise line endings so a repo shared between Windows and macOS/Linux
+# does not churn, and so the .mjs hook scripts in .claude/hooks/ stay LF.
+* text=auto eol=lf
+
+# Binary files git should never try to normalise or diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+
+# Generated; collapse it in diffs and reviews.
+pnpm-lock.yaml -diff linguist-generated

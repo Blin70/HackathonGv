@@ -84,8 +84,29 @@ users. Flag them when you touch the surrounding code; don't copy the pattern.
   builds HTML from regex. Prefer `components/repair-intake/` and don't extend
   this page.
 
+## Testing
+
+Vitest, with tests co-located next to the code as `*.test.ts`. `pnpm verify`
+runs the whole gate (`typecheck`, `lint`, `test`); `pnpm test:watch` while
+working.
+
+The suite covers pure logic — schema boundaries, phone normalisation, the AI
+rate limiter, row mappers. That is deliberate: it is the layer where a bug is
+silent and expensive. Prefer adding to it over writing brittle UI assertions.
+
+- The default environment is `node`. A test needing a DOM can opt in with
+  `// @vitest-environment jsdom`, once jsdom is installed.
+- `lib/ai/rate-limit.ts` keeps counters in a module-level Map, so its tests
+  use a distinct IP each rather than resetting shared state.
+- Never assert an invented rating, review count, or price. Several tests exist
+  specifically to stop fabricated social proof reaching the UI.
+
+CI (`.github/workflows/ci.yml`) runs typecheck, lint, test and `next build` on
+every PR and on pushes to `main`. The build step matters: it catches
+server/client boundary violations the other three miss.
+
 ## Gaps worth knowing
 
-No test suite and no CI yet, so `pnpm build` and `npx tsc --noEmit` are the
-only real gates. There is no analytics, so conversion claims are unmeasurable
-today.
+There is no analytics, so conversion claims are unmeasurable today — that
+needs fixing before anyone reasons about funnel changes. No component or hook
+tests yet, only the logic layer.
