@@ -6,6 +6,7 @@ import { Search, MapPin, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DemoBadge } from "@/components/DemoBadge";
 import { createClient } from "@/lib/client";
 import {
   Select,
@@ -74,11 +75,7 @@ function CompanyCard({
             </Badge>
 
             {/* A visitor must never mistake a seeded example for a real business. */}
-            {company.isDemo && (
-              <Badge className="rounded-full border-0 bg-amber-500 px-3 py-1 text-[10px] font-bold text-white shadow-md">
-                Example listing
-              </Badge>
-            )}
+            {company.isDemo && <DemoBadge emphasis="card" />}
           </div>
 
           {company.isVerified && (

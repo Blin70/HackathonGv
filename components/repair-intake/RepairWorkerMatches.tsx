@@ -3,6 +3,7 @@ import { ArrowRight, BadgeCheck, MapPin, Star, Users } from "lucide-react"
 
 import { EmptyState } from "@/components/EmptyState"
 import { Badge } from "@/components/ui/badge"
+import { DemoBadge } from "@/components/DemoBadge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Company } from "@/lib/data"
@@ -65,11 +66,7 @@ export function RepairWorkerMatches({ companies, city, tradeCategory, loading, e
                               <BadgeCheck className="size-3" /> Registered
                             </Badge>
                           )}
-                          {company.isDemo && (
-                            <Badge variant="outline" className="rounded-full border-amber-300 bg-amber-50 text-[10px] text-amber-900">
-                              Example
-                            </Badge>
-                          )}
+                          {company.isDemo && <DemoBadge emphasis="inline" />}
                         </div>
                         <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{company.desc}</p>
                       </div>

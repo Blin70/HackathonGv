@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { DemoBadge } from "@/components/DemoBadge"
 import type { Company } from "@/lib/data"
 import { getMarketplaceCompanies } from "@/lib/workers"
 
@@ -298,11 +299,7 @@ export default function HomeContent() {
                     <Badge className="bg-white text-[#1a7a4a] font-bold text-xs rounded-full px-3 py-1 border-0">
                       {worker.type}
                     </Badge>
-                    {worker.isDemo && (
-                      <Badge className="rounded-full border-0 bg-amber-500 px-3 py-1 text-[10px] font-bold text-white">
-                        Example listing
-                      </Badge>
-                    )}
+                    {worker.isDemo && <DemoBadge emphasis="card" />}
                   </div>
                 </div>
 

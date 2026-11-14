@@ -25,10 +25,22 @@ supabase/migrations/  timestamped SQL migrations
 
 - **Put new code in these existing folders.** Don't invent new top-level or
   `_`-prefixed directories.
-- **Reuse before building.** Check `components/ui/` and the installed
-  dependencies first — `date-fns`, `libphonenumber-js`, `recharts`, `sonner`,
-  `vaul`, `cmdk`, `embla-carousel-react`, `react-day-picker` are all already
-  here. Keep files small and split along the folders above.
+- **Reuse before building — search first, then write.** Before adding a
+  component, formatter, validator or badge, look for one that already exists:
+  `components/ui/` (shadcn primitives), `components/*.tsx` (shared app
+  components like `DemoBadge`, `EmptyState`, `StarRating`, `LoadingState`),
+  `hooks/use-*`, `lib/`. Then check `package.json` — `date-fns`,
+  `libphonenumber-js`, `recharts`, `sonner`, `vaul`, `cmdk`,
+  `embla-carousel-react`, `react-day-picker` and `class-variance-authority`
+  are already installed, so hand-rolling date maths, phone parsing, a
+  carousel, a toast or a chart is almost always wrong.
+  - If it almost exists, **extend it with a variant** rather than forking it.
+  - If the change would make something exist twice, build it shared now.
+  - Don't over-extract: things that share a shape but not a reason to change
+    should stay separate.
+  - Say in your summary what you reused, or why nothing fit.
+  - The `/reuse-check` skill walks this properly; `/simplify` is the
+    after-the-fact pass.
 - The data flow is `component → hooks/use-*.ts → lib/*.ts → Supabase`. Client
   components should not query Supabase directly.
 - Style with design tokens (`text-primary`, `bg-background`, `border-border`),
