@@ -4,6 +4,7 @@ import { CURRENCY_SUFFIX, PRICE_UNSET } from "@/lib/currency"
 import { COMPANIES } from "@/lib/data"
 import { FALLBACK_BANNER_IMAGE } from "@/lib/profile"
 import {
+  demoListingMode,
   rowToCompany,
   shouldIncludeDemoListings,
   type WorkerProfileRow,
@@ -108,6 +109,32 @@ describe("rowToCompany", () => {
   })
 })
 
+describe("demoListingMode", () => {
+  const ENV_KEY = "NEXT_PUBLIC_SHOW_DEMO_LISTINGS"
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it("defaults to always, so one test account cannot empty the marketplace", () => {
+    expect(demoListingMode()).toBe("always")
+  })
+
+  it("reads the two opt-in modes", () => {
+    vi.stubEnv(ENV_KEY, "never")
+    expect(demoListingMode()).toBe("never")
+    vi.stubEnv(ENV_KEY, "until-real")
+    expect(demoListingMode()).toBe("until-real")
+  })
+
+  it("falls back to the default rather than failing on an unknown value", () => {
+    vi.stubEnv(ENV_KEY, "yes-please")
+    expect(demoListingMode()).toBe("always")
+    vi.stubEnv(ENV_KEY, "")
+    expect(demoListingMode()).toBe("always")
+  })
+})
+
 describe("shouldIncludeDemoListings", () => {
   const ENV_KEY = "NEXT_PUBLIC_SHOW_DEMO_LISTINGS"
 
@@ -115,33 +142,31 @@ describe("shouldIncludeDemoListings", () => {
     vi.unstubAllEnvs()
   })
 
-  it("shows examples while the marketplace is empty, so it does not look broken", () => {
+  it("keeps examples alongside real listings by default", () => {
+    // A marketplace holding one test account should still look like a
+    // marketplace. Honesty here comes from the badge, not from hiding them.
     expect(shouldIncludeDemoListings(0)).toBe(true)
+    expect(shouldIncludeDemoListings(1)).toBe(true)
+    expect(shouldIncludeDemoListings(50)).toBe(true)
   })
 
-  it("retires examples as soon as a single real listing exists", () => {
-    // The point of the whole mechanism: nobody has to remember to switch the
-    // seeded catalogue off before launch.
+  it("retires examples once real listings exist, under 'until-real'", () => {
+    vi.stubEnv(ENV_KEY, "until-real")
+    expect(shouldIncludeDemoListings(0)).toBe(true)
     expect(shouldIncludeDemoListings(1)).toBe(false)
     expect(shouldIncludeDemoListings(50)).toBe(false)
   })
 
-  it("honours an explicit 'always' override for demos and screenshots", () => {
-    vi.stubEnv(ENV_KEY, "always")
-    expect(shouldIncludeDemoListings(0)).toBe(true)
-    expect(shouldIncludeDemoListings(25)).toBe(true)
-  })
-
-  it("honours an explicit 'never' override even with an empty marketplace", () => {
+  it("hides examples outright under 'never', the switch to throw at launch", () => {
     vi.stubEnv(ENV_KEY, "never")
     expect(shouldIncludeDemoListings(0)).toBe(false)
     expect(shouldIncludeDemoListings(25)).toBe(false)
   })
 
-  it("falls back to the automatic behaviour for an unrecognised value", () => {
-    vi.stubEnv(ENV_KEY, "yes-please")
+  it("honours an explicit 'always'", () => {
+    vi.stubEnv(ENV_KEY, "always")
     expect(shouldIncludeDemoListings(0)).toBe(true)
-    expect(shouldIncludeDemoListings(3)).toBe(false)
+    expect(shouldIncludeDemoListings(25)).toBe(true)
   })
 })
 

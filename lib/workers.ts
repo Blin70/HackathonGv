@@ -122,21 +122,28 @@ function applyReviewStats(companies: Company[], stats: Map<string, ReviewStat>):
   })
 }
 
+export type DemoListingMode = "always" | "never" | "until-real"
+
 /**
- * Whether the seeded example listings should appear alongside real ones.
+ * How the seeded example listings behave, from `NEXT_PUBLIC_SHOW_DEMO_LISTINGS`.
  *
- * They exist so the marketplace does not look broken before the first
- * tradespeople sign up, and they retire themselves the moment any real listing
- * exists — nobody has to remember to switch them off. Set
- * `NEXT_PUBLIC_SHOW_DEMO_LISTINGS` to `always` (screenshots, a demo
- * environment) or `never` (hide them even with an empty marketplace) to
- * override that.
+ * `always` is the default while the marketplace is being built out: a single
+ * test account should not empty the page, and an example is honest as long as
+ * it is badged, which every surface does. Switch to `until-real` to have
+ * examples retire themselves once any real listing exists, or `never` to hide
+ * them outright — that is the switch to throw at launch.
  */
-export function shouldIncludeDemoListings(realListingCount: number): boolean {
+export function demoListingMode(): DemoListingMode {
   const mode = process.env.NEXT_PUBLIC_SHOW_DEMO_LISTINGS
+  return mode === "never" || mode === "until-real" ? mode : "always"
+}
+
+/** Whether the seeded example listings should appear alongside real ones. */
+export function shouldIncludeDemoListings(realListingCount: number): boolean {
+  const mode = demoListingMode()
   if (mode === "never") return false
-  if (mode === "always") return true
-  return realListingCount === 0
+  if (mode === "until-real") return realListingCount === 0
+  return true
 }
 
 /**
@@ -165,12 +172,16 @@ export async function getMarketplaceCompanies(): Promise<Company[]> {
 export async function getCompanyById(id: string): Promise<Company | null> {
   const seeded = COMPANIES.find((c) => String(c.id) === id)
   if (seeded) {
-    // An example listing stops resolving once real ones exist, so a stale link
-    // cannot keep serving an invented business as though it were real.
+    const mode = demoListingMode()
+    if (mode === "never") return null
+    if (mode === "always") return seeded
+
+    // Only `until-real` needs to know how many real listings there are, so the
+    // count query is not paid for on every example page view.
     const { count } = await createClient()
       .from("worker_profiles")
       .select("user_id", { count: "exact", head: true })
-    return shouldIncludeDemoListings(count ?? 0) ? seeded : null
+    return (count ?? 0) === 0 ? seeded : null
   }
 
   try {

@@ -78,10 +78,13 @@ and self-retiring:
 
 - Every entry carries `isDemo: true`, and the UI badges it as "Example
   listing" in the marketplace, the detail hero and the repair-intake matches.
-- `shouldIncludeDemoListings()` in `lib/workers.ts` drops them as soon as one
-  real listing exists. `NEXT_PUBLIC_SHOW_DEMO_LISTINGS` (`always` / `never`)
-  overrides that. `getCompanyById` applies the same rule, so a stale
-  `/book/<n>` link stops resolving rather than serving an invented business.
+  **The badge is what makes them legitimate** — never render one without it.
+- `NEXT_PUBLIC_SHOW_DEMO_LISTINGS` picks the behaviour, via `demoListingMode()`
+  in `lib/workers.ts`: `always` (the default — examples sit alongside real
+  listings, so one test account cannot empty the page), `until-real` (retire
+  once any real listing exists), `never` (the switch to throw at launch).
+  `getCompanyById` follows the same mode, so under `until-real` or `never` a
+  stale `/book/<n>` link 404s rather than serving an invented business.
 - `Company.id` is a `number` for these and a uuid `string` for real
   `worker_profiles` rows; code handling both must expect either.
 
