@@ -109,12 +109,30 @@ regressions here.
 Prices are stored bare (`"900"`) and formatted at render by `lib/currency.ts`,
 which is the only place the market's currency is defined.
 
+## Routes
+
+- `/` — the marketing landing page (`components/landing/LandingPage.tsx`).
+  One search input, a reassurance line, then categories, listings and how it
+  works. This is a value proposition, not a tool; keep it that way.
+- `/describe` — the AI repair intake. The accelerator for people who don't
+  know which trade they need, reached from the hero and from `/book`. It is
+  deliberately **not** the homepage: it depends on a paid third-party call, so
+  nothing load-bearing should sit behind it.
+- `/book`, `/book/[id]` — marketplace and listing detail.
+- `/home` and `/ai` are retired, and redirect (308) from `next.config.ts` to
+  `/` and `/describe`. Middleware runs before those redirects, so both paths
+  must stay in `PUBLIC_ROUTES` in `lib/proxy.ts` or a signed-out visitor is
+  sent to login instead of being forwarded.
+
+**A new public route needs an entry in `PUBLIC_ROUTES`**, or guests get
+bounced to `/auth/login`.
+
 ## Other things worth knowing
 
-- `app/ai/page.tsx` — a second AI surface, off the shared design system, that
-  builds HTML from regex. Prefer `components/repair-intake/` and don't extend
-  this page.
 - The repair assessment returns no cost estimate. Don't let copy promise one.
+- There is one AI surface. `app/ai/page.tsx` was a second one, off the design
+  system and building HTML from regex; it and its `/api/ai` endpoint were
+  removed. Don't reintroduce a parallel chat UI.
 
 ## Testing
 

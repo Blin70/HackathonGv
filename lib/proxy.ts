@@ -10,15 +10,17 @@ import { NextResponse, type NextRequest } from 'next/server'
  * Add a new entry here to make a route publicly accessible.
  */
 const PUBLIC_ROUTES = [
-  '/',         // landing page
-  '/home',     // marketplace overview
-  '/auth',     // login, signup, callback, error
-  '/ai',       // AI Concierge diagnostics
-  '/api/ai',   // AI Concierge endpoint (guests can use the concierge)
+  '/',          // landing page
+  '/describe',  // AI repair intake
+  '/auth',      // login, signup, callback, error
   '/api/repair-intake', // AI repair triage endpoint (guests can use the intake)
-  '/book',     // worker market & worker profiles
+  '/book',      // worker market & worker profiles
   '/terms-of-service',
-  '/privacy-policy'
+  '/privacy-policy',
+  // Legacy paths. Middleware runs before next.config redirects, so these must
+  // stay public or a signed-out visitor is sent to login instead of forwarded.
+  '/home',      // -> /
+  '/ai',        // -> /describe
 ]
 
 function isPublicRoute(pathname: string): boolean {

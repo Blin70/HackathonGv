@@ -15,10 +15,10 @@ const popularTrades = [
   { title: "Roofers", href: "/book?type=Roofer", icon: <HomeIcon className="h-3.5 w-3.5 text-red-500" /> },
 ]
 
-const mainNavLinks = [
-  { title: "Home", href: "/home" },
+const mainNavLinks: { title: string; href: string; badge?: string }[] = [
+  { title: "Home", href: "/" },
   { title: "Book a Fixer", href: "/book" },
-  { title: "AI", href: "/ai", badge: "AI Powered" },
+  { title: "Describe a repair", href: "/describe" },
 ]
 
 export default function Footer() {

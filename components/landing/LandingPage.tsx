@@ -38,7 +38,7 @@ const QUICK_SUGGESTIONS = [
   "HVAC"
 ]
 
-export default function HomeContent() {
+export function LandingPage() {
   const [jobDescription, setJobDescription] = useState("")
   const [featuredWorkers, setFeaturedWorkers] = useState<Company[]>([])
   const router = useRouter()
@@ -121,6 +121,18 @@ export default function HomeContent() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
+
+                {/* The single biggest fear of a lead form is being cold-called
+                    by five contractors. Answer it right under the button. */}
+                <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 pl-1 text-sm text-slate-400">
+                  <span>No phone calls — you choose who to contact.</span>
+                  <Link
+                    href="/describe"
+                    className="font-semibold text-emerald-400 underline-offset-4 hover:underline"
+                  >
+                    Not sure which trade you need?
+                  </Link>
+                </p>
               </form>
 
               {/* Quick Trade Pills */}
@@ -165,10 +177,13 @@ export default function HomeContent() {
                         Registered businesses are checked and labelled
                       </p>
                     </div>
+                    {/* Deliberately not the no-phone-calls line: that now sits
+                        under the search button, and repeating it in the same
+                        viewport reads as filler. */}
                     <div className="flex items-start gap-3 border-t border-slate-800/80 pt-3">
-                      <MessageSquare size={18} className="mt-0.5 shrink-0 text-emerald-400" />
+                      <Star size={18} className="mt-0.5 shrink-0 text-emerald-400" />
                       <p className="text-sm font-semibold text-white">
-                        No phone calls — you choose who to contact
+                        Reviews come from completed bookings only
                       </p>
                     </div>
                   </div>
@@ -251,8 +266,8 @@ export default function HomeContent() {
           </div>
 
           <Button asChild size="lg" className="h-14 px-8 font-black text-base rounded-2xl bg-white text-slate-950 hover:bg-slate-100 shadow-2xl shrink-0 gap-2">
-            <Link href="/ai">
-              Try AI Concierge Diagnostic
+            <Link href="/describe">
+              Describe the problem
               <Sparkles className="h-5 w-5 text-[#1a7a4a]" />
             </Link>
           </Button>

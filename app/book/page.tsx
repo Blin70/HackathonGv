@@ -380,13 +380,13 @@ export default function TradesmanMarket() {
                   <Sparkles size={14} /> Need diagnostics?
                 </p>
                 <p className="text-[11px] text-emerald-800 leading-relaxed">
-                  Describe your problem to our AI Concierge and get matched immediately.
+                  Not sure which trade you need? Describe the problem and we will work it out.
                 </p>
                 <Link
-                  href="/ai"
+                  href="/describe"
                   className="text-[11px] font-black text-[#1a7a4a] hover:underline flex items-center gap-0.5 pt-1"
                 >
-                  Start AI Diagnostic →
+                  Describe the problem →
                 </Link>
               </div>
 

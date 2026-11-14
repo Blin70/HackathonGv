@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { CircleAlert, Clock3, House, ShieldCheck, Wrench } from "lucide-react"
+import { CircleAlert, Clock3, Hammer, ShieldCheck, Wrench } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -78,7 +78,7 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
 
         {!assessment.isHomeRepair && (
           <Button asChild variant="outline" className="w-full rounded-xl">
-            <Link href="/home"><House className="mr-2 size-4" /> Go to home</Link>
+            <Link href="/book"><Hammer className="mr-2 size-4" /> Browse tradespeople</Link>
           </Button>
         )}
 

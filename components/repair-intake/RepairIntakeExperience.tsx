@@ -1,14 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
-import { ArrowUpRight, House, Sparkles } from "lucide-react"
+import { ArrowUpRight, Sparkles } from "lucide-react"
 
 import { EmptyState } from "@/components/EmptyState"
 import { RepairAssessmentPanel } from "@/components/repair-intake/RepairAssessmentPanel"
 import { RepairConversation } from "@/components/repair-intake/RepairConversation"
 import { RepairWorkerMatches } from "@/components/repair-intake/RepairWorkerMatches"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useRepairIntake } from "@/hooks/use-repair-intake"
 import { getMarketplaceCompanies } from "@/lib/workers"
@@ -53,9 +51,6 @@ export function RepairIntakeExperience() {
           <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
             Get a practical repair summary, safety guidance, and local tradespeople matched to the work and city.
           </p>
-          <Button asChild variant="outline" size="sm" className="mt-5 rounded-full bg-white">
-            <Link href="/home"><House className="mr-2 size-4" /> Go to home</Link>
-          </Button>
         </section>
 
         <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.12fr)_minmax(360px,0.88fr)] lg:gap-6">

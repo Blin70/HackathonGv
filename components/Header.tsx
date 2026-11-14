@@ -36,14 +36,15 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
-const navLinks = [
-    { title: "Home", href: "/home", icon: <Home className="h-4 w-4" /> },
+const navLinks: { title: string; href: string; icon: React.ReactNode; badge?: string }[] = [
+    { title: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
     { title: "Book a Fixer", href: "/book", icon: <CalendarCheck className="h-4 w-4" /> },
-    { 
-        title: "AI Concierge", 
-        href: "/ai", 
-        icon: <Sparkles className="h-4 w-4 text-primary animate-pulse" />,
-        badge: "AI Powered"
+    // Named for what it does. A pulsing "AI Powered" badge was the loudest
+    // thing in the header and said nothing a customer needs.
+    {
+        title: "Describe a repair",
+        href: "/describe",
+        icon: <Sparkles className="h-4 w-4 text-primary" />,
     }
 ]
 
