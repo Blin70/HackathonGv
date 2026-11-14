@@ -34,6 +34,10 @@ supabase/migrations/  timestamped SQL migrations
 - Style with design tokens (`text-primary`, `bg-background`, `border-border`),
   not raw hex. The brand green `#1a7a4a` is still hardcoded in older files;
   prefer the token when you touch them.
+- `components/ui/**` is vendored shadcn/ui code. Two lint rules are switched
+  off there (`no-explicit-any`, `react-hooks/set-state-in-effect`) because
+  they fire on upstream's own patterns — don't chase those. Every other rule
+  still applies, and the repo is currently at zero lint problems; keep it there.
 
 ## Supabase
 
