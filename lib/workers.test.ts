@@ -1,7 +1,14 @@
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
+import { CURRENCY_SUFFIX, PRICE_UNSET } from "@/lib/currency"
+import { COMPANIES } from "@/lib/data"
 import { FALLBACK_BANNER_IMAGE } from "@/lib/profile"
-import { rowToCompany, type WorkerProfileRow } from "@/lib/workers"
+import {
+  demoListingMode,
+  rowToCompany,
+  shouldIncludeDemoListings,
+  type WorkerProfileRow,
+} from "@/lib/workers"
 
 function row(overrides: Partial<WorkerProfileRow> = {}): WorkerProfileRow {
   return {
@@ -16,7 +23,8 @@ function row(overrides: Partial<WorkerProfileRow> = {}): WorkerProfileRow {
     about_us: "Fifteen years in the trade.",
     services: ["Leak repair", "Pipe fitting"],
     available_days: "Monday - Saturday",
-    price: "$90",
+    // Stored bare; the currency is applied at render time.
+    price: "900",
     banner_image: "https://example.com/banner.jpg",
     is_verified: true,
     created_at: "2026-01-01T00:00:00Z",
@@ -34,7 +42,7 @@ describe("rowToCompany", () => {
       type: "Plumber",
       desc: "Emergency leaks and pipe fitting.",
       city: "Skopje",
-      price: "$90",
+      price: `900 ${CURRENCY_SUFFIX}`,
       isVerified: true,
     })
   })
@@ -83,5 +91,103 @@ describe("rowToCompany", () => {
 
   it("marks an unverified worker as unverified", () => {
     expect(rowToCompany(row({ is_verified: false })).isVerified).toBe(false)
+  })
+
+  it("never marks a real worker as a demo listing", () => {
+    expect(rowToCompany(row()).isDemo).toBeUndefined()
+  })
+
+  it("renders the rate in the market's currency, not dollars", () => {
+    expect(rowToCompany(row({ price: "900" })).price).toBe(`900 ${CURRENCY_SUFFIX}`)
+    // Rows written before the currency fix still hold a "$" prefix.
+    expect(rowToCompany(row({ price: "$90" })).price).toBe(`90 ${CURRENCY_SUFFIX}`)
+    expect(rowToCompany(row({ price: "900" })).price).not.toContain("$")
+  })
+
+  it("shows a dash rather than a made-up rate when none is set", () => {
+    expect(rowToCompany(row({ price: null })).price).toBe(PRICE_UNSET)
+  })
+})
+
+describe("demoListingMode", () => {
+  const ENV_KEY = "NEXT_PUBLIC_SHOW_DEMO_LISTINGS"
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it("defaults to always, so one test account cannot empty the marketplace", () => {
+    expect(demoListingMode()).toBe("always")
+  })
+
+  it("reads the two opt-in modes", () => {
+    vi.stubEnv(ENV_KEY, "never")
+    expect(demoListingMode()).toBe("never")
+    vi.stubEnv(ENV_KEY, "until-real")
+    expect(demoListingMode()).toBe("until-real")
+  })
+
+  it("falls back to the default rather than failing on an unknown value", () => {
+    vi.stubEnv(ENV_KEY, "yes-please")
+    expect(demoListingMode()).toBe("always")
+    vi.stubEnv(ENV_KEY, "")
+    expect(demoListingMode()).toBe("always")
+  })
+})
+
+describe("shouldIncludeDemoListings", () => {
+  const ENV_KEY = "NEXT_PUBLIC_SHOW_DEMO_LISTINGS"
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it("keeps examples alongside real listings by default", () => {
+    // A marketplace holding one test account should still look like a
+    // marketplace. Honesty here comes from the badge, not from hiding them.
+    expect(shouldIncludeDemoListings(0)).toBe(true)
+    expect(shouldIncludeDemoListings(1)).toBe(true)
+    expect(shouldIncludeDemoListings(50)).toBe(true)
+  })
+
+  it("retires examples once real listings exist, under 'until-real'", () => {
+    vi.stubEnv(ENV_KEY, "until-real")
+    expect(shouldIncludeDemoListings(0)).toBe(true)
+    expect(shouldIncludeDemoListings(1)).toBe(false)
+    expect(shouldIncludeDemoListings(50)).toBe(false)
+  })
+
+  it("hides examples outright under 'never', the switch to throw at launch", () => {
+    vi.stubEnv(ENV_KEY, "never")
+    expect(shouldIncludeDemoListings(0)).toBe(false)
+    expect(shouldIncludeDemoListings(25)).toBe(false)
+  })
+
+  it("honours an explicit 'always'", () => {
+    vi.stubEnv(ENV_KEY, "always")
+    expect(shouldIncludeDemoListings(0)).toBe(true)
+    expect(shouldIncludeDemoListings(25)).toBe(true)
+  })
+})
+
+describe("the seeded example catalogue", () => {
+  it("marks every entry as a demo, which is what the UI badges", () => {
+    expect(COMPANIES.length).toBeGreaterThan(0)
+    for (const company of COMPANIES) {
+      expect(company.isDemo, `${company.name} must be marked isDemo`).toBe(true)
+    }
+  })
+
+  it("quotes every example in the market's currency", () => {
+    for (const company of COMPANIES) {
+      expect(company.price, `${company.name} should not be priced in dollars`).not.toContain("$")
+      expect(company.price).toContain(CURRENCY_SUFFIX)
+    }
+  })
+
+  it("uses numeric ids, which is how they stay distinct from real uuid rows", () => {
+    for (const company of COMPANIES) {
+      expect(typeof company.id).toBe("number")
+    }
   })
 })

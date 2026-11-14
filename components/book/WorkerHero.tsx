@@ -1,6 +1,7 @@
 import { BadgeCheck, Sparkles, Star } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { DemoBadge } from "@/components/DemoBadge"
 import type { Company } from "@/lib/data"
 
 interface WorkerHeroProps {
@@ -23,9 +24,15 @@ export function WorkerHero({ company, averageRating, reviewCount }: WorkerHeroPr
       <div className="absolute bottom-0 w-full">
         <div className="max-w-5xl mx-auto px-6 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="text-white">
-            <Badge className="bg-[#1a7a4a] text-white border-0 mb-4 px-4 py-1.5 text-sm font-bold rounded-full shadow-lg">
-              {company.type}
-            </Badge>
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <Badge className="bg-[#1a7a4a] text-white border-0 px-4 py-1.5 text-sm font-bold rounded-full shadow-lg">
+                {company.type}
+              </Badge>
+
+              {/* Seeded example: say so plainly, on the page where someone is
+                  about to try booking it. */}
+              {company.isDemo && <DemoBadge emphasis="detail" />}
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2">
               {company.name}
             </h1>

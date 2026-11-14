@@ -6,6 +6,7 @@ import { Search, MapPin, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DemoBadge } from "@/components/DemoBadge";
 import { createClient } from "@/lib/client";
 import {
   Select,
@@ -65,12 +66,17 @@ function CompanyCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
-          <Badge
-            className="absolute top-4 left-4 text-xs font-bold rounded-full px-3.5 py-1 border-0 shadow-md"
-            style={{ background: "white", color: "#145e38" }}
-          >
-            {company.type}
-          </Badge>
+          <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5">
+            <Badge
+              className="text-xs font-bold rounded-full px-3.5 py-1 border-0 shadow-md"
+              style={{ background: "white", color: "#145e38" }}
+            >
+              {company.type}
+            </Badge>
+
+            {/* A visitor must never mistake a seeded example for a real business. */}
+            {company.isDemo && <DemoBadge emphasis="card" />}
+          </div>
 
           {company.isVerified && (
             <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-extrabold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">

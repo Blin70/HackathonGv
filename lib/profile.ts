@@ -90,9 +90,5 @@ export function joinName(firstName: string, lastName: string): string {
   return `${firstName} ${lastName}`.trim()
 }
 
-/** Ensures a price string is rendered with a leading `$`. */
-export function formatPrice(price: string): string {
-  const trimmed = price.trim()
-  if (!trimmed) return ""
-  return trimmed.startsWith("$") ? trimmed : `$${trimmed}`
-}
+// Price formatting lives in `lib/currency.ts`, so the market's currency is
+// defined in exactly one place.

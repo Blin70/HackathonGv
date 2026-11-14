@@ -25,10 +25,22 @@ supabase/migrations/  timestamped SQL migrations
 
 - **Put new code in these existing folders.** Don't invent new top-level or
   `_`-prefixed directories.
-- **Reuse before building.** Check `components/ui/` and the installed
-  dependencies first — `date-fns`, `libphonenumber-js`, `recharts`, `sonner`,
-  `vaul`, `cmdk`, `embla-carousel-react`, `react-day-picker` are all already
-  here. Keep files small and split along the folders above.
+- **Reuse before building — search first, then write.** Before adding a
+  component, formatter, validator or badge, look for one that already exists:
+  `components/ui/` (shadcn primitives), `components/*.tsx` (shared app
+  components like `DemoBadge`, `EmptyState`, `StarRating`, `LoadingState`),
+  `hooks/use-*`, `lib/`. Then check `package.json` — `date-fns`,
+  `libphonenumber-js`, `recharts`, `sonner`, `vaul`, `cmdk`,
+  `embla-carousel-react`, `react-day-picker` and `class-variance-authority`
+  are already installed, so hand-rolling date maths, phone parsing, a
+  carousel, a toast or a chart is almost always wrong.
+  - If it almost exists, **extend it with a variant** rather than forking it.
+  - If the change would make something exist twice, build it shared now.
+  - Don't over-extract: things that share a shape but not a reason to change
+    should stay separate.
+  - Say in your summary what you reused, or why nothing fit.
+  - The `/reuse-check` skill walks this properly; `/simplify` is the
+    after-the-fact pass.
 - The data flow is `component → hooks/use-*.ts → lib/*.ts → Supabase`. Client
   components should not query Supabase directly.
 - Style with design tokens (`text-primary`, `bg-background`, `border-border`),
@@ -69,20 +81,40 @@ to them should consider abuse and spend. `lib/ai/rate-limit.ts` is in-memory:
 it resets on deploy and does not hold across serverless instances, so it is
 not real protection yet.
 
-## Known placeholder content (remove before launch)
+## Example listings, and the line they must not cross
 
-These are demo leftovers that would be a legal and trust problem with real
-users. Flag them when you touch the surrounding code; don't copy the pattern.
+`lib/data.ts` holds `COMPANIES`, a seeded catalogue of invented businesses with
+stock photography. It exists so the marketplace does not look broken before
+real tradespeople sign up, and it is legitimate **only** because it is labelled
+and self-retiring:
 
-- `lib/data.ts` — `COMPANIES` is seeded demo data with Unsplash stock photos
-  and invented ratings. `Company.id` is a `number` for these and a uuid
-  `string` for real `worker_profiles` rows; code handling both must expect it.
-- `app/home/page.tsx` — fabricated testimonials with fake names, a
-  "4.9 / 5 Average Customer Rating", an unbacked "100% satisfaction guarantee",
-  and `$`-denominated prices in a market that uses MKD/EUR.
+- Every entry carries `isDemo: true`, and the UI badges it as "Example
+  listing" in the marketplace, the detail hero and the repair-intake matches.
+  **The badge is what makes them legitimate** — never render one without it.
+- `NEXT_PUBLIC_SHOW_DEMO_LISTINGS` picks the behaviour, via `demoListingMode()`
+  in `lib/workers.ts`: `always` (the default — examples sit alongside real
+  listings, so one test account cannot empty the page), `until-real` (retire
+  once any real listing exists), `never` (the switch to throw at launch).
+  `getCompanyById` follows the same mode, so under `until-real` or `never` a
+  stale `/book/<n>` link 404s rather than serving an invented business.
+- `Company.id` is a `number` for these and a uuid `string` for real
+  `worker_profiles` rows; code handling both must expect either.
+
+**Never extend this into claims about reality.** An example listing is honest
+because it says what it is. Invented reviews, an average rating, a customer
+count or a guarantee are not — those were removed and must not come back. If
+there is no data yet, say so in the UI. Several tests exist purely to catch
+regressions here.
+
+Prices are stored bare (`"900"`) and formatted at render by `lib/currency.ts`,
+which is the only place the market's currency is defined.
+
+## Other things worth knowing
+
 - `app/ai/page.tsx` — a second AI surface, off the shared design system, that
   builds HTML from regex. Prefer `components/repair-intake/` and don't extend
   this page.
+- The repair assessment returns no cost estimate. Don't let copy promise one.
 
 ## Testing
 

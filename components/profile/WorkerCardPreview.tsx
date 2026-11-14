@@ -6,7 +6,8 @@ import { BadgeCheck, Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { FALLBACK_BANNER_IMAGE, formatPrice, type WorkerProfileForm } from "@/lib/profile"
+import { formatPrice } from "@/lib/currency"
+import { FALLBACK_BANNER_IMAGE, type WorkerProfileForm } from "@/lib/profile"
 
 interface WorkerCardPreviewProps {
   form: WorkerProfileForm
