@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/client"
+import { formatPriceOrDash, stripCurrency } from "@/lib/currency"
 import { COMPANIES, type Company } from "@/lib/data"
-import { FALLBACK_BANNER_IMAGE, formatPrice, type WorkerProfileForm } from "@/lib/profile"
+import { FALLBACK_BANNER_IMAGE, type WorkerProfileForm } from "@/lib/profile"
 import { fetchReviewStats, type ReviewStat } from "@/lib/reviews"
 
 /** Shape of a `public.worker_profiles` row. */
@@ -37,7 +38,7 @@ export function rowToCompany(row: WorkerProfileRow): Company {
     // reviews table; 0 here means "no reviews yet" → renders as a "New" badge.
     rating: 0,
     reviews: 0,
-    price: row.price || "$—",
+    price: formatPriceOrDash(row.price),
     image: row.banner_image || FALLBACK_BANNER_IMAGE,
     city: row.city || "",
     isVerified: row.is_verified,
@@ -80,7 +81,7 @@ export function rowToWorkerForm(row: WorkerProfileRow): WorkerProfileForm {
   return {
     businessName: row.business_name || row.display_name || "",
     tradeType: row.trade_type || "",
-    price: row.price || "",
+    price: stripCurrency(row.price ?? ""),
     tagline: row.tagline || "",
     aboutUs: row.about_us || "",
     bannerImage: row.banner_image || "",
@@ -107,7 +108,7 @@ function workerFormToRow(form: WorkerProfileForm, userId: string) {
     about_us: form.aboutUs || null,
     services: form.services,
     available_days: form.availableDays || null,
-    price: formatPrice(form.price) || null,
+    price: stripCurrency(form.price) || null,
     banner_image: form.bannerImage || null,
     updated_at: new Date().toISOString(),
   }
@@ -122,9 +123,26 @@ function applyReviewStats(companies: Company[], stats: Map<string, ReviewStat>):
 }
 
 /**
- * All marketplace listings (real workers first, then the demo catalogue), each
- * with its real review rating + count folded in. Unreviewed listings come back
- * with 0/0, which the UI renders as a "New" badge.
+ * Whether the seeded example listings should appear alongside real ones.
+ *
+ * They exist so the marketplace does not look broken before the first
+ * tradespeople sign up, and they retire themselves the moment any real listing
+ * exists — nobody has to remember to switch them off. Set
+ * `NEXT_PUBLIC_SHOW_DEMO_LISTINGS` to `always` (screenshots, a demo
+ * environment) or `never` (hide them even with an empty marketplace) to
+ * override that.
+ */
+export function shouldIncludeDemoListings(realListingCount: number): boolean {
+  const mode = process.env.NEXT_PUBLIC_SHOW_DEMO_LISTINGS
+  if (mode === "never") return false
+  if (mode === "always") return true
+  return realListingCount === 0
+}
+
+/**
+ * All marketplace listings (real workers first, then example listings if they
+ * still apply), each with its real review rating + count folded in. Unreviewed
+ * listings come back with 0/0, which the UI renders as a "New" badge.
  */
 export async function getMarketplaceCompanies(): Promise<Company[]> {
   const supabase = createClient()
@@ -133,20 +151,27 @@ export async function getMarketplaceCompanies(): Promise<Company[]> {
     fetchReviewStats(),
   ])
 
-  let companies: Company[]
   if (workers.error) {
     console.error("Failed to load worker profiles, falling back to demo data:", workers.error)
-    companies = COMPANIES
-  } else {
-    companies = [...(workers.data as WorkerProfileRow[]).map(rowToCompany), ...COMPANIES]
+    return applyReviewStats(COMPANIES, stats)
   }
+
+  const real = (workers.data as WorkerProfileRow[]).map(rowToCompany)
+  const companies = shouldIncludeDemoListings(real.length) ? [...real, ...COMPANIES] : real
   return applyReviewStats(companies, stats)
 }
 
-/** A single listing by id — a seeded demo company (numeric id) or a real worker (uuid). */
+/** A single listing by id — a seeded example (numeric id) or a real worker (uuid). */
 export async function getCompanyById(id: string): Promise<Company | null> {
   const seeded = COMPANIES.find((c) => String(c.id) === id)
-  if (seeded) return seeded
+  if (seeded) {
+    // An example listing stops resolving once real ones exist, so a stale link
+    // cannot keep serving an invented business as though it were real.
+    const { count } = await createClient()
+      .from("worker_profiles")
+      .select("user_id", { count: "exact", head: true })
+    return shouldIncludeDemoListings(count ?? 0) ? seeded : null
+  }
 
   try {
     const supabase = createClient()

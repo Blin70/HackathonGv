@@ -1,6 +1,14 @@
+import { formatPrice } from "@/lib/currency";
+
 export type Company = {
   // number for the seeded demo catalogue, uuid string for real worker_profiles rows.
   id: number | string;
+  /**
+   * True for the seeded example catalogue below. The UI badges these so a
+   * visitor is never shown an example as though it were a real business, and
+   * `lib/workers.ts` retires them once real listings exist.
+   */
+  isDemo?: boolean;
   name: string;
   type: string;
   desc: string;
@@ -15,7 +23,7 @@ export type Company = {
   isVerified?: boolean;
 };
 
-export const COMPANIES: Company[] = [
+const DEMO_CATALOGUE: Omit<Company, "isDemo">[] = [
   {
     id: 1,
     name: "AquaFix Plumbing",
@@ -26,7 +34,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Sunday (24/7)",
     rating: 4.9,
     reviews: 312,
-    price: "$90",
+    price: "900",
     city: "Skopje",
     image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=1200&auto=format&fit=crop",
   },
@@ -40,7 +48,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Saturday",
     rating: 4.8,
     reviews: 278,
-    price: "$110",
+    price: "1100",
     city: "Skopje",
     image: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?q=80&w=1200&auto=format&fit=crop",
   },
@@ -54,7 +62,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Friday",
     rating: 4.7,
     reviews: 214,
-    price: "$80",
+    price: "800",
     city: "Bitola",
     image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1200&auto=format&fit=crop",
   },
@@ -68,7 +76,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Saturday",
     rating: 4.9,
     reviews: 189,
-    price: "$120",
+    price: "1200",
     city: "Skopje",
     image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
   },
@@ -82,7 +90,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Tuesday - Sunday",
     rating: 4.6,
     reviews: 301,
-    price: "$70",
+    price: "700",
     city: "Tetovo",
     image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?q=80&w=1200&auto=format&fit=crop",
   },
@@ -96,7 +104,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Friday",
     rating: 4.8,
     reviews: 156,
-    price: "$150",
+    price: "1500",
     city: "Bitola",
     image: "https://images.unsplash.com/photo-1632759145351-1d592919f522?q=80&w=1200&auto=format&fit=crop",
   },
@@ -110,7 +118,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Saturday",
     rating: 4.7,
     reviews: 245,
-    price: "$95",
+    price: "950",
     city: "Skopje",
     image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1200&auto=format&fit=crop",
   },
@@ -124,7 +132,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Sunday",
     rating: 4.5,
     reviews: 198,
-    price: "$130",
+    price: "1300",
     city: "Kumanovo",
     image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=1200&auto=format&fit=crop",
   },
@@ -138,7 +146,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Friday",
     rating: 4.8,
     reviews: 173,
-    price: "$115",
+    price: "1150",
     city: "Bitola",
     image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop",
   },
@@ -152,7 +160,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Sunday (24/7)",
     rating: 4.9,
     reviews: 142,
-    price: "$85",
+    price: "850",
     city: "Skopje",
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
   },
@@ -166,7 +174,7 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Saturday",
     rating: 4.6,
     reviews: 388,
-    price: "$55",
+    price: "550",
     city: "Tetovo",
     image: "https://images.unsplash.com/photo-1585421514738-01798e348b17?q=80&w=1200&auto=format&fit=crop",
   },
@@ -180,11 +188,26 @@ export const COMPANIES: Company[] = [
     availableDays: "Monday - Friday",
     rating: 4.8,
     reviews: 221,
-    price: "$105",
+    price: "1050",
     city: "Kumanovo",
     image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop",
   },
 ];
+
+/**
+ * Example listings, shown so the marketplace does not look broken before the
+ * first tradespeople sign up. Every entry is marked `isDemo`, which is what the
+ * UI badges and what `shouldIncludeDemoListings` keys off. These are invented
+ * businesses with stock photography: never present one as a real company, and
+ * never copy a rating or review count out of here.
+ */
+export const COMPANIES: Company[] = DEMO_CATALOGUE.map((company) => ({
+  ...company,
+  isDemo: true,
+  // Real listings get their currency in `rowToCompany`; these need it too, or
+  // the marketplace would show "900" beside "900 ден".
+  price: formatPrice(company.price),
+}));
 
 export const TRADE_CATEGORIES = [
   "Plumber",

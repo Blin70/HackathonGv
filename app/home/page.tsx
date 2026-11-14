@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -18,12 +18,14 @@ import {
   ShieldCheck,
   UserPlus,
   Briefcase,
-  ChevronRight
+  ChevronRight,
+  MessageSquare
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { COMPANIES } from "@/lib/data"
+import type { Company } from "@/lib/data"
+import { getMarketplaceCompanies } from "@/lib/workers"
 
 const QUICK_SUGGESTIONS = [
   "Plumber",
@@ -37,7 +39,25 @@ const QUICK_SUGGESTIONS = [
 
 export default function HomeContent() {
   const [jobDescription, setJobDescription] = useState("")
+  const [featuredWorkers, setFeaturedWorkers] = useState<Company[]>([])
   const router = useRouter()
+
+  // Same source as /book, so a seeded example never outlives the real listing
+  // that replaces it.
+  useEffect(() => {
+    let active = true
+    getMarketplaceCompanies()
+      .then((listings) => {
+        if (active) setFeaturedWorkers(listings.slice(0, 3))
+      })
+      .catch(() => {
+        // The marketplace section is not load-bearing; leaving it empty beats
+        // showing an error on the landing page.
+      })
+    return () => {
+      active = false
+    }
+  }, [])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,8 +71,6 @@ export default function HomeContent() {
   const handleQuickCategory = (trade: string) => {
     router.push(`/book?type=${encodeURIComponent(trade)}`)
   }
-
-  const featuredWorkers = COMPANIES.slice(0, 3)
 
   return (
     <div className="flex flex-col min-h-screen bg-background overflow-hidden">
@@ -77,7 +95,7 @@ export default function HomeContent() {
                   The Fast & Trusted Way to <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-[#1a7a4a]">Book a Fixer</span>
                 </h1>
                 <p className="text-lg md:text-xl text-slate-300 font-normal leading-relaxed max-w-2xl">
-                  Connect instantly with certified plumbers, electricians, carpenters, painters & contractors in your area. Guaranteed transparent rates and zero hassle.
+                  Describe the job, compare local plumbers, electricians, carpenters and painters, and send a booking request. Rates are shown up front.
                 </p>
               </div>
 
@@ -137,28 +155,20 @@ export default function HomeContent() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                   
-                  {/* Floating Verified Worker Badge (Bottom Overlay) */}
-                  <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-slate-900/90 border border-slate-800/80 backdrop-blur-xl shadow-2xl flex items-center justify-between">
-                    <div className="flex items-center gap-3.5">
-                      <div className="h-12 w-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-extrabold text-lg">
-                        S
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <h4 className="font-extrabold text-white text-base">Simon Kraja</h4>
-                          <ShieldCheck size={16} className="text-emerald-400" />
-                        </div>
-                        <p className="text-xs text-slate-400 font-medium">Master Carpenter & Joiner</p>
-                      </div>
+                  {/* How the platform works, rather than an invented person
+                      with an invented rating and rate. */}
+                  <div className="absolute bottom-6 left-6 right-6 space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/90 p-5 shadow-2xl backdrop-blur-xl">
+                    <div className="flex items-start gap-3">
+                      <ShieldCheck size={18} className="mt-0.5 shrink-0 text-emerald-400" />
+                      <p className="text-sm font-semibold text-white">
+                        Registered businesses are checked and labelled
+                      </p>
                     </div>
-
-                    <div className="text-right">
-                      <div className="flex items-center gap-1 text-xs font-bold text-amber-400">
-                        <Star size={14} className="fill-amber-400" />
-                        <span>4.9</span>
-                        <span className="text-slate-400 font-normal">(189)</span>
-                      </div>
-                      <span className="text-xs font-extrabold text-emerald-400">$120/hr</span>
+                    <div className="flex items-start gap-3 border-t border-slate-800/80 pt-3">
+                      <MessageSquare size={18} className="mt-0.5 shrink-0 text-emerald-400" />
+                      <p className="text-sm font-semibold text-white">
+                        No phone calls — you choose who to contact
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -181,7 +191,7 @@ export default function HomeContent() {
                 Browse Popular Trade Categories
               </h2>
               <p className="text-muted-foreground text-base mt-1">
-                Direct access to top-rated, certified local trade specialists.
+                Browse local tradespeople by the work you need doing.
               </p>
             </div>
 
@@ -235,7 +245,7 @@ export default function HomeContent() {
               Not sure what fixing service you need?
             </h3>
             <p className="text-slate-300 text-base leading-relaxed">
-              Describe your issue in plain language and our AI Diagnostic Concierge will identify the exact trade category, estimate labor cost, and match you with available fixers.
+              Describe the problem in your own words. The assistant works out which trade it needs, how urgent it is, and any safety steps worth taking first, then points you at matching listings.
             </p>
           </div>
 
@@ -256,10 +266,10 @@ export default function HomeContent() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
             <div>
               <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
-                Featured Verified Professionals
+                Listings on Book A Fixer
               </h2>
               <p className="text-muted-foreground text-base mt-1">
-                Explore real trade experts ready to handle your home repair and installation needs.
+                Tradespeople currently on the marketplace. Examples are labelled as such.
               </p>
             </div>
 
@@ -284,9 +294,16 @@ export default function HomeContent() {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <Badge className="absolute top-4 left-4 bg-white text-[#1a7a4a] font-bold text-xs rounded-full px-3 py-1 border-0">
-                    {worker.type}
-                  </Badge>
+                  <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5">
+                    <Badge className="bg-white text-[#1a7a4a] font-bold text-xs rounded-full px-3 py-1 border-0">
+                      {worker.type}
+                    </Badge>
+                    {worker.isDemo && (
+                      <Badge className="rounded-full border-0 bg-amber-500 px-3 py-1 text-[10px] font-bold text-white">
+                        Example listing
+                      </Badge>
+                    )}
+                  </div>
                 </div>
 
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
@@ -361,9 +378,10 @@ export default function HomeContent() {
               <div className="h-16 w-16 rounded-2xl bg-emerald-50 text-[#1a7a4a] border border-emerald-200 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
                 3
               </div>
-              <h3 className="font-extrabold text-xl text-foreground">Job Done & Satisfaction</h3>
+              <h3 className="font-extrabold text-xl text-foreground">Job Done & Reviewed</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Your fixer arrives on schedule, completes the job with excellence, backed by 100% satisfaction guarantee.
+                Your fixer arrives at the agreed time. Once the job is marked complete you can
+                review the work, which is what other customers will see next.
               </p>
             </div>
 
@@ -376,54 +394,46 @@ export default function HomeContent() {
       {/* ========================================================================= */}
       <section className="w-full py-20 bg-background">
         <div className="container max-w-7xl mx-auto px-6">
+          {/* We are pre-launch: there are no customers yet, so there is nothing
+              honest to quote. This explains how reviews will work instead of
+              inventing people who said nice things. */}
           <div className="text-center mb-14 max-w-2xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-1 text-amber-400 text-sm font-bold">
-              {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} className="fill-amber-400" />)}
-              <span className="text-foreground ml-2">4.9 / 5 Average Customer Rating</span>
-            </div>
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
-              What Homeowners Say
+              Reviews you can actually trust
             </h2>
+            <p className="text-muted-foreground text-base">
+              Book A Fixer is new, so there are no reviews yet. When they arrive, here is
+              what will and will not be behind them.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                quote: "The fastest and most reliable way to get things fixed around the house! The plumber arrived on time and the pricing was completely transparent.",
-                author: "Elvira K.",
-                trade: "Plumbing Service",
-                initial: "E",
-                color: "bg-blue-100 text-blue-700"
+                icon: <MessageSquare className="h-6 w-6 text-[#1a7a4a]" />,
+                title: "Tied to a real booking",
+                body: "A review can only be written by the customer who requested the job, against that specific booking. No anonymous submissions.",
               },
               {
-                quote: "Extremely professional electrician. Panel upgrade was completed safely and flawlessly. Will definitely use Book A Fixer for future projects!",
-                author: "Arjan M.",
-                trade: "Electrical Rewiring",
-                initial: "A",
-                color: "bg-amber-100 text-amber-800"
+                icon: <ShieldCheck className="h-6 w-6 text-[#1a7a4a]" />,
+                title: "Only after the work is done",
+                body: "Reviews open once a job is marked complete, so a rating always reflects work that actually happened.",
               },
               {
-                quote: "Outstanding experience! Registered, found a certified carpenter within 10 minutes, and got custom door frames installed perfectly.",
-                author: "Sara D.",
-                trade: "Custom Carpentry",
-                initial: "S",
-                color: "bg-emerald-100 text-emerald-800"
-              }
-            ].map((review, i) => (
-              <div key={i} className="p-8 rounded-3xl bg-secondary/20 border border-border/60 flex flex-col justify-between space-y-6">
-                <p className="italic text-muted-foreground text-sm leading-relaxed">
-                  &quot;{review.quote}&quot;
-                </p>
-
-                <div className="flex items-center gap-3.5 pt-4 border-t border-border/40">
-                  <div className={`h-10 w-10 rounded-full font-bold flex items-center justify-center text-base ${review.color}`}>
-                    {review.initial}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-foreground text-sm">{review.author}</h4>
-                    <p className="text-xs text-muted-foreground">{review.trade}</p>
-                  </div>
+                icon: <Star className="h-6 w-6 text-[#1a7a4a]" />,
+                title: "Shown with the count",
+                body: "Every rating appears next to how many reviews it came from. A fixer with no reviews is labelled New, never padded out.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="p-8 rounded-3xl bg-secondary/20 border border-border/60 space-y-4"
+              >
+                <div className="p-3 rounded-2xl bg-white shadow-xs border border-border/40 w-fit">
+                  {item.icon}
                 </div>
+                <h3 className="font-extrabold text-lg text-foreground">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.body}</p>
               </div>
             ))}
           </div>
@@ -441,7 +451,7 @@ export default function HomeContent() {
             <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
               <h3 className="text-2xl font-black text-white">Find a Pro Fixer Today</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Browse verified local tradespeople, compare hourly rates, and submit booking requests with zero hassle.
+                Browse local tradespeople, compare hourly rates, and send a booking request. Registered businesses are labelled.
               </p>
               <Button asChild className="rounded-2xl h-12 px-6 bg-[#1a7a4a] hover:bg-[#145e38] text-white font-bold gap-2">
                 <Link href="/auth/signup">
