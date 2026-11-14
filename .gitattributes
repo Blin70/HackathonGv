@@ -13,5 +13,7 @@
 *.woff2 binary
 *.pdf binary
 
-# Generated; collapse it in diffs and reviews.
-pnpm-lock.yaml -diff linguist-generated
+# Generated; collapsed in GitHub reviews. Deliberately not marked -diff, which
+# would also hide the diff locally -- a lockfile change is worth being able to
+# read when a dependency moves unexpectedly.
+pnpm-lock.yaml linguist-generated
