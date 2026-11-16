@@ -67,7 +67,11 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  /* Was oklch(0.556 0 0) = #737373, which cleared 4.5:1 on white but only
+     managed 4.35:1 on bg-muted, bg-secondary and bg-slate-50 — the tinted
+     surfaces most body copy actually sits on. This is 4.75:1 there and
+     5.17:1 on white, with margin to spare, and still reads as secondary. */
+  --muted-foreground: oklch(0.535 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
