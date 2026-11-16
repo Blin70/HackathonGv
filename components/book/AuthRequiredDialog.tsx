@@ -36,7 +36,7 @@ export function AuthRequiredDialog({ open, onOpenChange, companyName }: AuthRequ
         <div className="mt-6 flex flex-col gap-3">
           <Button
             asChild
-            className="rounded-2xl w-full h-12 font-bold bg-[#1a7a4a] text-white hover:opacity-90 transition-all gap-2"
+            className="rounded-2xl w-full h-12 font-bold bg-primary text-white hover:opacity-90 transition-all gap-2"
           >
             <Link href="/auth/signup">
               <UserPlus size={18} />

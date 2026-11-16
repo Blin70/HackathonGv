@@ -234,7 +234,7 @@ export function BookingRequestDialog({
             type="button"
             onClick={onSubmit}
             disabled={submitting || alreadyOpen}
-            className="rounded-2xl font-bold gap-2 bg-[#1a7a4a] text-white hover:opacity-90 w-full sm:w-auto"
+            className="rounded-2xl font-bold gap-2 bg-primary text-white hover:opacity-90 w-full sm:w-auto"
           >
             <Send size={16} />
             {submitting ? "Sending..." : "Send request"}

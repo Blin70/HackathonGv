@@ -25,7 +25,7 @@ export function WorkerHero({ company, averageRating, reviewCount }: WorkerHeroPr
         <div className="max-w-5xl mx-auto px-6 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="text-white">
             <div className="mb-4 flex flex-wrap items-center gap-2">
-              <Badge className="bg-[#1a7a4a] text-white border-0 px-4 py-1.5 text-sm font-bold rounded-full shadow-lg">
+              <Badge className="bg-primary text-white border-0 px-4 py-1.5 text-sm font-bold rounded-full shadow-lg">
                 {company.type}
               </Badge>
 
@@ -39,13 +39,13 @@ export function WorkerHero({ company, averageRating, reviewCount }: WorkerHeroPr
             <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-medium opacity-90">
               {reviewCount > 0 ? (
                 <div className="flex items-center gap-1.5">
-                  <Star className="fill-yellow-400 text-yellow-400" size={18} />
+                  <Star className="fill-amber-400 text-amber-400" size={18} />
                   <span className="font-bold">{averageRating}</span>
                   <span className="opacity-75">({reviewCount} reviews)</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <Sparkles className="text-emerald-400" size={18} />
+                  <Sparkles className="text-primary-bright" size={18} />
                   <span className="font-bold">New</span>
                   <span className="opacity-75">— no reviews yet</span>
                 </div>
@@ -54,7 +54,7 @@ export function WorkerHero({ company, averageRating, reviewCount }: WorkerHeroPr
                 <>
                   <div className="h-1.5 w-1.5 rounded-full bg-white/50" />
                   <div className="flex items-center gap-1.5">
-                    <BadgeCheck size={18} className="text-emerald-400" />
+                    <BadgeCheck size={18} className="text-primary-bright" />
                     <span>Registered Business</span>
                   </div>
                 </>

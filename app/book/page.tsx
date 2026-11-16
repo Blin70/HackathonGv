@@ -69,7 +69,7 @@ function CompanyCard({
           <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5">
             <Badge
               className="text-xs font-bold rounded-full px-3.5 py-1 border-0 shadow-md"
-              style={{ background: "white", color: "#145e38" }}
+              style={{ background: "white", color: "var(--primary)" }}
             >
               {company.type}
             </Badge>
@@ -80,7 +80,7 @@ function CompanyCard({
 
           {company.isVerified && (
             <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-extrabold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">
-              <BadgeCheck size={12} className="text-emerald-400" />
+              <BadgeCheck size={12} className="text-primary-bright" />
               <span>Registered</span>
             </div>
           )}
@@ -89,7 +89,7 @@ function CompanyCard({
         {/* Content */}
         <CardContent className="flex flex-col gap-3 p-5 flex-1">
           <div>
-            <h3 className="font-extrabold text-[17px] leading-snug text-foreground group-hover:text-[#1a7a4a] transition-colors line-clamp-1">
+            <h3 className="font-extrabold text-[17px] leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-1">
               {company.name}
             </h3>
             <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-2">
@@ -97,7 +97,7 @@ function CompanyCard({
             </p>
             {company.city && (
               <p className="flex items-center gap-1 text-xs font-semibold text-muted-foreground mt-2">
-                <MapPin size={12} className="text-[#1a7a4a]" /> {company.city}
+                <MapPin size={12} className="text-primary" /> {company.city}
               </p>
             )}
           </div>
@@ -116,8 +116,8 @@ function CompanyCard({
                 </span>
               </>
             ) : (
-              <span className="flex items-center gap-1 text-xs font-bold text-[#1a7a4a] bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-1">
-                <Sparkles size={12} className="text-emerald-400" /> New
+              <span className="flex items-center gap-1 text-xs font-bold text-primary bg-primary/5 border border-primary/15 rounded-full px-2.5 py-1">
+                <Sparkles size={12} className="text-primary-bright" /> New
               </span>
             )}
           </div>
@@ -141,8 +141,7 @@ function CompanyCard({
             onBook(company);
           }}
           disabled={booking}
-          className="rounded-2xl px-4 h-10 font-bold text-xs text-white hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
-          style={{ background: "#1a7a4a" }}
+          className="rounded-2xl px-4 h-10 font-bold text-xs bg-primary text-primary-foreground hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
         >
           {!isLoggedIn && <Lock size={12} className="opacity-80" />}
           {booking ? "Sending..." : "Book Now"}
@@ -218,7 +217,7 @@ export default function TradesmanMarket() {
   }).sort((a, b) => b.rating - a.rating);
 
   return (
-    <div className="min-h-screen bg-[#f7f6f2]">
+    <div className="min-h-screen bg-muted/40">
       <div className="max-w-7xl mx-auto px-6 pt-12 pb-20">
 
         {/* Header - Not Sticky */}
@@ -296,7 +295,7 @@ export default function TradesmanMarket() {
 
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="font-black text-sm uppercase tracking-wider flex items-center gap-1.5 text-foreground">
-                  <SlidersHorizontal size={16} className="text-[#1a7a4a]" />
+                  <SlidersHorizontal size={16} className="text-primary" />
                   Filters
                 </span>
 
@@ -307,7 +306,7 @@ export default function TradesmanMarket() {
                       setRatingFilter("0");
                       setCityFilter("All Cities");
                     }}
-                    className="text-xs font-bold text-[#1a7a4a] hover:underline"
+                    className="text-xs font-bold text-primary hover:underline"
                   >
                     Reset
                   </button>
@@ -375,16 +374,16 @@ export default function TradesmanMarket() {
               </div>
 
               {/* AI diagnostic helper card in sidebar */}
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 space-y-2">
-                <p className="text-xs font-bold text-[#145e38] flex items-center gap-1">
+              <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-2">
+                <p className="text-xs font-bold text-primary/90 flex items-center gap-1">
                   <Sparkles size={14} /> Need diagnostics?
                 </p>
-                <p className="text-[11px] text-emerald-800 leading-relaxed">
+                <p className="text-[11px] text-primary leading-relaxed">
                   Not sure which trade you need? Describe the problem and we will work it out.
                 </p>
                 <Link
                   href="/describe"
-                  className="text-[11px] font-black text-[#1a7a4a] hover:underline flex items-center gap-0.5 pt-1"
+                  className="text-[11px] font-black text-primary hover:underline flex items-center gap-0.5 pt-1"
                 >
                   Describe the problem →
                 </Link>
@@ -430,7 +429,7 @@ export default function TradesmanMarket() {
               </DialogDescription>
             </DialogHeader>
             <div className="mt-6 flex flex-col gap-3">
-              <Button asChild className="rounded-2xl w-full h-12 font-bold bg-[#1a7a4a] text-white hover:opacity-90 transition-all gap-2">
+              <Button asChild className="rounded-2xl w-full h-12 font-bold bg-primary text-primary-foreground hover:opacity-90 transition-all gap-2">
                 <Link href="/auth/signup">
                   <UserPlus size={18} />
                   Sign In / Register as Client

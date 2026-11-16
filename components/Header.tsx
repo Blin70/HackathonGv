@@ -100,7 +100,7 @@ export default function Header() {
                     aria-label="Book A Fixer Home"
                 >
                     <div className="relative flex-shrink-0 transform transition-all duration-500 group-hover:scale-105 group-active:scale-95">
-                        <div className="absolute -inset-2 rounded-full bg-[#1a7a4a]/0 blur-md transition-all duration-500 group-hover:bg-[#1a7a4a]/25" />
+                        <div className="absolute -inset-2 rounded-full bg-primary/0 blur-md transition-all duration-500 group-hover:bg-primary/25" />
 
                         <Image
                             src="/image.svg"
@@ -164,7 +164,7 @@ export default function Header() {
                                                         : user.email?.charAt(0).toUpperCase()}
                                                 </AvatarFallback>
                                             </Avatar>
-                                            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+                                            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" />
                                         </div>
                                         <span className="text-sm font-semibold max-w-[120px] truncate text-foreground group-hover:text-primary transition-colors">
                                             {user.user_metadata?.firstName || user.email?.split('@')[0] || "Account"}
@@ -262,7 +262,7 @@ export default function Header() {
                                             className="h-10 w-10 object-contain"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-[#1a7a4a]">Book A</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Book A</span>
                                             <span className="text-xl font-black text-foreground">Fixer</span>
                                         </div>
                                     </div>

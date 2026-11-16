@@ -35,7 +35,7 @@ export function BookingPanel({ company, isLoggedIn, booked, onBook }: BookingPan
       <div className="space-y-4 mb-8">
         {GUARANTEES.map((item) => (
           <div key={item} className="flex items-center gap-3 text-sm font-medium text-foreground">
-            <CheckCircle2 className="text-green-500" size={18} />
+            <CheckCircle2 className="text-primary" size={18} />
             {item}
           </div>
         ))}
@@ -44,8 +44,7 @@ export function BookingPanel({ company, isLoggedIn, booked, onBook }: BookingPan
       <Button
         onClick={onBook}
         disabled={booked}
-        className="w-full h-14 rounded-2xl font-bold text-base shadow-lg shadow-[#1a7a4a]/20 hover:scale-[1.02] transition-transform gap-2 text-white"
-        style={{ background: "#1a7a4a" }}
+        className="w-full h-14 rounded-2xl font-bold text-base bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform gap-2"
       >
         {!isLoggedIn && <Lock size={16} />}
         {booked ? "Booking Request Sent!" : isLoggedIn ? "Request Booking" : "Sign In to Book"}

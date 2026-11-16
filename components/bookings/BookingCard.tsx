@@ -32,9 +32,9 @@ const STATUS_STYLES: Record<BookingStatus, { label: string; className: string }>
   pending: { label: "Pending", className: "bg-amber-50 text-amber-700 ring-amber-200" },
   confirmed: { label: "Accepted", className: "bg-blue-50 text-blue-700 ring-blue-200" },
   in_progress: { label: "In progress", className: "bg-violet-50 text-violet-700 ring-violet-200" },
-  completed: { label: "Completed", className: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
+  completed: { label: "Completed", className: "bg-primary/5 text-primary ring-primary/20" },
   declined: { label: "Declined", className: "bg-red-50 text-red-700 ring-red-200" },
-  cancelled: { label: "Cancelled", className: "bg-gray-100 text-gray-600 ring-gray-200" },
+  cancelled: { label: "Cancelled", className: "bg-slate-100 text-slate-600 ring-slate-200" },
 }
 
 /** How each reachable status is offered as a button. */
@@ -132,7 +132,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
       {/* The scheduled slot is the fact a worker plans their day around. */}
       {schedule && (
         <div className="mx-5 mb-4 rounded-2xl bg-secondary/40 px-4 py-3 flex items-center gap-2.5">
-          <CalendarClock size={16} className="text-[#1a7a4a] shrink-0" />
+          <CalendarClock size={16} className="text-primary shrink-0" />
           <span className="text-sm font-bold text-foreground">{schedule}</span>
         </div>
       )}
@@ -152,7 +152,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
               <Detail icon={Phone}>
                 <a
                   href={`tel:${booking.client_phone}`}
-                  className="font-semibold text-[#1a7a4a] hover:underline"
+                  className="font-semibold text-primary hover:underline"
                 >
                   {formatPhoneForDisplay(booking.client_phone)}
                 </a>
@@ -211,7 +211,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
                   variant={action.tone === "primary" ? "default" : "outline"}
                   className={cn(
                     "h-8 rounded-xl text-xs font-bold gap-1.5",
-                    action.tone === "primary" && "bg-[#1a7a4a] text-white hover:opacity-90",
+                    action.tone === "primary" && "bg-primary text-white hover:opacity-90",
                     action.tone === "quiet" && "border-border",
                     action.tone === "danger" && "border-border text-red-600 hover:bg-red-50"
                   )}

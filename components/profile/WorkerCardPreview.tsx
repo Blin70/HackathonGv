@@ -20,7 +20,7 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
     <div className="lg:col-span-4 space-y-6">
       <div className="sticky top-24 space-y-6">
         <Card className="border border-border/60 bg-white shadow-xl rounded-3xl overflow-hidden p-0">
-          <div className="bg-gradient-to-r from-[#1a7a4a] to-[#25c26e] p-4 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-between">
+          <div className="bg-gradient-to-r from-primary to-primary-bright p-4 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-between">
             <span>Live Card Preview</span>
             <span className="bg-white/20 text-white px-2.5 py-0.5 rounded-full text-[10px]">Real-time</span>
           </div>
@@ -33,7 +33,7 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <Badge className="absolute top-3 left-3 bg-white text-[#1a7a4a] font-bold text-xs rounded-full px-3 py-1 border-0">
+            <Badge className="absolute top-3 left-3 bg-white text-primary font-bold text-xs rounded-full px-3 py-1 border-0">
               {form.tradeType}
             </Badge>
           </div>
@@ -53,7 +53,7 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
                 <span className="text-muted-foreground">(189 reviews)</span>
               </div>
               {isVerified && (
-                <span className="flex items-center gap-1 text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                <span className="flex items-center gap-1 text-xs text-primary font-bold bg-primary/5 px-2 py-0.5 rounded-md border border-primary/20">
                   <BadgeCheck size={12} /> Registered
                 </span>
               )}
@@ -67,7 +67,7 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
               <span className="text-xs text-muted-foreground">/hr</span>
             </div>
 
-            <Button asChild size="sm" className="rounded-xl font-bold bg-[#1a7a4a] text-white">
+            <Button asChild size="sm" className="rounded-xl font-bold bg-primary text-white">
               <Link href={`/book/${workerId}`} target="_blank">
                 View Page →
               </Link>

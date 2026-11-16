@@ -11,7 +11,7 @@ interface RepairAssessmentPanelProps {
 }
 
 const URGENCY_PRESENTATION = {
-  routine: { label: "Routine", className: "border-emerald-200 bg-emerald-50 text-emerald-800" },
+  routine: { label: "Routine", className: "border-primary/20 bg-primary/5 text-primary" },
   soon: { label: "Needs attention soon", className: "border-amber-200 bg-amber-50 text-amber-900" },
   urgent: { label: "Urgent", className: "border-orange-200 bg-orange-50 text-orange-900" },
   emergency: { label: "Possible emergency", className: "border-red-200 bg-red-50 text-red-800" },

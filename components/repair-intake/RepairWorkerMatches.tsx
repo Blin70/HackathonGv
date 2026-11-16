@@ -62,7 +62,7 @@ export function RepairWorkerMatches({ companies, city, tradeCategory, loading, e
                         <div className="flex flex-wrap items-center gap-2">
                           <h3 className="truncate font-bold text-foreground">{company.name}</h3>
                           {company.isVerified && (
-                            <Badge variant="outline" className="gap-1 rounded-full border-emerald-200 bg-emerald-50 text-[10px] text-emerald-800">
+                            <Badge variant="outline" className="gap-1 rounded-full border-primary/20 bg-primary/5 text-[10px] text-primary">
                               <BadgeCheck className="size-3" /> Registered
                             </Badge>
                           )}

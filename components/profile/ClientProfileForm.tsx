@@ -165,7 +165,6 @@ export function ClientProfileForm({ form, onChange, saving, onSubmit }: ClientPr
                 type="submit"
                 disabled={saving}
                 className="w-full sm:w-auto sm:ml-auto h-12 px-8 font-bold text-md rounded-2xl shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
-                style={{ background: "#1a7a4a" }}
               >
                 {saving ? "Saving..." : "Save Personal Info"}
               </Button>

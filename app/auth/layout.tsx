@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen w-full flex flex-col justify-between bg-[#fcfbf9] dark:bg-background relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col justify-between bg-muted/40 dark:bg-background relative overflow-hidden">
       {/* Decorative background gradients */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none -mr-48 -mt-48" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none -ml-48 -mb-48" />

@@ -24,7 +24,7 @@ export function ProfileCompleteness({ checklist, completeness }: ProfileComplete
             A complete profile ranks higher and wins more bookings.
           </p>
         </div>
-        <span className="text-2xl font-black text-[#1a7a4a]">{completeness}%</span>
+        <span className="text-2xl font-black text-primary">{completeness}%</span>
       </div>
 
       <Progress value={completeness} className="h-2" />
@@ -42,7 +42,7 @@ export function ProfileCompleteness({ checklist, completeness }: ProfileComplete
           ))}
         </div>
       ) : (
-        <p className="text-xs font-bold text-emerald-700 flex items-center gap-1 pt-1">
+        <p className="text-xs font-bold text-primary flex items-center gap-1 pt-1">
           <CheckCircle2 size={14} /> Your profile is complete.
         </p>
       )}

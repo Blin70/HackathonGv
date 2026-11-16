@@ -68,14 +68,14 @@ export function WorkerProfileForm({
   return (
     <div className="lg:col-span-8 space-y-8">
       <Card className="border-border/50 shadow-xl rounded-3xl overflow-hidden bg-white">
-        <div className="h-2 bg-[#1a7a4a] w-full" />
+        <div className="h-2 bg-primary w-full" />
         <form onSubmit={handleSubmit}>
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl font-black flex items-center gap-2">
-                <Briefcase className="text-[#1a7a4a]" /> Worker &amp; Business Public Profile Form
+                <Briefcase className="text-primary" /> Worker &amp; Business Public Profile Form
               </CardTitle>
-              <Badge className="bg-[#1a7a4a] text-white border-0 text-xs px-3 py-1 font-bold">
+              <Badge className="bg-primary text-white border-0 text-xs px-3 py-1 font-bold">
                 Public Listing
               </Badge>
             </div>
@@ -98,7 +98,7 @@ export function WorkerProfileForm({
                     value={form.businessName}
                     onChange={(e) => onChange("businessName", e.target.value)}
                     placeholder="e.g. Oak & Timber Carpentry"
-                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a] font-bold text-foreground"
+                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary font-bold text-foreground"
                     required
                   />
                 </Field>
@@ -135,7 +135,7 @@ export function WorkerProfileForm({
                     value={form.price}
                     onChange={(e) => onChange("price", e.target.value)}
                     placeholder="e.g. $120"
-                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a] font-extrabold text-foreground"
+                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary font-extrabold text-foreground"
                     required
                   />
                 </Field>
@@ -149,7 +149,7 @@ export function WorkerProfileForm({
                     value={form.availableDays}
                     onChange={(e) => onChange("availableDays", e.target.value)}
                     placeholder="e.g. Monday - Saturday (8am - 6pm)"
-                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a]"
+                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary"
                   />
                 </Field>
               </div>
@@ -166,7 +166,7 @@ export function WorkerProfileForm({
                   value={form.tagline}
                   onChange={(e) => onChange("tagline", e.target.value)}
                   placeholder="e.g. Custom built-ins, doors, decking & structural woodwork."
-                  className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a]"
+                  className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary"
                   required
                 />
                 <p className="text-xs text-muted-foreground mt-1">
@@ -187,7 +187,7 @@ export function WorkerProfileForm({
                   value={form.aboutUs}
                   onChange={(e) => onChange("aboutUs", e.target.value)}
                   placeholder="Describe your background, years of experience, and dedication to quality craftsmen..."
-                  className="p-4 rounded-2xl bg-secondary/30 border border-border focus-visible:ring-2 focus-visible:ring-[#1a7a4a] text-sm leading-relaxed"
+                  className="p-4 rounded-2xl bg-secondary/30 border border-border focus-visible:ring-2 focus-visible:ring-primary text-sm leading-relaxed"
                   required
                 />
               </Field>
@@ -212,7 +212,7 @@ export function WorkerProfileForm({
                     value={form.bannerImage}
                     onChange={(e) => onChange("bannerImage", e.target.value)}
                     placeholder="https://..."
-                    className="h-12 pl-10 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a] text-xs font-mono"
+                    className="h-12 pl-10 rounded-2xl bg-secondary/30 focus-visible:ring-primary text-xs font-mono"
                   />
                 </div>
 
@@ -228,7 +228,7 @@ export function WorkerProfileForm({
                         onClick={() => onChange("bannerImage", preset.url)}
                         className={`text-[11px] font-bold px-3 py-1.5 rounded-xl border transition-all ${
                           form.bannerImage === preset.url
-                            ? "bg-[#1a7a4a] text-white border-[#1a7a4a] shadow-xs"
+                            ? "bg-primary text-white border-primary shadow-xs"
                             : "bg-secondary/40 text-muted-foreground hover:bg-secondary/80 border-border"
                         }`}
                       >
@@ -257,12 +257,12 @@ export function WorkerProfileForm({
                       }
                     }}
                     placeholder="Add a service (e.g. Custom Built-ins)..."
-                    className="h-11 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a]"
+                    className="h-11 rounded-2xl bg-secondary/30 focus-visible:ring-primary"
                   />
                   <Button
                     type="button"
                     onClick={handleAddService}
-                    className="h-11 px-5 rounded-2xl font-bold bg-[#1a7a4a] text-white hover:opacity-90 shrink-0"
+                    className="h-11 px-5 rounded-2xl font-bold bg-primary text-white hover:opacity-90 shrink-0"
                   >
                     <Plus size={16} className="mr-1" /> Add
                   </Button>
@@ -279,7 +279,7 @@ export function WorkerProfileForm({
                         key={service}
                         className="bg-white text-foreground border border-border/60 shadow-xs px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 group hover:border-red-300"
                       >
-                        <CheckCircle2 size={13} className="text-[#1a7a4a]" />
+                        <CheckCircle2 size={13} className="text-primary" />
                         <span>{service}</span>
                         <button
                           type="button"
@@ -311,8 +311,7 @@ export function WorkerProfileForm({
             <Button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto h-12 px-8 font-black text-base rounded-2xl shadow-xl shadow-green-900/20 hover:scale-105 transition-transform"
-              style={{ background: "#1a7a4a", color: "#ffffff" }}
+              className="w-full sm:w-auto h-12 px-8 font-black text-base rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/20 hover:scale-105 transition-transform"
             >
               {saving ? "Publishing Profile..." : "Save & Publish Worker Profile"}
             </Button>

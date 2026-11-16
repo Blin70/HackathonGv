@@ -84,7 +84,7 @@ export function WriteReviewDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. John D."
-              className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a]"
+              className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary"
               required
             />
           </div>
@@ -102,7 +102,7 @@ export function WriteReviewDialog({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Describe the service quality, punctuality, and overall experience..."
-              className="rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a] leading-relaxed"
+              className="rounded-2xl bg-secondary/30 focus-visible:ring-primary leading-relaxed"
               required
             />
           </div>
@@ -118,7 +118,7 @@ export function WriteReviewDialog({
             </Button>
             <Button
               type="submit"
-              className="rounded-2xl h-11 px-6 font-bold bg-[#1a7a4a] text-white hover:opacity-90"
+              className="rounded-2xl h-11 px-6 font-bold bg-primary text-white hover:opacity-90"
             >
               {editing ? "Update Review" : "Publish Review"}
             </Button>

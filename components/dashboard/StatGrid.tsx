@@ -30,14 +30,16 @@ export function StatGrid({ pending, scheduled, completed, acceptanceRate }: Stat
       />
       <StatCard
         icon={<CheckCheck size={18} />}
-        accent="bg-emerald-100 text-emerald-700"
+        accent="bg-primary/10 text-primary"
         label="Completed"
         value={completed}
         sublabel="jobs finished"
       />
       <StatCard
         icon={<Percent size={18} />}
-        accent="bg-blue-100 text-blue-700"
+        /* A rate is not a status, so it takes the neutral treatment rather
+           than borrowing the colour that means "scheduled". */
+        accent="bg-slate-100 text-slate-700"
         label="Acceptance"
         value={acceptanceRate === null ? "—" : `${acceptanceRate}%`}
         sublabel={acceptanceRate === null ? "no data yet" : "of decided requests"}

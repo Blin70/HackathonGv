@@ -14,7 +14,7 @@ interface StatusBannerProps {
 }
 
 const VARIANT_STYLES: Record<StatusBannerVariant, string> = {
-  success: "bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/30",
+  success: "bg-primary/10 text-primary dark:text-primary-bright border border-primary/30",
   error: "bg-red-500/10 text-red-600 border border-red-500/30",
 }
 

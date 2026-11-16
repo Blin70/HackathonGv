@@ -37,7 +37,7 @@ export function BookingsView() {
           title="Couldn't load your bookings"
           description={error}
           action={
-            <Button onClick={reload} className="rounded-2xl font-bold bg-[#1a7a4a] text-white hover:opacity-90">
+            <Button onClick={reload} className="rounded-2xl font-bold bg-primary text-white hover:opacity-90">
               Try again
             </Button>
           }
@@ -92,7 +92,7 @@ export function BookingsView() {
                 title="No booking requests yet"
                 description="Find a trusted local fixer and send your first request."
                 action={
-                  <Button asChild className="rounded-2xl font-bold bg-[#1a7a4a] text-white hover:opacity-90">
+                  <Button asChild className="rounded-2xl font-bold bg-primary text-white hover:opacity-90">
                     <Link href="/book">Browse Fixers</Link>
                   </Button>
                 }

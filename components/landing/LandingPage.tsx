@@ -81,8 +81,8 @@ export function LandingPage() {
       {/* ========================================================================= */}
       <section className="relative w-full bg-slate-950 text-white overflow-hidden py-16 md:py-28">
         {/* Ambient Radial Lighting */}
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#1a7a4a]/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="container max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -93,7 +93,10 @@ export function LandingPage() {
               {/* Title & Subtitle */}
               <div className="space-y-4 pt-4">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-white">
-                  The Fast & Trusted Way to <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-[#1a7a4a]">Book a Fixer</span>
+                  {/* Solid, not a gradient: the gradient faded into --primary,
+                      which is only 3.77:1 on this background, so half the
+                      headline was muddy. One colour also reads calmer. */}
+                  The Fast &amp; Trusted Way to <span className="text-primary-bright">Book a Fixer</span>
                 </h1>
                 <p className="text-lg md:text-xl text-slate-300 font-normal leading-relaxed max-w-2xl">
                   Describe the job, compare local plumbers, electricians, carpenters and painters, and send a booking request. Rates are shown up front.
@@ -114,8 +117,7 @@ export function LandingPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="h-14 px-8 w-full sm:w-auto font-black text-base rounded-2xl text-white shadow-xl shadow-emerald-950 transition-all hover:scale-[1.02]"
-                    style={{ background: "#1a7a4a" }}
+                    className="h-14 px-8 w-full sm:w-auto font-black text-base rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/30 transition-all hover:scale-[1.02]"
                   >
                     Search Fixers
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -128,7 +130,7 @@ export function LandingPage() {
                   <span>No phone calls — you choose who to contact.</span>
                   <Link
                     href="/describe"
-                    className="font-semibold text-emerald-400 underline-offset-4 hover:underline"
+                    className="font-semibold text-primary-bright underline-offset-4 hover:underline"
                   >
                     Not sure which trade you need?
                   </Link>
@@ -143,7 +145,7 @@ export function LandingPage() {
                     key={trade}
                     type="button"
                     onClick={() => handleQuickCategory(trade)}
-                    className="text-xs font-bold px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-emerald-500/50 hover:bg-slate-800 transition-all"
+                    className="text-xs font-bold px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-primary-bright/50 hover:bg-slate-800 transition-all"
                   >
                     {trade}
                   </button>
@@ -172,7 +174,7 @@ export function LandingPage() {
                       with an invented rating and rate. */}
                   <div className="absolute bottom-6 left-6 right-6 space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/90 p-5 shadow-2xl backdrop-blur-xl">
                     <div className="flex items-start gap-3">
-                      <ShieldCheck size={18} className="mt-0.5 shrink-0 text-emerald-400" />
+                      <ShieldCheck size={18} className="mt-0.5 shrink-0 text-primary-bright" />
                       <p className="text-sm font-semibold text-white">
                         Registered businesses are checked and labelled
                       </p>
@@ -181,7 +183,7 @@ export function LandingPage() {
                         under the search button, and repeating it in the same
                         viewport reads as filler. */}
                     <div className="flex items-start gap-3 border-t border-slate-800/80 pt-3">
-                      <Star size={18} className="mt-0.5 shrink-0 text-emerald-400" />
+                      <Star size={18} className="mt-0.5 shrink-0 text-primary-bright" />
                       <p className="text-sm font-semibold text-white">
                         Reviews come from completed bookings only
                       </p>
@@ -221,24 +223,24 @@ export function LandingPage() {
           {/* Trade Category Cards Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
             {[
-              { name: "Plumbing", trade: "Plumber", icon: <Droplets className="h-7 w-7 text-blue-500" />, count: "Emergency Leak & Fittings" },
-              { name: "Electrical", trade: "Electrician", icon: <Zap className="h-7 w-7 text-amber-500" />, count: "Rewiring & Panel Upgrades" },
-              { name: "Carpentry", trade: "Carpenter", icon: <Hammer className="h-7 w-7 text-orange-600" />, count: "Built-ins & Framing" },
-              { name: "Painting", trade: "Painter", icon: <Paintbrush className="h-7 w-7 text-emerald-500" />, count: "Interior & Exterior" },
-              { name: "Roofing", trade: "Roofer", icon: <Wind className="h-7 w-7 text-cyan-500" />, count: "Repairs & Waterproofing" },
-              { name: "Landscaping", trade: "Gardener", icon: <Leaf className="h-7 w-7 text-green-600" />, count: "Lawns & Patios" },
+              { name: "Plumbing", trade: "Plumber", icon: <Droplets className="h-7 w-7 text-primary" />, count: "Emergency Leak & Fittings" },
+              { name: "Electrical", trade: "Electrician", icon: <Zap className="h-7 w-7 text-primary" />, count: "Rewiring & Panel Upgrades" },
+              { name: "Carpentry", trade: "Carpenter", icon: <Hammer className="h-7 w-7 text-primary" />, count: "Built-ins & Framing" },
+              { name: "Painting", trade: "Painter", icon: <Paintbrush className="h-7 w-7 text-primary" />, count: "Interior & Exterior" },
+              { name: "Roofing", trade: "Roofer", icon: <Wind className="h-7 w-7 text-primary" />, count: "Repairs & Waterproofing" },
+              { name: "Landscaping", trade: "Gardener", icon: <Leaf className="h-7 w-7 text-primary" />, count: "Lawns & Patios" },
             ].map((cat) => (
               <button
                 key={cat.name}
                 type="button"
                 onClick={() => handleQuickCategory(cat.trade)}
-                className="group p-5 rounded-3xl bg-secondary/30 border border-border/60 hover:bg-white hover:shadow-xl hover:border-[#1a7a4a]/40 transition-all duration-300 text-left flex flex-col justify-between min-h-[160px]"
+                className="group p-5 rounded-3xl bg-secondary/30 border border-border/60 hover:bg-white hover:shadow-xl hover:border-primary/40 transition-all duration-300 text-left flex flex-col justify-between min-h-[160px]"
               >
                 <div className="p-3 rounded-2xl bg-white shadow-xs border border-border/40 w-fit group-hover:scale-110 transition-transform">
                   {cat.icon}
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-base text-foreground group-hover:text-[#1a7a4a] transition-colors">
+                  <h3 className="font-extrabold text-base text-foreground group-hover:text-primary transition-colors">
                     {cat.name}
                   </h3>
                   <p className="text-[11px] text-muted-foreground font-medium mt-0.5 leading-tight">
@@ -254,7 +256,7 @@ export function LandingPage() {
       {/* ========================================================================= */}
       {/* AI DIAGNOSTIC CONCIERGE BANNER                                             */}
       {/* ========================================================================= */}
-      <section className="w-full py-16 bg-gradient-to-r from-emerald-950 via-slate-950 to-emerald-950 text-white relative overflow-hidden">
+      <section className="w-full py-16 bg-gradient-to-r from-slate-950 via-slate-950 to-slate-950 text-white relative overflow-hidden">
         <div className="container max-w-7xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="space-y-3 max-w-2xl text-center lg:text-left">
             <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white">
@@ -268,7 +270,7 @@ export function LandingPage() {
           <Button asChild size="lg" className="h-14 px-8 font-black text-base rounded-2xl bg-white text-slate-950 hover:bg-slate-100 shadow-2xl shrink-0 gap-2">
             <Link href="/describe">
               Describe the problem
-              <Sparkles className="h-5 w-5 text-[#1a7a4a]" />
+              <Sparkles className="h-5 w-5 text-primary" />
             </Link>
           </Button>
         </div>
@@ -311,7 +313,7 @@ export function LandingPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5">
-                    <Badge className="bg-white text-[#1a7a4a] font-bold text-xs rounded-full px-3 py-1 border-0">
+                    <Badge className="bg-white text-primary font-bold text-xs rounded-full px-3 py-1 border-0">
                       {worker.type}
                     </Badge>
                     {worker.isDemo && <DemoBadge emphasis="card" />}
@@ -320,7 +322,7 @@ export function LandingPage() {
 
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="font-extrabold text-xl text-foreground group-hover:text-[#1a7a4a] transition-colors">
+                    <h3 className="font-extrabold text-xl text-foreground group-hover:text-primary transition-colors">
                       {worker.name}
                     </h3>
                     <p className="text-sm text-muted-foreground mt-2 leading-relaxed line-clamp-2">
@@ -334,7 +336,7 @@ export function LandingPage() {
                       <p className="text-2xl font-black text-foreground">{worker.price}<span className="text-sm font-medium text-muted-foreground">/hr</span></p>
                     </div>
 
-                    <Button asChild size="sm" className="rounded-xl font-bold bg-[#1a7a4a] text-white hover:opacity-90">
+                    <Button asChild size="sm" className="rounded-xl font-bold bg-primary text-white hover:opacity-90">
                       <Link href={`/book/${worker.id}`}>
                         View Profile
                       </Link>
@@ -365,7 +367,7 @@ export function LandingPage() {
             
             {/* Step 1 */}
             <div className="p-8 rounded-3xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-xl">
-              <div className="h-16 w-16 rounded-2xl bg-emerald-50 text-[#1a7a4a] border border-emerald-200 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
+              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
                 1
               </div>
               <h3 className="font-extrabold text-xl text-foreground">Browse or Search Fixers</h3>
@@ -376,7 +378,7 @@ export function LandingPage() {
 
             {/* Step 2 */}
             <div className="p-8 rounded-3xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-xl">
-              <div className="h-16 w-16 rounded-2xl bg-emerald-50 text-[#1a7a4a] border border-emerald-200 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
+              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
                 2
               </div>
               <h3 className="font-extrabold text-xl text-foreground">Select Pro & Request Booking</h3>
@@ -387,7 +389,7 @@ export function LandingPage() {
 
             {/* Step 3 */}
             <div className="p-8 rounded-3xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-xl">
-              <div className="h-16 w-16 rounded-2xl bg-emerald-50 text-[#1a7a4a] border border-emerald-200 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
+              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
                 3
               </div>
               <h3 className="font-extrabold text-xl text-foreground">Job Done & Reviewed</h3>
@@ -422,17 +424,17 @@ export function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                icon: <MessageSquare className="h-6 w-6 text-[#1a7a4a]" />,
+                icon: <MessageSquare className="h-6 w-6 text-primary" />,
                 title: "Tied to a real booking",
                 body: "A review can only be written by the customer who requested the job, against that specific booking. No anonymous submissions.",
               },
               {
-                icon: <ShieldCheck className="h-6 w-6 text-[#1a7a4a]" />,
+                icon: <ShieldCheck className="h-6 w-6 text-primary" />,
                 title: "Only after the work is done",
                 body: "Reviews open once a job is marked complete, so a rating always reflects work that actually happened.",
               },
               {
-                icon: <Star className="h-6 w-6 text-[#1a7a4a]" />,
+                icon: <Star className="h-6 w-6 text-primary" />,
                 title: "Shown with the count",
                 body: "Every rating appears next to how many reviews it came from. A fixer with no reviews is labelled New, never padded out.",
               },
@@ -465,7 +467,7 @@ export function LandingPage() {
               <p className="text-sm text-slate-300 leading-relaxed">
                 Browse local tradespeople, compare hourly rates, and send a booking request. Registered businesses are labelled.
               </p>
-              <Button asChild className="rounded-2xl h-12 px-6 bg-[#1a7a4a] hover:bg-[#145e38] text-white font-bold gap-2">
+              <Button asChild className="rounded-2xl h-12 px-6 bg-primary hover:bg-primary/90 text-white font-bold gap-2">
                 <Link href="/auth/signup">
                   <UserPlus size={16} /> Sign In / Client Registration
                 </Link>

@@ -43,13 +43,53 @@ supabase/migrations/  timestamped SQL migrations
     after-the-fact pass.
 - The data flow is `component → hooks/use-*.ts → lib/*.ts → Supabase`. Client
   components should not query Supabase directly.
-- Style with design tokens (`text-primary`, `bg-background`, `border-border`),
-  not raw hex. The brand green `#1a7a4a` is still hardcoded in older files;
-  prefer the token when you touch them.
+- Style with design tokens, never raw hex. There are no hex colours left in
+  `app/` or `components/`; keep it that way. See **Colour** below.
 - `components/ui/**` is vendored shadcn/ui code. Two lint rules are switched
   off there (`no-explicit-any`, `react-hooks/set-state-in-effect`) because
   they fire on upstream's own patterns — don't chase those. Every other rule
   still applies, and the repo is currently at zero lint problems; keep it there.
+
+## Colour
+
+The palette follows 60-30-10: neutrals carry most of the page, dark slate
+bands are the secondary surface, and the brand green is the accent used
+sparingly. Adding a seventh hue is almost always the wrong answer.
+
+**Brand (the 10%)** — one hue, two lightnesses, both defined in
+`app/globals.css`:
+
+| Token | Value | Use | Never |
+|---|---|---|---|
+| `--primary` | `#1a7a4a` | Solid fills, link text on light | — |
+| `--primary-bright` | `#32ad6d` | Text and icons on dark surfaces | As text on white (2.86:1) |
+
+Use `bg-primary text-primary-foreground` for solid buttons rather than
+`bg-primary text-white`: the foreground token flips with the theme, and in
+dark mode `--primary` is the lighter tint, where white text fails.
+
+**Neutral (the 60/30)** — `slate-*` and the shadcn tokens (`background`,
+`muted`, `border`, `foreground`). `gray-*` is not used; don't reintroduce a
+second neutral family.
+
+**Functional** — these encode meaning and sit outside the palette. Keep them,
+and don't borrow them for decoration:
+
+- `red` — errors, destructive actions
+- `amber` — warnings, star ratings, the example-listing badge
+- `blue` — informational, and the "scheduled/accepted" booking state
+- `violet` — the "in progress" booking state only
+- `orange` — one step of the four-level urgency ramp in
+  `RepairAssessmentPanel` (routine → soon → urgent → emergency). Collapsing
+  that ramp would lose safety-relevant distinctions.
+
+**Decoration gets no colour of its own.** Trade and category icons are all
+`text-primary`. They used to be six different hues, which is most of why the
+site looked busy.
+
+Check contrast when changing any of this: white-on-`--primary` is 5.35:1 and
+`--primary-bright` on `slate-950` is 7.04:1, both passing WCAG AA. The green
+that shipped before this was `#00ae00`, which failed at 2.98:1.
 
 ## Supabase
 
