@@ -12,7 +12,7 @@ export default function TermsOfService() {
                     <div className="h-16 w-16 bg-primary/10 flex items-center justify-center rounded-2xl rotate-3 mb-6 shadow-sm">
                         <ShieldCheck className="h-8 w-8 text-primary" />
                     </div>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 text-foreground">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-foreground">
                         Terms of Service
                     </h1>
                     <p className="text-muted-foreground text-lg max-w-2xl font-medium">

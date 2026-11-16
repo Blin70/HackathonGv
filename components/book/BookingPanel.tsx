@@ -14,7 +14,7 @@ const GUARANTEES = ["No hidden fees", "Cancel anytime before 24h", "100% Satisfa
 
 export function BookingPanel({ company, isLoggedIn, booked, onBook }: BookingPanelProps) {
   return (
-    <div className="sticky top-24 bg-white rounded-3xl p-6 border border-border shadow-xl">
+    <div className="sticky top-24 bg-white rounded-2xl p-6 border border-border shadow-md">
       {!isLoggedIn && (
         <div className="mb-6 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-semibold flex items-center gap-2.5 leading-snug">
           <Lock size={18} className="text-amber-600 shrink-0" />
@@ -27,7 +27,7 @@ export function BookingPanel({ company, isLoggedIn, booked, onBook }: BookingPan
           Starting Rate
         </p>
         <div className="flex items-baseline justify-center gap-1">
-          <span className="text-5xl font-black text-foreground">{company.price}</span>
+          <span className="text-5xl font-bold text-foreground">{company.price}</span>
           <span className="text-lg text-muted-foreground font-medium">/hr</span>
         </div>
       </div>
@@ -44,7 +44,7 @@ export function BookingPanel({ company, isLoggedIn, booked, onBook }: BookingPan
       <Button
         onClick={onBook}
         disabled={booked}
-        className="w-full h-14 rounded-2xl font-bold text-base bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform gap-2"
+        className="w-full h-14 rounded-2xl font-bold text-base bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-transform gap-2"
       >
         {!isLoggedIn && <Lock size={16} />}
         {booked ? "Booking Request Sent!" : isLoggedIn ? "Request Booking" : "Sign In to Book"}

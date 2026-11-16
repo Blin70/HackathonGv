@@ -33,7 +33,7 @@ export function WorkerHero({ company, averageRating, reviewCount }: WorkerHeroPr
                   about to try booking it. */}
               {company.isDemo && <DemoBadge emphasis="detail" />}
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-2">
               {company.name}
             </h1>
             <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-medium opacity-90">

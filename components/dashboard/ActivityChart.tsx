@@ -25,9 +25,9 @@ interface ActivityChartProps {
 /** Six-month request trend, so a worker can see demand building or dropping. */
 export function ActivityChart({ data }: ActivityChartProps) {
   return (
-    <div className="rounded-3xl border border-border bg-white p-6 shadow-sm space-y-4">
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm space-y-4">
       <div>
-        <h2 className="font-black text-foreground flex items-center gap-2">
+        <h2 className="font-bold text-foreground flex items-center gap-2">
           <TrendingUp size={16} className="text-primary" /> Request activity
         </h2>
         <p className="text-xs text-muted-foreground mt-0.5">

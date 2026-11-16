@@ -298,7 +298,7 @@ export default function TradesmanSignupPage() {
                       private, never shown publicly.
                     </FieldDescription>
                     {isRegistered && (
-                      <div className="mt-1 flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-bold text-primary">
+                      <div className="mt-1 flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-semibold text-primary">
                         <ShieldCheck size={14} />
                         You&apos;ll receive a verified “Registered Business” badge.
                       </div>

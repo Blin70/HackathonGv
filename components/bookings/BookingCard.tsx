@@ -101,15 +101,15 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
   }
 
   return (
-    <div className="rounded-3xl border border-border bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-border bg-white shadow-sm overflow-hidden">
       {/* Who + where it stands */}
       <div className="flex items-start justify-between gap-3 p-5 pb-4">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="h-11 w-11 shrink-0 rounded-2xl bg-primary/10 text-primary font-extrabold flex items-center justify-center">
+          <div className="h-11 w-11 shrink-0 rounded-2xl bg-primary/10 text-primary font-bold flex items-center justify-center">
             {(counterparty || "?").charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <h3 className="font-extrabold text-foreground leading-snug truncate">
+            <h3 className="font-bold text-foreground leading-snug truncate">
               {counterparty || (isReceived ? "A client" : "Fixer")}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5 truncate">
@@ -121,7 +121,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
 
         <span
           className={cn(
-            "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ring-1",
+            "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ring-1",
             status.className
           )}
         >
@@ -191,7 +191,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
                 asChild
                 size="sm"
                 variant="ghost"
-                className="h-8 rounded-xl text-xs font-bold gap-1.5"
+                className="h-8 rounded-xl text-xs font-semibold gap-1.5"
               >
                 <Link href={`/book/${booking.worker_id}`}>
                   <ExternalLink size={13} /> View
@@ -210,7 +210,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
                   disabled={busy}
                   variant={action.tone === "primary" ? "default" : "outline"}
                   className={cn(
-                    "h-8 rounded-xl text-xs font-bold gap-1.5",
+                    "h-8 rounded-xl text-xs font-semibold gap-1.5",
                     action.tone === "primary" && "bg-primary text-white hover:opacity-90",
                     action.tone === "quiet" && "border-border",
                     action.tone === "danger" && "border-border text-red-600 hover:bg-red-50"

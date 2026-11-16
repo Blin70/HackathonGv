@@ -19,8 +19,8 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
   return (
     <div className="lg:col-span-4 space-y-6">
       <div className="sticky top-24 space-y-6">
-        <Card className="border border-border/60 bg-white shadow-xl rounded-3xl overflow-hidden p-0">
-          <div className="bg-gradient-to-r from-primary to-primary-bright p-4 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-between">
+        <Card className="border border-border/60 bg-white shadow-md rounded-2xl overflow-hidden p-0">
+          <div className="bg-gradient-to-r from-primary to-primary-bright p-4 text-white font-semibold text-xs uppercase tracking-wider flex items-center justify-between">
             <span>Live Card Preview</span>
             <span className="bg-white/20 text-white px-2.5 py-0.5 rounded-full text-[10px]">Real-time</span>
           </div>
@@ -33,13 +33,13 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <Badge className="absolute top-3 left-3 bg-white text-primary font-bold text-xs rounded-full px-3 py-1 border-0">
+            <Badge className="absolute top-3 left-3 bg-white text-primary font-semibold text-xs rounded-full px-3 py-1 border-0">
               {form.tradeType}
             </Badge>
           </div>
 
           <CardContent className="p-5 space-y-3">
-            <h3 className="font-extrabold text-xl leading-snug text-foreground">
+            <h3 className="font-bold text-xl leading-snug text-foreground">
               {form.businessName || "Your Company Name"}
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
@@ -63,7 +63,7 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
           <CardFooter className="p-5 pt-0 flex items-center justify-between border-t border-border/30 mt-2">
             <div>
               <span className="text-xs text-muted-foreground block">Starting rate</span>
-              <span className="text-2xl font-black text-foreground">{formatPrice(form.price)}</span>
+              <span className="text-2xl font-bold text-foreground">{formatPrice(form.price)}</span>
               <span className="text-xs text-muted-foreground">/hr</span>
             </div>
 
@@ -76,7 +76,7 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
         </Card>
 
         {/* Quick tip box */}
-        <div className="p-5 rounded-3xl bg-secondary/40 border border-border/50 text-xs text-muted-foreground space-y-2">
+        <div className="p-5 rounded-2xl bg-secondary/40 border border-border/50 text-xs text-muted-foreground space-y-2">
           <p className="font-bold text-foreground text-sm flex items-center gap-2">💡 How this works</p>
           <p className="leading-relaxed">
             When you save this form, your company is immediately published to the <strong>/book</strong>{" "}

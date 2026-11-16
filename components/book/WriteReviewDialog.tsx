@@ -51,9 +51,9 @@ export function WriteReviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-3xl p-8 border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-lg rounded-2xl p-8 border-0 shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black mb-1 text-foreground">
+          <DialogTitle className="text-2xl font-bold mb-1 text-foreground">
             {editing ? "Edit your review" : `Review ${companyName}`}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
@@ -63,7 +63,7 @@ export function WriteReviewDialog({
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
           <div className="space-y-2">
-            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Rating
             </Label>
             <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export function WriteReviewDialog({
           <div className="space-y-2">
             <Label
               htmlFor="reviewerName"
-              className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
               Your Name
             </Label>
@@ -92,7 +92,7 @@ export function WriteReviewDialog({
           <div className="space-y-2">
             <Label
               htmlFor="reviewComment"
-              className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
               Your Review
             </Label>

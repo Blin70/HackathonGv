@@ -77,9 +77,9 @@ export function BookingRequestDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {/* Bounded flex column: the body scrolls and the footer stays pinned, so
           the form fits any screen height. `dvh` tracks mobile browser chrome. */}
-      <DialogContent className="sm:max-w-lg rounded-3xl p-0 gap-0 overflow-hidden flex flex-col max-h-[90dvh]">
+      <DialogContent className="sm:max-w-lg rounded-2xl p-0 gap-0 overflow-hidden flex flex-col max-h-[90dvh]">
         <DialogHeader className="px-6 pt-6 pb-4 text-left shrink-0">
-          <DialogTitle className="text-xl font-black text-foreground">
+          <DialogTitle className="text-xl font-bold text-foreground">
             Request {companyName}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">

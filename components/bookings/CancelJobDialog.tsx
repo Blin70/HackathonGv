@@ -62,12 +62,12 @@ export function CancelJobDialog({
         }
       }}
     >
-      <DialogContent className="sm:max-w-md rounded-3xl">
+      <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader className="text-left">
           <div className="h-11 w-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mb-2">
             <TriangleAlert size={20} />
           </div>
-          <DialogTitle className="text-lg font-black">Cancel this job?</DialogTitle>
+          <DialogTitle className="text-lg font-bold">Cancel this job?</DialogTitle>
           <DialogDescription className="text-sm">
             {clientName} is expecting you. They&apos;ll see the reason you give. We keep a record of
             cancellations to help build a reliable marketplace.

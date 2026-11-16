@@ -23,7 +23,7 @@ export function RepairWorkerMatches({ companies, city, tradeCategory, loading, e
   )
 
   return (
-    <Card className="rounded-3xl border-border/70 bg-white shadow-sm">
+    <Card className="rounded-2xl border-border/70 bg-white shadow-sm">
       <CardHeader className="px-5 pb-3 pt-5 sm:px-6 sm:pt-6">
         <div className="flex items-start gap-3">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">

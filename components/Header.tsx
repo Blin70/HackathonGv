@@ -135,7 +135,7 @@ export default function Header() {
                                                 {link.icon}
                                                 <span>{link.title}</span>
                                                 {link.badge && (
-                                                    <span className="ml-1 rounded-full bg-primary/15 text-primary text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider border border-primary/20">
+                                                    <span className="ml-1 rounded-full bg-primary/15 text-primary text-[10px] font-semibold px-2 py-0.5 uppercase tracking-wider border border-primary/20">
                                                         {link.badge}
                                                     </span>
                                                 )}
@@ -171,7 +171,7 @@ export default function Header() {
                                         </span>
                                     </div>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-60 p-2 mt-2 shadow-xl border-border/60 backdrop-blur-md rounded-2xl">
+                                <DropdownMenuContent align="end" className="w-60 p-2 mt-2 shadow-md border-border/60 backdrop-blur-md rounded-2xl">
                                     <div className="px-3 py-2.5 text-xs text-muted-foreground bg-primary/5 rounded-xl mb-1">
                                         <span className="block font-bold text-foreground truncate text-sm">
                                             {user.user_metadata?.full_name || (user.user_metadata?.firstName ? `${user.user_metadata.firstName} ${user.user_metadata.lastName}` : "User Account")}
@@ -262,8 +262,8 @@ export default function Header() {
                                             className="h-10 w-10 object-contain"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Book A</span>
-                                            <span className="text-xl font-black text-foreground">Fixer</span>
+                                            <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">Book A</span>
+                                            <span className="text-xl font-bold text-foreground">Fixer</span>
                                         </div>
                                     </div>
                                     <Button
@@ -278,7 +278,7 @@ export default function Header() {
 
                                 {/* Main Mobile Nav Links */}
                                 <div className="px-5 py-6 space-y-2">
-                                    <p className="text-[11px] font-black uppercase tracking-wider text-muted-foreground px-3 mb-2">Navigation</p>
+                                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Navigation</p>
                                     <nav className="space-y-1.5">
                                         {navLinks.map((link) => {
                                             const isActive = pathname === link.href
@@ -302,7 +302,7 @@ export default function Header() {
                                                     </div>
                                                     <span>{link.title}</span>
                                                     {link.badge && (
-                                                        <span className="ml-auto rounded-full bg-primary/15 text-primary text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider">
+                                                        <span className="ml-auto rounded-full bg-primary/15 text-primary text-[10px] font-semibold px-2 py-0.5 uppercase tracking-wider">
                                                             {link.badge}
                                                         </span>
                                                     )}
@@ -313,7 +313,7 @@ export default function Header() {
 
                                     {/* Mobile Auth Actions */}
                                     <div className="space-y-3 pt-6 mt-6 border-t border-border/30">
-                                        <p className="text-[11px] font-black uppercase tracking-wider text-muted-foreground px-3 mb-2">Account & Access</p>
+                                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Account & Access</p>
                                         {loading ? (
                                             <div className="space-y-2">
                                                 <div className="h-14 animate-pulse rounded-2xl bg-muted" />

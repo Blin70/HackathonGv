@@ -21,7 +21,7 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
   const urgency = URGENCY_PRESENTATION[assessment.urgency]
 
   return (
-    <Card className="overflow-hidden rounded-3xl border-border/70 bg-white shadow-sm">
+    <Card className="overflow-hidden rounded-2xl border-border/70 bg-white shadow-sm">
       <CardHeader className="space-y-3 border-b border-border/60 bg-slate-50/70 px-5 py-5 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Badge variant="outline" className="gap-1.5 rounded-full border-primary/20 bg-primary/5 px-3 py-1 text-primary">
@@ -43,7 +43,7 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
 
       <CardContent className="space-y-5 p-5 sm:p-6">
         <div className="space-y-1.5">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Urgency</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Urgency</p>
           <p className="text-sm leading-relaxed text-foreground">{assessment.urgencyExplanation}</p>
         </div>
 
@@ -60,13 +60,13 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
 
         {assessment.followUpQuestion && (
           <div className="rounded-2xl bg-muted/50 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">One detail that could help</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">One detail that could help</p>
             <p className="mt-1 text-sm leading-relaxed text-foreground">{assessment.followUpQuestion}</p>
           </div>
         )}
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Suggested next step</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Suggested next step</p>
           <p className="mt-1 text-sm leading-relaxed text-foreground">{assessment.nextStep}</p>
         </div>
 

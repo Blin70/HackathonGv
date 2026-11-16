@@ -52,7 +52,7 @@ function CompanyCard({
   isLoggedIn: boolean;
 }) {
   return (
-    <Card className="overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-border/70 rounded-3xl p-0 bg-white h-full group">
+    <Card className="overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-lg border border-border/70 rounded-2xl p-0 bg-white h-full group">
       <Link href={`/book/${company.id}`} className="block flex-1">
         {/* Image */}
         <div className="relative w-full h-52 overflow-hidden">
@@ -68,7 +68,7 @@ function CompanyCard({
 
           <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5">
             <Badge
-              className="text-xs font-bold rounded-full px-3.5 py-1 border-0 shadow-md"
+              className="text-xs font-semibold rounded-full px-3.5 py-1 border-0 shadow-md"
               style={{ background: "white", color: "var(--primary)" }}
             >
               {company.type}
@@ -79,7 +79,7 @@ function CompanyCard({
           </div>
 
           {company.isVerified && (
-            <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-extrabold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">
+            <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/45 backdrop-blur-md text-white font-semibold text-[10px] rounded-full px-2.5 py-1 border border-white/10 shadow-sm">
               <BadgeCheck size={12} className="text-primary-bright" />
               <span>Registered</span>
             </div>
@@ -89,7 +89,7 @@ function CompanyCard({
         {/* Content */}
         <CardContent className="flex flex-col gap-3 p-5 flex-1">
           <div>
-            <h3 className="font-extrabold text-[17px] leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-1">
+            <h3 className="font-bold text-[17px] leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-1">
               {company.name}
             </h3>
             <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-2">
@@ -116,7 +116,7 @@ function CompanyCard({
                 </span>
               </>
             ) : (
-              <span className="flex items-center gap-1 text-xs font-bold text-primary bg-primary/5 border border-primary/15 rounded-full px-2.5 py-1">
+              <span className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/5 border border-primary/15 rounded-full px-2.5 py-1">
                 <Sparkles size={12} className="text-primary-bright" /> New
               </span>
             )}
@@ -128,7 +128,7 @@ function CompanyCard({
       <CardFooter className="px-5 pb-5 pt-0 flex items-center justify-between z-10 relative">
         <div>
           <p className="text-[10px] text-muted-foreground font-semibold">Starting from</p>
-          <span className="text-xl font-black text-foreground">
+          <span className="text-xl font-bold text-foreground">
             {company.price}
           </span>
           <span className="text-xs text-muted-foreground">/hr</span>
@@ -141,7 +141,7 @@ function CompanyCard({
             onBook(company);
           }}
           disabled={booking}
-          className="rounded-2xl px-4 h-10 font-bold text-xs bg-primary text-primary-foreground hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
+          className="rounded-2xl px-4 h-10 font-semibold text-xs bg-primary text-primary-foreground hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
         >
           {!isLoggedIn && <Lock size={12} className="opacity-80" />}
           {booking ? "Sending..." : "Book Now"}
@@ -222,7 +222,7 @@ export default function TradesmanMarket() {
 
         {/* Header - Not Sticky */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Find a Tradesman
           </h1>
           <p className="text-base text-muted-foreground mt-2 max-w-xl mx-auto">
@@ -232,7 +232,7 @@ export default function TradesmanMarket() {
 
         {/* static search bar (Not Sticky) */}
         <div className="w-full max-w-3xl mx-auto mb-10">
-          <div className="flex items-center bg-white border border-border/80 shadow-lg rounded-3xl p-3 w-full">
+          <div className="flex items-center bg-white border border-border/80 shadow-lg rounded-2xl p-3 w-full">
             <Search size={18} className="text-slate-400 ml-3 mr-2" />
             <Input
               placeholder="Search trade, services, or fixer name..."
@@ -277,7 +277,7 @@ export default function TradesmanMarket() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20 text-muted-foreground bg-white border border-border/60 rounded-3xl max-w-md mx-auto p-8 shadow-sm">
+              <div className="text-center py-20 text-muted-foreground bg-white border border-border/60 rounded-2xl max-w-md mx-auto p-8 shadow-sm">
                 <div className="text-5xl mb-4">🔍</div>
                 <p className="text-base font-bold text-foreground mb-1">
                   No matching fixers found
@@ -291,10 +291,10 @@ export default function TradesmanMarket() {
 
           {/* Sticky Sidebar filters (3 columns) - Stays sticky at the right side of viewport */}
           <div className="lg:col-span-3 lg:sticky lg:top-28 z-30">
-            <div className="bg-white border border-border/70 rounded-3xl p-6 shadow-xl space-y-6">
+            <div className="bg-white border border-border/70 rounded-2xl p-6 shadow-md space-y-6">
 
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
-                <span className="font-black text-sm uppercase tracking-wider flex items-center gap-1.5 text-foreground">
+                <span className="font-bold text-sm uppercase tracking-wider flex items-center gap-1.5 text-foreground">
                   <SlidersHorizontal size={16} className="text-primary" />
                   Filters
                 </span>
@@ -306,7 +306,7 @@ export default function TradesmanMarket() {
                       setRatingFilter("0");
                       setCityFilter("All Cities");
                     }}
-                    className="text-xs font-bold text-primary hover:underline"
+                    className="text-xs font-semibold text-primary hover:underline"
                   >
                     Reset
                   </button>
@@ -315,7 +315,7 @@ export default function TradesmanMarket() {
 
               {/* Trade Profession filter */}
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Trade Category
                 </label>
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -334,7 +334,7 @@ export default function TradesmanMarket() {
 
               {/* Minimum Rating filter */}
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Minimum Rating
                 </label>
                 <Select value={ratingFilter} onValueChange={setRatingFilter}>
@@ -353,7 +353,7 @@ export default function TradesmanMarket() {
 
               {/* City / Service Area filter */}
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   City
                 </label>
                 <Select value={cityFilter} onValueChange={setCityFilter}>
@@ -375,7 +375,7 @@ export default function TradesmanMarket() {
 
               {/* AI diagnostic helper card in sidebar */}
               <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-2">
-                <p className="text-xs font-bold text-primary/90 flex items-center gap-1">
+                <p className="text-xs font-semibold text-primary/90 flex items-center gap-1">
                   <Sparkles size={14} /> Need diagnostics?
                 </p>
                 <p className="text-[11px] text-primary leading-relaxed">
@@ -383,7 +383,7 @@ export default function TradesmanMarket() {
                 </p>
                 <Link
                   href="/describe"
-                  className="text-[11px] font-black text-primary hover:underline flex items-center gap-0.5 pt-1"
+                  className="text-[11px] font-semibold text-primary hover:underline flex items-center gap-0.5 pt-1"
                 >
                   Describe the problem →
                 </Link>
@@ -418,12 +418,12 @@ export default function TradesmanMarket() {
 
         {/* Auth Required Modal */}
         <Dialog open={!!showAuthRequiredModal} onOpenChange={(open) => !open && setShowAuthRequiredModal(null)}>
-          <DialogContent className="sm:max-w-md rounded-3xl p-8 border-0 shadow-2xl">
+          <DialogContent className="sm:max-w-md rounded-2xl p-8 border-0 shadow-lg">
             <DialogHeader>
               <div className="h-16 w-16 bg-amber-100 text-amber-600 flex items-center justify-center rounded-full mb-4 mx-auto">
                 <Lock size={32} className="text-amber-600" />
               </div>
-              <DialogTitle className="text-2xl font-black mb-2 text-center text-foreground">Client Registration Required</DialogTitle>
+              <DialogTitle className="text-2xl font-bold mb-2 text-center text-foreground">Client Registration Required</DialogTitle>
               <DialogDescription className="text-base text-center text-muted-foreground leading-relaxed mt-2">
                 You can freely browse worker pages and rates. To book <strong className="text-foreground">{showAuthRequiredModal}</strong>, message fixers, or leave ratings, please sign in or register as a client.
               </DialogDescription>

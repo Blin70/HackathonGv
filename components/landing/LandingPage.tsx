@@ -92,7 +92,7 @@ export function LandingPage() {
               
               {/* Title & Subtitle */}
               <div className="space-y-4 pt-4">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-white">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.08] text-white">
                   {/* Solid, not a gradient: the gradient faded into --primary,
                       which is only 3.77:1 on this background, so half the
                       headline was muddy. One colour also reads calmer. */}
@@ -105,7 +105,7 @@ export function LandingPage() {
 
               {/* Instant Search Bar */}
               <form onSubmit={handleSearch} className="relative max-w-2xl w-full">
-                <div className="flex flex-col sm:flex-row items-center gap-2.5 p-2 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-xl shadow-2xl">
+                <div className="flex flex-col sm:flex-row items-center gap-2.5 p-2 rounded-2xl bg-slate-900/90 border border-slate-800 backdrop-blur-xl shadow-lg">
                   <div className="relative flex-1 w-full">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                     <Input
@@ -117,7 +117,7 @@ export function LandingPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="h-14 px-8 w-full sm:w-auto font-black text-base rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/30 transition-all hover:scale-[1.02]"
+                    className="h-14 px-8 w-full sm:w-auto font-bold text-base rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/30 transition-all"
                   >
                     Search Fixers
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -139,13 +139,13 @@ export function LandingPage() {
 
               {/* Quick Trade Pills */}
               <div className="flex flex-wrap items-center gap-2 pt-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Popular:</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 mr-1">Popular:</span>
                 {QUICK_SUGGESTIONS.map((trade) => (
                   <button
                     key={trade}
                     type="button"
                     onClick={() => handleQuickCategory(trade)}
-                    className="text-xs font-bold px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-primary-bright/50 hover:bg-slate-800 transition-all"
+                    className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-primary-bright/50 hover:bg-slate-800 transition-all"
                   >
                     {trade}
                   </button>
@@ -159,7 +159,7 @@ export function LandingPage() {
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 
                 {/* Main Featured Photo */}
-                <div className="relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl h-[420px] md:h-[480px]">
+                <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-lg h-[420px] md:h-[480px]">
                   <Image
                     src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1200&auto=format&fit=crop"
                     alt="Skilled Tradesman at work"
@@ -172,7 +172,7 @@ export function LandingPage() {
                   
                   {/* How the platform works, rather than an invented person
                       with an invented rating and rate. */}
-                  <div className="absolute bottom-6 left-6 right-6 space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/90 p-5 shadow-2xl backdrop-blur-xl">
+                  <div className="absolute bottom-6 left-6 right-6 space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/90 p-5 shadow-lg backdrop-blur-xl">
                     <div className="flex items-start gap-3">
                       <ShieldCheck size={18} className="mt-0.5 shrink-0 text-primary-bright" />
                       <p className="text-sm font-semibold text-white">
@@ -205,7 +205,7 @@ export function LandingPage() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
             <div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
                 Browse Popular Trade Categories
               </h2>
               <p className="text-muted-foreground text-base mt-1">
@@ -234,13 +234,13 @@ export function LandingPage() {
                 key={cat.name}
                 type="button"
                 onClick={() => handleQuickCategory(cat.trade)}
-                className="group p-5 rounded-3xl bg-secondary/30 border border-border/60 hover:bg-white hover:shadow-xl hover:border-primary/40 transition-all duration-300 text-left flex flex-col justify-between min-h-[160px]"
+                className="group p-5 rounded-2xl bg-secondary/30 border border-border/60 hover:bg-white hover:shadow-md hover:border-primary/40 transition-all duration-300 text-left flex flex-col justify-between min-h-[160px]"
               >
-                <div className="p-3 rounded-2xl bg-white shadow-xs border border-border/40 w-fit group-hover:scale-110 transition-transform">
+                <div className="p-3 rounded-2xl bg-white shadow-xs border border-border/40 w-fit group-hover:scale-105 transition-transform">
                   {cat.icon}
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-base text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
                     {cat.name}
                   </h3>
                   <p className="text-[11px] text-muted-foreground font-medium mt-0.5 leading-tight">
@@ -259,7 +259,7 @@ export function LandingPage() {
       <section className="w-full py-16 bg-gradient-to-r from-slate-950 via-slate-950 to-slate-950 text-white relative overflow-hidden">
         <div className="container max-w-7xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="space-y-3 max-w-2xl text-center lg:text-left">
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-white">
               Not sure what fixing service you need?
             </h3>
             <p className="text-slate-300 text-base leading-relaxed">
@@ -267,7 +267,7 @@ export function LandingPage() {
             </p>
           </div>
 
-          <Button asChild size="lg" className="h-14 px-8 font-black text-base rounded-2xl bg-white text-slate-950 hover:bg-slate-100 shadow-2xl shrink-0 gap-2">
+          <Button asChild size="lg" className="h-14 px-8 font-bold text-base rounded-2xl bg-white text-slate-950 hover:bg-slate-100 shadow-lg shrink-0 gap-2">
             <Link href="/describe">
               Describe the problem
               <Sparkles className="h-5 w-5 text-primary" />
@@ -283,7 +283,7 @@ export function LandingPage() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
             <div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
                 Listings on Book A Fixer
               </h2>
               <p className="text-muted-foreground text-base mt-1">
@@ -301,7 +301,7 @@ export function LandingPage() {
           {/* Worker Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredWorkers.map((worker) => (
-              <div key={worker.id} className="rounded-3xl bg-white border border-border shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group">
+              <div key={worker.id} className="rounded-2xl bg-white border border-border shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group">
                 <div className="relative h-56 w-full overflow-hidden">
                   <Image
                     src={worker.image}
@@ -313,7 +313,7 @@ export function LandingPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5">
-                    <Badge className="bg-white text-primary font-bold text-xs rounded-full px-3 py-1 border-0">
+                    <Badge className="bg-white text-primary font-semibold text-xs rounded-full px-3 py-1 border-0">
                       {worker.type}
                     </Badge>
                     {worker.isDemo && <DemoBadge emphasis="card" />}
@@ -322,7 +322,7 @@ export function LandingPage() {
 
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="font-extrabold text-xl text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
                       {worker.name}
                     </h3>
                     <p className="text-sm text-muted-foreground mt-2 leading-relaxed line-clamp-2">
@@ -333,7 +333,7 @@ export function LandingPage() {
                   <div className="flex items-center justify-between pt-2 border-t border-border/50">
                     <div>
                       <p className="text-xs text-muted-foreground font-medium">Starting rate</p>
-                      <p className="text-2xl font-black text-foreground">{worker.price}<span className="text-sm font-medium text-muted-foreground">/hr</span></p>
+                      <p className="text-2xl font-bold text-foreground">{worker.price}<span className="text-sm font-medium text-muted-foreground">/hr</span></p>
                     </div>
 
                     <Button asChild size="sm" className="rounded-xl font-bold bg-primary text-white hover:opacity-90">
@@ -355,7 +355,7 @@ export function LandingPage() {
       <section className="w-full py-20 bg-secondary/30 border-y border-border/40">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-14 max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
               How Book A Fixer Works
             </h2>
             <p className="text-muted-foreground text-base">
@@ -366,33 +366,33 @@ export function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
             {/* Step 1 */}
-            <div className="p-8 rounded-3xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-xl">
-              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
+            <div className="p-8 rounded-2xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-md">
+              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-bold text-2xl mx-auto md:mx-0">
                 1
               </div>
-              <h3 className="font-extrabold text-xl text-foreground">Browse or Search Fixers</h3>
+              <h3 className="font-bold text-xl text-foreground">Browse or Search Fixers</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Filter by trade type, compare hourly rates, inspect ratings, and check verified service offerings.
               </p>
             </div>
 
             {/* Step 2 */}
-            <div className="p-8 rounded-3xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-xl">
-              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
+            <div className="p-8 rounded-2xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-md">
+              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-bold text-2xl mx-auto md:mx-0">
                 2
               </div>
-              <h3 className="font-extrabold text-xl text-foreground">Select Pro & Request Booking</h3>
+              <h3 className="font-bold text-xl text-foreground">Select Pro & Request Booking</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Sign in with a client account to submit your booking request directly to the professional fixer.
               </p>
             </div>
 
             {/* Step 3 */}
-            <div className="p-8 rounded-3xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-xl">
-              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-black text-2xl mx-auto md:mx-0">
+            <div className="p-8 rounded-2xl bg-white border border-border shadow-md space-y-4 text-center md:text-left transition-all hover:shadow-md">
+              <div className="h-16 w-16 rounded-2xl bg-primary/5 text-primary border border-primary/20 flex items-center justify-center font-bold text-2xl mx-auto md:mx-0">
                 3
               </div>
-              <h3 className="font-extrabold text-xl text-foreground">Job Done & Reviewed</h3>
+              <h3 className="font-bold text-xl text-foreground">Job Done & Reviewed</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Your fixer arrives at the agreed time. Once the job is marked complete you can
                 review the work, which is what other customers will see next.
@@ -412,7 +412,7 @@ export function LandingPage() {
               honest to quote. This explains how reviews will work instead of
               inventing people who said nice things. */}
           <div className="text-center mb-14 max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
               Reviews you can actually trust
             </h2>
             <p className="text-muted-foreground text-base">
@@ -441,12 +441,12 @@ export function LandingPage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="p-8 rounded-3xl bg-secondary/20 border border-border/60 space-y-4"
+                className="p-8 rounded-2xl bg-secondary/20 border border-border/60 space-y-4"
               >
                 <div className="p-3 rounded-2xl bg-white shadow-xs border border-border/40 w-fit">
                   {item.icon}
                 </div>
-                <h3 className="font-extrabold text-lg text-foreground">{item.title}</h3>
+                <h3 className="font-bold text-lg text-foreground">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.body}</p>
               </div>
             ))}
@@ -462,8 +462,8 @@ export function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
             {/* Client Callout */}
-            <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
-              <h3 className="text-2xl font-black text-white">Find a Pro Fixer Today</h3>
+            <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+              <h3 className="text-2xl font-bold text-white">Find a Pro Fixer Today</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
                 Browse local tradespeople, compare hourly rates, and send a booking request. Registered businesses are labelled.
               </p>
@@ -475,8 +475,8 @@ export function LandingPage() {
             </div>
 
             {/* Worker Callout */}
-            <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
-              <h3 className="text-2xl font-black text-white">Register as Worker or Company</h3>
+            <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+              <h3 className="text-2xl font-bold text-white">Register as Worker or Company</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
                 List your business, showcase your services & hourly rates, and start receiving job requests directly.
               </p>

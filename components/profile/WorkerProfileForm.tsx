@@ -67,12 +67,12 @@ export function WorkerProfileForm({
 
   return (
     <div className="lg:col-span-8 space-y-8">
-      <Card className="border-border/50 shadow-xl rounded-3xl overflow-hidden bg-white">
+      <Card className="border-border/50 shadow-md rounded-2xl overflow-hidden bg-white">
         <div className="h-2 bg-primary w-full" />
         <form onSubmit={handleSubmit}>
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl font-black flex items-center gap-2">
+              <CardTitle className="text-2xl font-bold flex items-center gap-2">
                 <Briefcase className="text-primary" /> Worker &amp; Business Public Profile Form
               </CardTitle>
               <Badge className="bg-primary text-white border-0 text-xs px-3 py-1 font-bold">
@@ -135,7 +135,7 @@ export function WorkerProfileForm({
                     value={form.price}
                     onChange={(e) => onChange("price", e.target.value)}
                     placeholder="e.g. $120"
-                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary font-extrabold text-foreground"
+                    className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary font-bold text-foreground"
                     required
                   />
                 </Field>
@@ -226,7 +226,7 @@ export function WorkerProfileForm({
                         key={preset.label}
                         type="button"
                         onClick={() => onChange("bannerImage", preset.url)}
-                        className={`text-[11px] font-bold px-3 py-1.5 rounded-xl border transition-all ${
+                        className={`text-[11px] font-semibold px-3 py-1.5 rounded-xl border transition-all ${
                           form.bannerImage === preset.url
                             ? "bg-primary text-white border-primary shadow-xs"
                             : "bg-secondary/40 text-muted-foreground hover:bg-secondary/80 border-border"
@@ -277,7 +277,7 @@ export function WorkerProfileForm({
                     form.services.map((service) => (
                       <Badge
                         key={service}
-                        className="bg-white text-foreground border border-border/60 shadow-xs px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 group hover:border-red-300"
+                        className="bg-white text-foreground border border-border/60 shadow-xs px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 group hover:border-red-300"
                       >
                         <CheckCircle2 size={13} className="text-primary" />
                         <span>{service}</span>
@@ -311,7 +311,7 @@ export function WorkerProfileForm({
             <Button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto h-12 px-8 font-black text-base rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/20 hover:scale-105 transition-transform"
+              className="w-full sm:w-auto h-12 px-8 font-bold text-base rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:scale-105 transition-transform"
             >
               {saving ? "Publishing Profile..." : "Save & Publish Worker Profile"}
             </Button>

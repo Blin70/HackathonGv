@@ -91,6 +91,27 @@ Check contrast when changing any of this: white-on-`--primary` is 5.35:1 and
 `--primary-bright` on `slate-950` is 7.04:1, both passing WCAG AA. The green
 that shipped before this was `#00ae00`, which failed at 2.98:1.
 
+## Type, radius and motion
+
+The same restraint as the palette. Before this pass, 228 of 338 weight
+declarations were bold or heavier — when most of a page shouts, nothing reads
+as emphasised, and that was the main thing making the site look unfinished.
+
+- **Weight.** `font-bold` is the heaviest thing on the site. `font-black` and
+  `font-extrabold` are not used; don't reintroduce them. Headings are bold,
+  UI labels and small text are `font-semibold`, body is `font-medium` or
+  `font-normal`. **Small text (`text-xs` and below) is never `font-bold`** —
+  semibold carries the emphasis without the shout.
+- **Radius.** Cards and panels `rounded-2xl`, controls and inputs
+  `rounded-xl`, pills and avatars `rounded-full`. `rounded-3xl` is not used.
+  `components/ui/*` follows `--radius` and is left alone.
+- **Shadow.** `shadow-sm` and `shadow-md` for resting surfaces, `shadow-lg`
+  for things that genuinely float (modals, the hero panel). `shadow-xl` and
+  `shadow-2xl` are not used — heavy drop shadows read cheap.
+- **Motion.** Cards lift with `hover:-translate-y-1`. Small interactive
+  elements may use `hover:scale-105`. **Buttons do not scale** — they change
+  colour or opacity. One treatment per kind of thing, not five.
+
 ## Supabase
 
 - Browser: `createClient()` from `lib/client.ts`

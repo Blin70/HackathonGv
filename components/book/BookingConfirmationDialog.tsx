@@ -22,12 +22,12 @@ export function BookingConfirmationDialog({
 }: BookingConfirmationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="sm:max-w-md rounded-3xl p-8 border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-md rounded-2xl p-8 border-0 shadow-lg">
         <DialogHeader>
           <div className="h-16 w-16 bg-primary/10 text-primary flex items-center justify-center rounded-full mb-4 mx-auto">
             <CheckCircle2 size={32} className="text-primary" />
           </div>
-          <DialogTitle className="text-2xl font-black mb-2 text-center text-foreground">
+          <DialogTitle className="text-2xl font-bold mb-2 text-center text-foreground">
             Booking Requested!
           </DialogTitle>
           <DialogDescription className="text-base text-center text-muted-foreground leading-relaxed mt-2">

@@ -58,7 +58,7 @@ export default function Footer() {
 
           {/* Navigation Links */}
           <div className="col-span-1 md:col-span-3 lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-black tracking-widest text-primary-bright uppercase">
+            <h4 className="text-xs font-semibold tracking-widest text-primary-bright uppercase">
               Platform
             </h4>
             <ul className="space-y-3">
@@ -82,7 +82,7 @@ export default function Footer() {
 
           {/* Trade Categories Grid */}
           <div className="col-span-1 md:col-span-4 lg:col-span-3 space-y-4">
-            <h4 className="text-xs font-black tracking-widest text-primary-bright uppercase">
+            <h4 className="text-xs font-semibold tracking-widest text-primary-bright uppercase">
               Popular Trades
             </h4>
             <ul className="space-y-2.5">
@@ -104,19 +104,19 @@ export default function Footer() {
 
           {/* Account CTAs */}
           <div className="col-span-1 md:col-span-12 lg:col-span-3 space-y-4">
-            <h4 className="text-xs font-black tracking-widest text-primary-bright uppercase">
+            <h4 className="text-xs font-semibold tracking-widest text-primary-bright uppercase">
               Get Started
             </h4>
             
             <div className="flex flex-col gap-2.5">
-              <Button asChild variant="outline" className="w-full justify-start rounded-xl h-10 border-slate-800 bg-slate-900 text-slate-200 hover:bg-slate-800 text-xs font-bold gap-2">
+              <Button asChild variant="outline" className="w-full justify-start rounded-xl h-10 border-slate-800 bg-slate-900 text-slate-200 hover:bg-slate-800 text-xs font-semibold gap-2">
                 <Link href="/auth/signup">
                   <UserPlus size={15} className="text-primary-bright" />
                   Sign In / Register as Client
                 </Link>
               </Button>
 
-              <Button asChild className="w-full justify-start rounded-xl h-10 bg-primary hover:bg-primary/90 text-white text-xs font-bold gap-2 shadow-md shadow-primary/30">
+              <Button asChild className="w-full justify-start rounded-xl h-10 bg-primary hover:bg-primary/90 text-white text-xs font-semibold gap-2 shadow-md shadow-primary/30">
                 <Link href="/auth/signup/tradesman">
                   <Briefcase size={15} />
                   Register as Worker / Company
