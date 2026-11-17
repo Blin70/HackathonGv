@@ -3,16 +3,17 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { UserPlus, Briefcase, ShieldCheck, Wrench, Hammer, Zap, Paintbrush, Home as HomeIcon } from "lucide-react"
+import { UserPlus, Briefcase, ShieldCheck, Wrench, Hammer, Zap, Paintbrush, Home as HomeIcon, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useAuthUser } from "@/hooks/use-auth-user"
 
 const popularTrades = [
   { title: "Plumbers", href: "/book?type=Plumber", icon: <Wrench className="h-3.5 w-3.5 text-primary" /> },
   { title: "Electricians", href: "/book?type=Electrician", icon: <Zap className="h-3.5 w-3.5 text-primary" /> },
   { title: "Carpenters", href: "/book?type=Carpenter", icon: <Hammer className="h-3.5 w-3.5 text-primary" /> },
   { title: "Painters", href: "/book?type=Painter", icon: <Paintbrush className="h-3.5 w-3.5 text-primary" /> },
-  { title: "Roofers", href: "/book?type=Roofer", icon: <HomeIcon className="h-3.5 w-3.5 text-red-500" /> },
+  { title: "Roofers", href: "/book?type=Roofer", icon: <HomeIcon className="h-3.5 w-3.5 text-primary" /> },
 ]
 
 const mainNavLinks: { title: string; href: string; badge?: string }[] = [
@@ -23,6 +24,7 @@ const mainNavLinks: { title: string; href: string; badge?: string }[] = [
 
 export default function Footer() {
   const pathname = usePathname()
+  const { user, loading, isWorker } = useAuthUser()
 
   if (pathname?.startsWith('/auth')) return null
 
@@ -105,23 +107,47 @@ export default function Footer() {
           {/* Account CTAs */}
           <div className="col-span-1 md:col-span-12 lg:col-span-3 space-y-4">
             <h4 className="text-xs font-semibold tracking-widest text-primary-bright uppercase">
-              Get Started
+              {user ? "Your account" : "Get Started"}
             </h4>
-            
-            <div className="flex flex-col gap-2.5">
-              <Button asChild variant="outline" className="w-full justify-start rounded-xl h-10 border-slate-800 bg-slate-900 text-slate-200 hover:bg-slate-800 text-xs font-semibold gap-2">
-                <Link href="/auth/signup">
-                  <UserPlus size={15} className="text-primary-bright" />
-                  Sign In / Register as Client
-                </Link>
-              </Button>
 
-              <Button asChild className="w-full justify-start rounded-xl h-10 bg-primary hover:bg-primary/90 text-white text-xs font-semibold gap-2 shadow-md shadow-primary/30">
-                <Link href="/auth/signup/tradesman">
-                  <Briefcase size={15} />
-                  Register as Worker / Company
-                </Link>
-              </Button>
+            {/* Asking a signed-in tradesperson to "Register as Worker" is the
+                kind of detail that makes a product feel unfinished. While the
+                session is still loading, render neither set rather than
+                flashing the wrong one. */}
+            <div className="flex flex-col gap-2.5">
+              {loading ? null : user ? (
+                <>
+                  <Button asChild variant="outline" className="w-full justify-start rounded-xl h-10 border-slate-800 bg-slate-900 text-slate-200 hover:bg-slate-800 text-xs font-semibold gap-2">
+                    <Link href={isWorker ? "/dashboard" : "/bookings"}>
+                      <LayoutDashboard size={15} className="text-primary-bright" />
+                      {isWorker ? "Go to dashboard" : "My bookings"}
+                    </Link>
+                  </Button>
+
+                  <Button asChild className="w-full justify-start rounded-xl h-10 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold gap-2 shadow-md shadow-primary/30">
+                    <Link href="/profile">
+                      <UserPlus size={15} />
+                      Edit your profile
+                    </Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button asChild variant="outline" className="w-full justify-start rounded-xl h-10 border-slate-800 bg-slate-900 text-slate-200 hover:bg-slate-800 text-xs font-semibold gap-2">
+                    <Link href="/auth/signup">
+                      <UserPlus size={15} className="text-primary-bright" />
+                      Sign In / Register as Client
+                    </Link>
+                  </Button>
+
+                  <Button asChild className="w-full justify-start rounded-xl h-10 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold gap-2 shadow-md shadow-primary/30">
+                    <Link href="/auth/signup/tradesman">
+                      <Briefcase size={15} />
+                      Register as Worker / Company
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 

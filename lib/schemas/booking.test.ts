@@ -58,6 +58,28 @@ describe("formatPhoneForDisplay", () => {
   it("passes through anything it cannot parse, rather than throwing", () => {
     expect(formatPhoneForDisplay("whatever")).toBe("whatever")
   })
+
+  it("formats numbers stored in national form, not just E.164", () => {
+    // Rows written before storage was normalised hold national-format
+    // numbers. Without a default region these parsed as nothing and rendered
+    // raw, so one booking showed "072 522 138" and another "072-522-138".
+    const fromE164 = formatPhoneForDisplay("+38972522138")
+    for (const stored of ["072522138", "072-522-138", "072 522 138", " 072 522 138 "]) {
+      expect(formatPhoneForDisplay(stored), `${stored} should render canonically`).toBe(fromE164)
+    }
+  })
+
+  it("still renders an unparseable number unchanged", () => {
+    expect(formatPhoneForDisplay("072 52")).toBe("072 52")
+  })
+
+  it("handles a missing number instead of throwing", () => {
+    // Bookings can carry no phone at all; .trim() on null would crash the
+    // whole bookings list rather than hiding one field.
+    expect(formatPhoneForDisplay(null)).toBe("")
+    expect(formatPhoneForDisplay(undefined)).toBe("")
+    expect(formatPhoneForDisplay("")).toBe("")
+  })
 })
 
 describe("validateBookingRequest", () => {

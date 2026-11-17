@@ -6,10 +6,9 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User, CalendarCheck, LayoutDashboard, Home, ArrowRight } from "lucide-react"
 
-import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 import { cn } from "@/lib/utils"
-import { createClient } from "@/lib/client"
+import { useAuthUser } from "@/hooks/use-auth-user"
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -52,40 +51,14 @@ export default function Header() {
     const router = useRouter()
     const pathname = usePathname()
     const [isOpen, setIsOpen] = React.useState(false)
-    const [user, setUser] = React.useState<SupabaseUser | null>(null)
-    const [loading, setLoading] = React.useState(true)
-
-    React.useEffect(() => {
-        const supabase = createClient()
-
-        // Fetch current session and user
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            setUser(user)
-            setLoading(false)
-        })
-
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null)
-            setLoading(false)
-        })
-
-        return () => {
-            subscription.unsubscribe()
-        }
-    }, [])
+    const { user, loading, isWorker, signOut } = useAuthUser()
 
     const handleSignOut = async () => {
-        const supabase = createClient()
-        await supabase.auth.signOut()
-        setUser(null)
+        await signOut()
         setIsOpen(false)
         router.push('/')
         router.refresh()
     }
-
-    const isWorker =
-        user?.user_metadata?.role === "tradesman" || user?.user_metadata?.role === "worker"
 
     if (pathname?.startsWith('/auth')) return null
 
