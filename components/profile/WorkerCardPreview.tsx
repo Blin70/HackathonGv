@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { BadgeCheck, Star } from "lucide-react"
+import { BadgeCheck, Sparkles } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -47,11 +47,9 @@ export function WorkerCardPreview({ form, workerId, isVerified }: WorkerCardPrev
             </p>
 
             <div className="flex items-center justify-between text-xs pt-2">
-              <div className="flex items-center gap-1">
-                <Star size={14} className="fill-amber-400 text-amber-400" />
-                <span className="font-bold">4.9</span>
-                <span className="text-muted-foreground">(189 reviews)</span>
-              </div>
+              <span className="flex items-center gap-1 rounded-full border border-primary/15 bg-primary/5 px-2.5 py-1 text-xs font-semibold text-primary">
+                <Sparkles size={12} className="text-primary-bright" /> New
+              </span>
               {isVerified && (
                 <span className="flex items-center gap-1 text-xs text-primary font-bold bg-primary/5 px-2 py-0.5 rounded-md border border-primary/20">
                   <BadgeCheck size={12} /> Registered

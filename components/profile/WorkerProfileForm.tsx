@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { CURRENCY_SUFFIX } from "@/lib/currency"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -128,7 +129,7 @@ export function WorkerProfileForm({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <Field>
                   <FieldLabel htmlFor="price" className="font-bold text-foreground">
-                    Starting Rate ($/hr) <span className="text-red-500">*</span>
+                    Starting Rate ({CURRENCY_SUFFIX}/hr) <span className="text-destructive">*</span>
                   </FieldLabel>
                   <Input
                     id="price"

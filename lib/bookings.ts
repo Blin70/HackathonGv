@@ -215,9 +215,18 @@ export async function fetchUserBookings(
 /** One month of request volume, split by whether the worker won the job. */
 export interface BookingActivityPoint {
   month: string
-  confirmed: number
-  other: number
+  /** The worker said yes: confirmed, in progress, or finished. */
+  accepted: number
+  /** Still waiting, declined, or cancelled. */
+  notAccepted: number
 }
+
+/** Statuses that mean the worker accepted the job at some point. */
+const ACCEPTED_STATUSES: ReadonlySet<BookingStatus> = new Set([
+  "confirmed",
+  "in_progress",
+  "completed",
+])
 
 /** Groups a date into the calendar month it belongs to. */
 function monthKey(date: Date): string {
@@ -238,7 +247,7 @@ export function monthlyBookingActivity(
 
   for (let offset = months - 1; offset >= 0; offset--) {
     const date = new Date(now.getFullYear(), now.getMonth() - offset, 1)
-    buckets.set(monthKey(date), { month: format(date, "MMM"), confirmed: 0, other: 0 })
+    buckets.set(monthKey(date), { month: format(date, "MMM"), accepted: 0, notAccepted: 0 })
   }
 
   for (const booking of bookings) {
@@ -248,8 +257,11 @@ export function monthlyBookingActivity(
     const point = buckets.get(monthKey(created))
     if (!point) continue // older than the window we chart
 
-    if (booking.status === "confirmed") point.confirmed += 1
-    else point.other += 1
+    // A request counts as accepted once the worker said yes, whatever
+    // happened after. Keying on the literal "confirmed" status alone put
+    // in-progress and completed jobs in the "not accepted" bucket.
+    if (ACCEPTED_STATUSES.has(booking.status)) point.accepted += 1
+    else point.notAccepted += 1
   }
 
   return [...buckets.values()]

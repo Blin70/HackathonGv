@@ -14,8 +14,10 @@ import {
 import type { BookingActivityPoint } from "@/lib/bookings"
 
 const chartConfig = {
-  confirmed: { label: "Confirmed", color: "var(--primary)" },
-  other: { label: "Not confirmed", color: "var(--chart-1)" },
+  // --chart-1 is oklch(0.87 0 0), which is near-invisible on a white card.
+  // --chart-2 is a mid grey that actually reads next to the brand green.
+  accepted: { label: "Accepted", color: "var(--primary)" },
+  notAccepted: { label: "Not accepted", color: "var(--chart-2)" },
 } satisfies ChartConfig
 
 interface ActivityChartProps {
@@ -46,16 +48,16 @@ export function ActivityChart({ data }: ActivityChartProps) {
               mounts at zero size (hydration, a hidden tab) leaves them stuck
               there — drawing nothing at all. */}
           <Bar
-            dataKey="confirmed"
+            dataKey="accepted"
             stackId="a"
-            fill="var(--color-confirmed)"
+            fill="var(--color-accepted)"
             radius={[0, 0, 4, 4]}
             isAnimationActive={false}
           />
           <Bar
-            dataKey="other"
+            dataKey="notAccepted"
             stackId="a"
-            fill="var(--color-other)"
+            fill="var(--color-notAccepted)"
             radius={[4, 4, 0, 0]}
             isAnimationActive={false}
           />
