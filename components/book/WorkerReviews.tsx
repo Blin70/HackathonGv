@@ -32,7 +32,7 @@ export function WorkerReviews({
             )}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Read genuine feedback from verified clients or leave your own review.
+            Every review here comes from a customer who completed a booking with this fixer.
           </p>
         </div>
 

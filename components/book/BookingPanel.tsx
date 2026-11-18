@@ -10,7 +10,11 @@ interface BookingPanelProps {
   onBook: () => void
 }
 
-const GUARANTEES = ["No hidden fees", "Cancel anytime before 24h", "100% Satisfaction Guarantee"]
+const GUARANTEES = [
+  "No hidden fees",
+  "Cancel any time before work starts",
+  "Reviews come from completed jobs only",
+]
 
 export function BookingPanel({ company, isLoggedIn, booked, onBook }: BookingPanelProps) {
   return (

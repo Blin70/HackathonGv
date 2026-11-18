@@ -135,7 +135,7 @@ export function WorkerProfileForm({
                     id="price"
                     value={form.price}
                     onChange={(e) => onChange("price", e.target.value)}
-                    placeholder="e.g. $120"
+                    placeholder="e.g. 900"
                     className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary font-bold text-foreground"
                     required
                   />

@@ -70,6 +70,7 @@ function LoginForm() {
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
                 id="email"
+                  autoComplete="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -82,6 +83,7 @@ function LoginForm() {
               <FieldLabel htmlFor="password">Password</FieldLabel>
               <Input
                 id="password"
+                  autoComplete="current-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
