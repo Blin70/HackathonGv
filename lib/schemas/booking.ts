@@ -20,9 +20,17 @@ export function toE164(value: string): string | null {
   return parsed?.isValid() ? parsed.format("E.164") : null
 }
 
-/** Renders a stored E.164 number in readable national form, e.g. `070 123 456`. */
-export function formatPhoneForDisplay(value: string): string {
-  const parsed = parsePhoneNumberFromString(value)
+/**
+ * Renders a stored number in readable national form, e.g. `070 123 456`.
+ *
+ * Parses with the same default region as `toE164`. Without it, a number stored
+ * in national form — anything written before storage was normalised to E.164 —
+ * fails to parse and falls through unformatted, so the same person's number
+ * renders as `072 522 138` on one booking and `072-522-138` on another.
+ */
+export function formatPhoneForDisplay(value: string | null | undefined): string {
+  if (!value) return ""
+  const parsed = parsePhoneNumberFromString(value.trim(), DEFAULT_REGION)
   return parsed?.isValid() ? parsed.formatNational() : value
 }
 

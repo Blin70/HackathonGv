@@ -48,7 +48,7 @@ export function DashboardView() {
           action={
             <Button
               onClick={reload}
-              className="rounded-2xl font-bold bg-[#1a7a4a] text-white hover:opacity-90"
+              className="rounded-2xl font-bold bg-primary text-white hover:opacity-90"
             >
               Try again
             </Button>
@@ -68,7 +68,7 @@ export function DashboardView() {
           action={
             <Button
               asChild
-              className="rounded-2xl font-bold bg-[#1a7a4a] text-white hover:opacity-90"
+              className="rounded-2xl font-bold bg-primary text-white hover:opacity-90"
             >
               <Link href="/profile?tab=worker">Set up your profile</Link>
             </Button>

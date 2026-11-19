@@ -32,9 +32,9 @@ const STATUS_STYLES: Record<BookingStatus, { label: string; className: string }>
   pending: { label: "Pending", className: "bg-amber-50 text-amber-700 ring-amber-200" },
   confirmed: { label: "Accepted", className: "bg-blue-50 text-blue-700 ring-blue-200" },
   in_progress: { label: "In progress", className: "bg-violet-50 text-violet-700 ring-violet-200" },
-  completed: { label: "Completed", className: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
+  completed: { label: "Completed", className: "bg-primary/5 text-primary ring-primary/20" },
   declined: { label: "Declined", className: "bg-red-50 text-red-700 ring-red-200" },
-  cancelled: { label: "Cancelled", className: "bg-gray-100 text-gray-600 ring-gray-200" },
+  cancelled: { label: "Cancelled", className: "bg-slate-100 text-slate-600 ring-slate-200" },
 }
 
 /** How each reachable status is offered as a button. */
@@ -101,15 +101,15 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
   }
 
   return (
-    <div className="rounded-3xl border border-border bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-border bg-white shadow-sm overflow-hidden">
       {/* Who + where it stands */}
       <div className="flex items-start justify-between gap-3 p-5 pb-4">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="h-11 w-11 shrink-0 rounded-2xl bg-primary/10 text-primary font-extrabold flex items-center justify-center">
+          <div className="h-11 w-11 shrink-0 rounded-2xl bg-primary/10 text-primary font-bold flex items-center justify-center">
             {(counterparty || "?").charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <h3 className="font-extrabold text-foreground leading-snug truncate">
+            <h3 className="font-bold text-foreground leading-snug truncate">
               {counterparty || (isReceived ? "A client" : "Fixer")}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5 truncate">
@@ -121,7 +121,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
 
         <span
           className={cn(
-            "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ring-1",
+            "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ring-1",
             status.className
           )}
         >
@@ -132,7 +132,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
       {/* The scheduled slot is the fact a worker plans their day around. */}
       {schedule && (
         <div className="mx-5 mb-4 rounded-2xl bg-secondary/40 px-4 py-3 flex items-center gap-2.5">
-          <CalendarClock size={16} className="text-[#1a7a4a] shrink-0" />
+          <CalendarClock size={16} className="text-primary shrink-0" />
           <span className="text-sm font-bold text-foreground">{schedule}</span>
         </div>
       )}
@@ -152,7 +152,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
               <Detail icon={Phone}>
                 <a
                   href={`tel:${booking.client_phone}`}
-                  className="font-semibold text-[#1a7a4a] hover:underline"
+                  className="font-semibold text-primary hover:underline"
                 >
                   {formatPhoneForDisplay(booking.client_phone)}
                 </a>
@@ -191,7 +191,7 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
                 asChild
                 size="sm"
                 variant="ghost"
-                className="h-8 rounded-xl text-xs font-bold gap-1.5"
+                className="h-8 rounded-xl text-xs font-semibold gap-1.5"
               >
                 <Link href={`/book/${booking.worker_id}`}>
                   <ExternalLink size={13} /> View
@@ -210,8 +210,8 @@ export function BookingCard({ booking, perspective, busy, onTransition }: Bookin
                   disabled={busy}
                   variant={action.tone === "primary" ? "default" : "outline"}
                   className={cn(
-                    "h-8 rounded-xl text-xs font-bold gap-1.5",
-                    action.tone === "primary" && "bg-[#1a7a4a] text-white hover:opacity-90",
+                    "h-8 rounded-xl text-xs font-semibold gap-1.5",
+                    action.tone === "primary" && "bg-primary text-white hover:opacity-90",
                     action.tone === "quiet" && "border-border",
                     action.tone === "danger" && "border-border text-red-600 hover:bg-red-50"
                   )}

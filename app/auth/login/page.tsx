@@ -40,20 +40,20 @@ function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm shadow-xl border-border/50">
+    <Card className="w-full max-w-sm shadow-md border-border/50">
       <CardHeader>
         {isWorker ? (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary w-fit mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary w-fit mb-2">
             <Briefcase className="w-3.5 h-3.5" />
             <span>Worker / Company Portal</span>
           </div>
         ) : isClient ? (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary w-fit mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary w-fit mb-2">
             <User className="w-3.5 h-3.5" />
             <span>Client Portal</span>
           </div>
         ) : null}
-        <CardTitle className="text-2xl font-black">Sign in</CardTitle>
+        <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
         <CardDescription>
           {isWorker
             ? 'Enter your credentials to access your worker dashboard'
@@ -70,6 +70,7 @@ function LoginForm() {
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
                 id="email"
+                  autoComplete="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -82,6 +83,7 @@ function LoginForm() {
               <FieldLabel htmlFor="password">Password</FieldLabel>
               <Input
                 id="password"
+                  autoComplete="current-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

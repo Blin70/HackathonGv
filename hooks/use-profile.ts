@@ -40,8 +40,17 @@ export function useProfile() {
   const [userId, setUserId] = useState("")
   const [role, setRole] = useState<ProfileRole>("client")
 
+  /**
+   * `useSearchParams()` hands back a new object every render, so depending on
+   * it below re-ran the load effect endlessly: each run's cleanup set the
+   * previous run's `active` flag to false, and `setLoading(false)` is guarded
+   * by that flag — so the page sat on its spinner forever. The tab is a string
+   * (or null), which is a stable dependency.
+   */
+  const tabParam = searchParams.get("tab")
+
   const [activeTab, setActiveTab] = useState<ProfileTab>(
-    searchParams.get("tab") === "worker" ? "worker" : "client"
+    tabParam === "worker" ? "worker" : "client"
   )
 
   const [clientForm, setClientForm] = useState<ClientProfileForm>(EMPTY_CLIENT_FORM)
@@ -70,7 +79,7 @@ export function useProfile() {
           ? "tradesman"
           : "client"
         setRole(resolvedRole)
-        if (resolvedRole === "tradesman" && !searchParams.get("tab")) {
+        if (resolvedRole === "tradesman" && !tabParam) {
           setActiveTab("worker")
         }
 
@@ -124,7 +133,7 @@ export function useProfile() {
     return () => {
       active = false
     }
-  }, [supabase, router, searchParams])
+  }, [supabase, router, tabParam])
 
   const setClientField = useCallback(
     <K extends keyof ClientProfileForm>(key: K, value: ClientProfileForm[K]) => {

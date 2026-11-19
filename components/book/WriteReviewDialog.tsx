@@ -51,9 +51,9 @@ export function WriteReviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-3xl p-8 border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-lg rounded-2xl p-8 border-0 shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black mb-1 text-foreground">
+          <DialogTitle className="text-2xl font-bold mb-1 text-foreground">
             {editing ? "Edit your review" : `Review ${companyName}`}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
@@ -63,7 +63,7 @@ export function WriteReviewDialog({
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
           <div className="space-y-2">
-            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Rating
             </Label>
             <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export function WriteReviewDialog({
           <div className="space-y-2">
             <Label
               htmlFor="reviewerName"
-              className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
               Your Name
             </Label>
@@ -84,7 +84,7 @@ export function WriteReviewDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. John D."
-              className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a]"
+              className="h-12 rounded-2xl bg-secondary/30 focus-visible:ring-primary"
               required
             />
           </div>
@@ -92,7 +92,7 @@ export function WriteReviewDialog({
           <div className="space-y-2">
             <Label
               htmlFor="reviewComment"
-              className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
               Your Review
             </Label>
@@ -102,7 +102,7 @@ export function WriteReviewDialog({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Describe the service quality, punctuality, and overall experience..."
-              className="rounded-2xl bg-secondary/30 focus-visible:ring-[#1a7a4a] leading-relaxed"
+              className="rounded-2xl bg-secondary/30 focus-visible:ring-primary leading-relaxed"
               required
             />
           </div>
@@ -118,7 +118,7 @@ export function WriteReviewDialog({
             </Button>
             <Button
               type="submit"
-              className="rounded-2xl h-11 px-6 font-bold bg-[#1a7a4a] text-white hover:opacity-90"
+              className="rounded-2xl h-11 px-6 font-bold bg-primary text-white hover:opacity-90"
             >
               {editing ? "Update Review" : "Publish Review"}
             </Button>

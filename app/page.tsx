@@ -1,12 +1,13 @@
 import type { Metadata } from "next"
 
-import { RepairIntakeExperience } from "@/components/repair-intake/RepairIntakeExperience"
+import { LandingPage } from "@/components/landing/LandingPage"
 
 export const metadata: Metadata = {
-  title: "Describe a Repair | Book A Fixer",
-  description: "Describe a home repair, get practical safety guidance, and find local tradespeople in North Macedonia.",
+  title: "Book A Fixer | Find a local tradesperson in North Macedonia",
+  description:
+    "Describe the job, compare local plumbers, electricians, carpenters and painters, and send a booking request. No phone calls until you choose who to contact.",
 }
 
-export default function HomePage() {
-  return <RepairIntakeExperience />
+export default function Page() {
+  return <LandingPage />
 }

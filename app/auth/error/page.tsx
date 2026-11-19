@@ -1,6 +1,13 @@
+import type { Metadata } from "next"
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+
+export const metadata: Metadata = {
+  title: "Something went wrong | Book A Fixer",
+  description:
+    "We could not complete that request.",
+}
 
 export default function AuthErrorPage() {
   return (

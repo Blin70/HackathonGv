@@ -20,16 +20,16 @@ export function DashboardHeader({ listing, userId, rating, reviewCount }: Dashbo
   const name = listing.display_name || listing.business_name || "Your listing"
 
   return (
-    <div className="rounded-3xl border border-border bg-white p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
       <div className="flex items-center gap-4 min-w-0">
-        <div className="h-14 w-14 shrink-0 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-2xl">
+        <div className="h-14 w-14 shrink-0 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-2xl">
           {name.charAt(0).toUpperCase()}
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl md:text-2xl font-extrabold text-foreground truncate">{name}</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">{name}</h1>
             {listing.is_verified && (
-              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 gap-1 text-xs font-bold">
+              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1 text-xs font-semibold">
                 <BadgeCheck size={12} /> Registered
               </Badge>
             )}
@@ -41,11 +41,11 @@ export function DashboardHeader({ listing, userId, rating, reviewCount }: Dashbo
           {reviewCount > 0 ? (
             <div className="flex items-center gap-1.5 mt-1.5">
               <StarRating value={Number(rating)} size={14} />
-              <span className="text-xs font-bold text-foreground">{rating}</span>
+              <span className="text-xs font-semibold text-foreground">{rating}</span>
               <span className="text-xs text-muted-foreground">({reviewCount})</span>
             </div>
           ) : (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-[#1a7a4a] mt-1.5">
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary mt-1.5">
               <Sparkles size={12} /> New — no reviews yet
             </span>
           )}
@@ -60,7 +60,7 @@ export function DashboardHeader({ listing, userId, rating, reviewCount }: Dashbo
         </Button>
         <Button
           asChild
-          className="rounded-2xl font-bold gap-2 bg-[#1a7a4a] text-white hover:opacity-90"
+          className="rounded-2xl font-bold gap-2 bg-primary text-white hover:opacity-90"
         >
           <Link href={`/book/${userId}`} target="_blank">
             <ExternalLink size={16} /> View

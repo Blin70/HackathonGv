@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Building2, MapPin, Phone, ShieldCheck, User } from 'lucide-react'
 
 import { createClient } from '@/lib/client'
+import { toE164 } from '@/lib/schemas/booking'
 import { CITIES } from '@/lib/data'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -55,6 +56,12 @@ export default function TradesmanSignupPage() {
       setError('Please select or enter your city / service area.')
       return
     }
+    // A number nobody can ring is worse than no number: it is the only way a
+    // customer reaches this fixer once a booking is accepted.
+    if (phone.trim() && !toE164(phone)) {
+      setError('Enter a valid phone number, e.g. 070 123 456 or +389 70 123 456.')
+      return
+    }
 
     setLoading(true)
 
@@ -74,7 +81,8 @@ export default function TradesmanSignupPage() {
           businessName: isCompany ? businessName.trim() : '',
           // Public-facing name: the business for companies, the person otherwise.
           displayName: isCompany ? businessName.trim() : fullName,
-          phone: phone.trim(),
+          // Stored in E.164, the same shape the booking form writes.
+          phone: toE164(phone) ?? phone.trim(),
           city: resolvedCity,
           // Kept private — only used to render a "Registered Business" badge.
           registrationNumber: registrationNumber.trim(),
@@ -162,6 +170,7 @@ export default function TradesmanSignupPage() {
                 <FieldLabel htmlFor="firstName">First Name</FieldLabel>
                 <Input
                   id="firstName"
+                  autoComplete="given-name"
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -173,6 +182,7 @@ export default function TradesmanSignupPage() {
                 <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
                 <Input
                   id="lastName"
+                  autoComplete="family-name"
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
@@ -187,6 +197,7 @@ export default function TradesmanSignupPage() {
                   <FieldLabel htmlFor="businessName">Company / Business Name</FieldLabel>
                   <Input
                     id="businessName"
+                  autoComplete="organization"
                     type="text"
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
@@ -201,6 +212,7 @@ export default function TradesmanSignupPage() {
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  autoComplete="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -214,6 +226,7 @@ export default function TradesmanSignupPage() {
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phone"
+                  autoComplete="tel"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
@@ -257,6 +270,7 @@ export default function TradesmanSignupPage() {
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
                   id="password"
+                  autoComplete="new-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -298,7 +312,7 @@ export default function TradesmanSignupPage() {
                       private, never shown publicly.
                     </FieldDescription>
                     {isRegistered && (
-                      <div className="mt-1 flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-bold text-primary">
+                      <div className="mt-1 flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-semibold text-primary">
                         <ShieldCheck size={14} />
                         You&apos;ll receive a verified “Registered Business” badge.
                       </div>

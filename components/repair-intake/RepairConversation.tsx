@@ -121,7 +121,7 @@ export function RepairConversation({ messages, loading, error, onSubmit, onReset
   }
 
   return (
-    <Card className="overflow-hidden rounded-3xl border-border/70 bg-white shadow-lg shadow-slate-900/5">
+    <Card className="overflow-hidden rounded-2xl border-border/70 bg-white shadow-lg shadow-slate-900/5">
       <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-border/60 px-5 py-5 sm:px-7">
         <div className="space-y-1">
           <CardTitle className="flex items-center gap-2 text-lg font-bold sm:text-xl">

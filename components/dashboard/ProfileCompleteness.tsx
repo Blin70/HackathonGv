@@ -16,15 +16,15 @@ export function ProfileCompleteness({ checklist, completeness }: ProfileComplete
   const missing = checklist.filter((item) => !item.done)
 
   return (
-    <div className="rounded-3xl border border-border bg-white p-6 shadow-sm space-y-4">
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="font-black text-foreground">Profile completeness</h2>
+          <h2 className="font-bold text-foreground">Profile completeness</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
             A complete profile ranks higher and wins more bookings.
           </p>
         </div>
-        <span className="text-2xl font-black text-[#1a7a4a]">{completeness}%</span>
+        <span className="text-2xl font-bold text-primary">{completeness}%</span>
       </div>
 
       <Progress value={completeness} className="h-2" />
@@ -42,7 +42,7 @@ export function ProfileCompleteness({ checklist, completeness }: ProfileComplete
           ))}
         </div>
       ) : (
-        <p className="text-xs font-bold text-emerald-700 flex items-center gap-1 pt-1">
+        <p className="text-xs font-semibold text-primary flex items-center gap-1 pt-1">
           <CheckCircle2 size={14} /> Your profile is complete.
         </p>
       )}

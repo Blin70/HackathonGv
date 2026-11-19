@@ -36,12 +36,12 @@ export function ClientProfileForm({ form, onChange, saving, onSubmit }: ClientPr
     <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
       {/* Summary card */}
       <div className="md:col-span-4 space-y-6">
-        <Card className="border-border/50 bg-white shadow-xl rounded-3xl overflow-hidden">
+        <Card className="border-border/50 bg-white shadow-md rounded-2xl overflow-hidden">
           <CardContent className="p-6 flex flex-col items-center text-center">
             <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4 border-4 border-background shadow-lg">
               <UserIcon className="h-10 w-10" />
             </div>
-            <h3 className="font-extrabold text-xl">
+            <h3 className="font-bold text-xl">
               {form.firstName || "Client"} {form.lastName}
             </h3>
             <p className="text-sm text-muted-foreground mt-1">{form.email}</p>
@@ -58,11 +58,11 @@ export function ClientProfileForm({ form, onChange, saving, onSubmit }: ClientPr
 
       {/* Contact form */}
       <div className="md:col-span-8">
-        <Card className="border-border/50 shadow-xl rounded-3xl overflow-hidden bg-white">
+        <Card className="border-border/50 shadow-md rounded-2xl overflow-hidden bg-white">
           <div className="h-2 bg-primary w-full" />
           <form onSubmit={handleSubmit}>
             <CardHeader className="pb-4">
-              <CardTitle className="text-2xl font-black">Personal Contact Information</CardTitle>
+              <CardTitle className="text-2xl font-bold">Personal Contact Information</CardTitle>
               <CardDescription>
                 Your details are used when placing booking requests with tradespeople.
               </CardDescription>
@@ -165,7 +165,6 @@ export function ClientProfileForm({ form, onChange, saving, onSubmit }: ClientPr
                 type="submit"
                 disabled={saving}
                 className="w-full sm:w-auto sm:ml-auto h-12 px-8 font-bold text-md rounded-2xl shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
-                style={{ background: "#1a7a4a" }}
               >
                 {saving ? "Saving..." : "Save Personal Info"}
               </Button>

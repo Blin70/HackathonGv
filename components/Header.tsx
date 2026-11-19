@@ -6,10 +6,9 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User, CalendarCheck, LayoutDashboard, Home, ArrowRight } from "lucide-react"
 
-import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 import { cn } from "@/lib/utils"
-import { createClient } from "@/lib/client"
+import { useAuthUser } from "@/hooks/use-auth-user"
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -36,14 +35,15 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
-const navLinks = [
-    { title: "Home", href: "/home", icon: <Home className="h-4 w-4" /> },
+const navLinks: { title: string; href: string; icon: React.ReactNode; badge?: string }[] = [
+    { title: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
     { title: "Book a Fixer", href: "/book", icon: <CalendarCheck className="h-4 w-4" /> },
-    { 
-        title: "AI Concierge", 
-        href: "/ai", 
-        icon: <Sparkles className="h-4 w-4 text-primary animate-pulse" />,
-        badge: "AI Powered"
+    // Named for what it does. A pulsing "AI Powered" badge was the loudest
+    // thing in the header and said nothing a customer needs.
+    {
+        title: "Describe a repair",
+        href: "/describe",
+        icon: <Sparkles className="h-4 w-4 text-primary" />,
     }
 ]
 
@@ -51,40 +51,14 @@ export default function Header() {
     const router = useRouter()
     const pathname = usePathname()
     const [isOpen, setIsOpen] = React.useState(false)
-    const [user, setUser] = React.useState<SupabaseUser | null>(null)
-    const [loading, setLoading] = React.useState(true)
-
-    React.useEffect(() => {
-        const supabase = createClient()
-
-        // Fetch current session and user
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            setUser(user)
-            setLoading(false)
-        })
-
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null)
-            setLoading(false)
-        })
-
-        return () => {
-            subscription.unsubscribe()
-        }
-    }, [])
+    const { user, loading, isWorker, signOut } = useAuthUser()
 
     const handleSignOut = async () => {
-        const supabase = createClient()
-        await supabase.auth.signOut()
-        setUser(null)
+        await signOut()
         setIsOpen(false)
         router.push('/')
         router.refresh()
     }
-
-    const isWorker =
-        user?.user_metadata?.role === "tradesman" || user?.user_metadata?.role === "worker"
 
     if (pathname?.startsWith('/auth')) return null
 
@@ -99,7 +73,7 @@ export default function Header() {
                     aria-label="Book A Fixer Home"
                 >
                     <div className="relative flex-shrink-0 transform transition-all duration-500 group-hover:scale-105 group-active:scale-95">
-                        <div className="absolute -inset-2 rounded-full bg-[#1a7a4a]/0 blur-md transition-all duration-500 group-hover:bg-[#1a7a4a]/25" />
+                        <div className="absolute -inset-2 rounded-full bg-primary/0 blur-md transition-all duration-500 group-hover:bg-primary/25" />
 
                         <Image
                             src="/image.svg"
@@ -134,7 +108,7 @@ export default function Header() {
                                                 {link.icon}
                                                 <span>{link.title}</span>
                                                 {link.badge && (
-                                                    <span className="ml-1 rounded-full bg-primary/15 text-primary text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider border border-primary/20">
+                                                    <span className="ml-1 rounded-full bg-primary/15 text-primary text-[10px] font-semibold px-2 py-0.5 uppercase tracking-wider border border-primary/20">
                                                         {link.badge}
                                                     </span>
                                                 )}
@@ -163,14 +137,14 @@ export default function Header() {
                                                         : user.email?.charAt(0).toUpperCase()}
                                                 </AvatarFallback>
                                             </Avatar>
-                                            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+                                            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" />
                                         </div>
                                         <span className="text-sm font-semibold max-w-[120px] truncate text-foreground group-hover:text-primary transition-colors">
                                             {user.user_metadata?.firstName || user.email?.split('@')[0] || "Account"}
                                         </span>
                                     </div>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-60 p-2 mt-2 shadow-xl border-border/60 backdrop-blur-md rounded-2xl">
+                                <DropdownMenuContent align="end" className="w-60 p-2 mt-2 shadow-md border-border/60 backdrop-blur-md rounded-2xl">
                                     <div className="px-3 py-2.5 text-xs text-muted-foreground bg-primary/5 rounded-xl mb-1">
                                         <span className="block font-bold text-foreground truncate text-sm">
                                             {user.user_metadata?.full_name || (user.user_metadata?.firstName ? `${user.user_metadata.firstName} ${user.user_metadata.lastName}` : "User Account")}
@@ -261,8 +235,8 @@ export default function Header() {
                                             className="h-10 w-10 object-contain"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-[#1a7a4a]">Book A</span>
-                                            <span className="text-xl font-black text-foreground">Fixer</span>
+                                            <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">Book A</span>
+                                            <span className="text-xl font-bold text-foreground">Fixer</span>
                                         </div>
                                     </div>
                                     <Button
@@ -277,7 +251,7 @@ export default function Header() {
 
                                 {/* Main Mobile Nav Links */}
                                 <div className="px-5 py-6 space-y-2">
-                                    <p className="text-[11px] font-black uppercase tracking-wider text-muted-foreground px-3 mb-2">Navigation</p>
+                                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Navigation</p>
                                     <nav className="space-y-1.5">
                                         {navLinks.map((link) => {
                                             const isActive = pathname === link.href
@@ -301,7 +275,7 @@ export default function Header() {
                                                     </div>
                                                     <span>{link.title}</span>
                                                     {link.badge && (
-                                                        <span className="ml-auto rounded-full bg-primary/15 text-primary text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider">
+                                                        <span className="ml-auto rounded-full bg-primary/15 text-primary text-[10px] font-semibold px-2 py-0.5 uppercase tracking-wider">
                                                             {link.badge}
                                                         </span>
                                                     )}
@@ -312,7 +286,7 @@ export default function Header() {
 
                                     {/* Mobile Auth Actions */}
                                     <div className="space-y-3 pt-6 mt-6 border-t border-border/30">
-                                        <p className="text-[11px] font-black uppercase tracking-wider text-muted-foreground px-3 mb-2">Account & Access</p>
+                                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Account & Access</p>
                                         {loading ? (
                                             <div className="space-y-2">
                                                 <div className="h-14 animate-pulse rounded-2xl bg-muted" />

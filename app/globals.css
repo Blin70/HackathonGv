@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-primary-bright: var(--primary-bright);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -55,18 +56,28 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.627 0.265 149.22);
+  /* Brand green #1a7a4a. White text on it is 5.35:1 — passes AA.
+     Use for solid fills and for link text on light surfaces. */
+  --primary: oklch(0.5137 0.1148 155.87);
   --primary-foreground: oklch(0.985 0 0);
+  /* Same hue, lifted for dark surfaces: #32ad6d is 7.04:1 on slate-950,
+     where --primary manages only 3.77:1. Never use it as text on white,
+     where it falls to 2.86:1. */
+  --primary-bright: oklch(0.6650 0.1434 155.81);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  /* Was oklch(0.556 0 0) = #737373, which cleared 4.5:1 on white but only
+     managed 4.35:1 on bg-muted, bg-secondary and bg-slate-50 — the tinted
+     surfaces most body copy actually sits on. This is 4.75:1 there and
+     5.17:1 on white, with margin to spare, and still reads as secondary. */
+  --muted-foreground: oklch(0.535 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.5137 0.1148 155.87);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -90,8 +101,9 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(0.6650 0.1434 155.81);
   --primary-foreground: oklch(0.205 0 0);
+  --primary-bright: oklch(0.6650 0.1434 155.81);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);

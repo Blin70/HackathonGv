@@ -62,17 +62,17 @@ export function RequestsPanel({
 
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-black flex items-center gap-2">
+      <h2 className="text-lg font-bold flex items-center gap-2">
         <Inbox size={18} className="text-primary" /> Requests
       </h2>
 
       <Tabs defaultValue="pending" className="gap-4">
         <TabsList className="rounded-2xl">
           {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value} className="rounded-xl font-bold text-xs">
+            <TabsTrigger key={tab.value} value={tab.value} className="rounded-xl font-semibold text-xs">
               {tab.label}
               {tab.bookings.length > 0 && (
-                <span className="ml-1.5 text-[10px] font-black text-muted-foreground">
+                <span className="ml-1.5 text-[10px] font-semibold text-muted-foreground">
                   {tab.bookings.length}
                 </span>
               )}

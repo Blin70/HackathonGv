@@ -28,8 +28,8 @@ export function StarRating({ value, onChange, size = 16, className }: StarRating
           key={star}
           size={size}
           className={cn(
-            active >= star ? "fill-amber-400 text-amber-400" : "fill-transparent text-gray-300",
-            interactive && "cursor-pointer transition-transform hover:scale-110"
+            active >= star ? "fill-amber-400 text-amber-400" : "fill-transparent text-muted-foreground/40",
+            interactive && "cursor-pointer transition-transform hover:scale-105"
           )}
           onMouseEnter={interactive ? () => setHovered(star) : undefined}
           onMouseLeave={interactive ? () => setHovered(0) : undefined}

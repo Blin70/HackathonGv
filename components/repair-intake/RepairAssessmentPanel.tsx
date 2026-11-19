@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { CircleAlert, Clock3, House, ShieldCheck, Wrench } from "lucide-react"
+import { CircleAlert, Clock3, Hammer, ShieldCheck, Wrench } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,7 +11,7 @@ interface RepairAssessmentPanelProps {
 }
 
 const URGENCY_PRESENTATION = {
-  routine: { label: "Routine", className: "border-emerald-200 bg-emerald-50 text-emerald-800" },
+  routine: { label: "Routine", className: "border-primary/20 bg-primary/5 text-primary" },
   soon: { label: "Needs attention soon", className: "border-amber-200 bg-amber-50 text-amber-900" },
   urgent: { label: "Urgent", className: "border-orange-200 bg-orange-50 text-orange-900" },
   emergency: { label: "Possible emergency", className: "border-red-200 bg-red-50 text-red-800" },
@@ -21,7 +21,7 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
   const urgency = URGENCY_PRESENTATION[assessment.urgency]
 
   return (
-    <Card className="overflow-hidden rounded-3xl border-border/70 bg-white shadow-sm">
+    <Card className="overflow-hidden rounded-2xl border-border/70 bg-white shadow-sm">
       <CardHeader className="space-y-3 border-b border-border/60 bg-slate-50/70 px-5 py-5 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Badge variant="outline" className="gap-1.5 rounded-full border-primary/20 bg-primary/5 px-3 py-1 text-primary">
@@ -43,7 +43,7 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
 
       <CardContent className="space-y-5 p-5 sm:p-6">
         <div className="space-y-1.5">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Urgency</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Urgency</p>
           <p className="text-sm leading-relaxed text-foreground">{assessment.urgencyExplanation}</p>
         </div>
 
@@ -60,13 +60,13 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
 
         {assessment.followUpQuestion && (
           <div className="rounded-2xl bg-muted/50 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">One detail that could help</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">One detail that could help</p>
             <p className="mt-1 text-sm leading-relaxed text-foreground">{assessment.followUpQuestion}</p>
           </div>
         )}
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Suggested next step</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Suggested next step</p>
           <p className="mt-1 text-sm leading-relaxed text-foreground">{assessment.nextStep}</p>
         </div>
 
@@ -78,7 +78,7 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
 
         {!assessment.isHomeRepair && (
           <Button asChild variant="outline" className="w-full rounded-xl">
-            <Link href="/home"><House className="mr-2 size-4" /> Go to home</Link>
+            <Link href="/book"><Hammer className="mr-2 size-4" /> Browse tradespeople</Link>
           </Button>
         )}
 

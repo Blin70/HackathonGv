@@ -19,7 +19,7 @@ export function RecentReviews({ reviews, limit = 3 }: RecentReviewsProps) {
 
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-black flex items-center gap-2">
+      <h2 className="text-lg font-bold flex items-center gap-2">
         <Star size={18} className="text-amber-500" /> Recent Reviews
       </h2>
 
@@ -30,7 +30,7 @@ export function RecentReviews({ reviews, limit = 3 }: RecentReviewsProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-9 w-9">
-                    <AvatarFallback className={`text-xs font-bold ${review.color}`}>
+                    <AvatarFallback className={`text-xs font-semibold ${review.color}`}>
                       {review.initial}
                     </AvatarFallback>
                   </Avatar>

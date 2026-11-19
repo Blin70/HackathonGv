@@ -57,7 +57,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
   }
 
   return (
-    <main className="min-h-screen bg-[#f3f6f4] pb-24">
+    <main className="min-h-screen bg-muted/40 pb-24">
       <WorkerHero company={company} averageRating={reviews.average} reviewCount={reviews.items.length} />
 
       <div className="max-w-5xl mx-auto px-6 mt-8 md:mt-12">

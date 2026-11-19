@@ -77,6 +77,7 @@ export default function SignupPage() {
                   <FieldLabel htmlFor="firstName">First Name</FieldLabel>
                   <Input
                     id="firstName"
+                  autoComplete="given-name"
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
@@ -88,6 +89,7 @@ export default function SignupPage() {
                   <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
                   <Input
                     id="lastName"
+                  autoComplete="family-name"
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
@@ -101,6 +103,7 @@ export default function SignupPage() {
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  autoComplete="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -113,6 +116,7 @@ export default function SignupPage() {
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
                   id="password"
+                  autoComplete="new-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

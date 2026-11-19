@@ -43,13 +43,74 @@ supabase/migrations/  timestamped SQL migrations
     after-the-fact pass.
 - The data flow is `component → hooks/use-*.ts → lib/*.ts → Supabase`. Client
   components should not query Supabase directly.
-- Style with design tokens (`text-primary`, `bg-background`, `border-border`),
-  not raw hex. The brand green `#1a7a4a` is still hardcoded in older files;
-  prefer the token when you touch them.
+- Style with design tokens, never raw hex. There are no hex colours left in
+  `app/` or `components/`; keep it that way. See **Colour** below.
 - `components/ui/**` is vendored shadcn/ui code. Two lint rules are switched
   off there (`no-explicit-any`, `react-hooks/set-state-in-effect`) because
   they fire on upstream's own patterns — don't chase those. Every other rule
   still applies, and the repo is currently at zero lint problems; keep it there.
+
+## Colour
+
+The palette follows 60-30-10: neutrals carry most of the page, dark slate
+bands are the secondary surface, and the brand green is the accent used
+sparingly. Adding a seventh hue is almost always the wrong answer.
+
+**Brand (the 10%)** — one hue, two lightnesses, both defined in
+`app/globals.css`:
+
+| Token | Value | Use | Never |
+|---|---|---|---|
+| `--primary` | `#1a7a4a` | Solid fills, link text on light | — |
+| `--primary-bright` | `#32ad6d` | Text and icons on dark surfaces | As text on white (2.86:1) |
+
+Use `bg-primary text-primary-foreground` for solid buttons rather than
+`bg-primary text-white`: the foreground token flips with the theme, and in
+dark mode `--primary` is the lighter tint, where white text fails.
+
+**Neutral (the 60/30)** — `slate-*` and the shadcn tokens (`background`,
+`muted`, `border`, `foreground`). `gray-*` is not used; don't reintroduce a
+second neutral family.
+
+**Functional** — these encode meaning and sit outside the palette. Keep them,
+and don't borrow them for decoration:
+
+- `red` — errors, destructive actions
+- `amber` — warnings, star ratings, the example-listing badge
+- `blue` — informational, and the "scheduled/accepted" booking state
+- `violet` — the "in progress" booking state only
+- `orange` — one step of the four-level urgency ramp in
+  `RepairAssessmentPanel` (routine → soon → urgent → emergency). Collapsing
+  that ramp would lose safety-relevant distinctions.
+
+**Decoration gets no colour of its own.** Trade and category icons are all
+`text-primary`. They used to be six different hues, which is most of why the
+site looked busy.
+
+Check contrast when changing any of this: white-on-`--primary` is 5.35:1 and
+`--primary-bright` on `slate-950` is 7.04:1, both passing WCAG AA. The green
+that shipped before this was `#00ae00`, which failed at 2.98:1.
+
+## Type, radius and motion
+
+The same restraint as the palette. Before this pass, 228 of 338 weight
+declarations were bold or heavier — when most of a page shouts, nothing reads
+as emphasised, and that was the main thing making the site look unfinished.
+
+- **Weight.** `font-bold` is the heaviest thing on the site. `font-black` and
+  `font-extrabold` are not used; don't reintroduce them. Headings are bold,
+  UI labels and small text are `font-semibold`, body is `font-medium` or
+  `font-normal`. **Small text (`text-xs` and below) is never `font-bold`** —
+  semibold carries the emphasis without the shout.
+- **Radius.** Cards and panels `rounded-2xl`, controls and inputs
+  `rounded-xl`, pills and avatars `rounded-full`. `rounded-3xl` is not used.
+  `components/ui/*` follows `--radius` and is left alone.
+- **Shadow.** `shadow-sm` and `shadow-md` for resting surfaces, `shadow-lg`
+  for things that genuinely float (modals, the hero panel). `shadow-xl` and
+  `shadow-2xl` are not used — heavy drop shadows read cheap.
+- **Motion.** Cards lift with `hover:-translate-y-1`. Small interactive
+  elements may use `hover:scale-105`. **Buttons do not scale** — they change
+  colour or opacity. One treatment per kind of thing, not five.
 
 ## Supabase
 
@@ -109,12 +170,30 @@ regressions here.
 Prices are stored bare (`"900"`) and formatted at render by `lib/currency.ts`,
 which is the only place the market's currency is defined.
 
+## Routes
+
+- `/` — the marketing landing page (`components/landing/LandingPage.tsx`).
+  One search input, a reassurance line, then categories, listings and how it
+  works. This is a value proposition, not a tool; keep it that way.
+- `/describe` — the AI repair intake. The accelerator for people who don't
+  know which trade they need, reached from the hero and from `/book`. It is
+  deliberately **not** the homepage: it depends on a paid third-party call, so
+  nothing load-bearing should sit behind it.
+- `/book`, `/book/[id]` — marketplace and listing detail.
+- `/home` and `/ai` are retired, and redirect (308) from `next.config.ts` to
+  `/` and `/describe`. Middleware runs before those redirects, so both paths
+  must stay in `PUBLIC_ROUTES` in `lib/proxy.ts` or a signed-out visitor is
+  sent to login instead of being forwarded.
+
+**A new public route needs an entry in `PUBLIC_ROUTES`**, or guests get
+bounced to `/auth/login`.
+
 ## Other things worth knowing
 
-- `app/ai/page.tsx` — a second AI surface, off the shared design system, that
-  builds HTML from regex. Prefer `components/repair-intake/` and don't extend
-  this page.
 - The repair assessment returns no cost estimate. Don't let copy promise one.
+- There is one AI surface. `app/ai/page.tsx` was a second one, off the design
+  system and building HTML from regex; it and its `/api/ai` endpoint were
+  removed. Don't reintroduce a parallel chat UI.
 
 ## Testing
 

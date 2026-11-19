@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated mirrors of .claude/ for other agent tools. They duplicate
+# CLAUDE.md and drift the moment it changes, so they stay out of git.
+AGENTS.md
+.agents/
+.codex/
