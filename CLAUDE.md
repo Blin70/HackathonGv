@@ -121,6 +121,29 @@ as emphasised, and that was the main thing making the site look unfinished.
   `rowToCompany` in `lib/workers.ts`).
 - **Never edit a migration that already exists** — it has been applied
   somewhere. Add a new timestamped file instead.
+- **The files in `supabase/migrations/` are not a record of what ran.** There
+  is no CLI link to the project, so some were applied by hand and some never
+  at all — `profiles` and `bookings` were both created in the dashboard, and
+  `20260912100000` (the `started_at` / cancellation columns) went unapplied
+  long enough that "Start job" failed in production with `PGRST204`. Before
+  assuming a column or policy exists, check:
+
+  ```sql
+  select column_name from information_schema.columns
+   where table_schema = 'public' and table_name = '<table>';
+  select policyname, cmd, qual, with_check from pg_policies
+   where tablename = '<table>';
+  ```
+
+- **Do not replay the migration set in order to catch up.** Each file is
+  idempotent from the state it expects, but later ones supersede earlier ones:
+  `20260911090000` converts `preferred_time` from text to `time`, so re-running
+  `20260910120000` afterwards tries to re-add its `in ('morning', ...)` check
+  against a `time` column and dies with `22007`. Apply only the files the
+  queries above show are missing.
+- After any DDL applied by hand, run `notify pgrst, 'reload schema';` —
+  PostgREST serves from a cached schema and reports a column it cannot see as
+  `PGRST204`, not as a missing column.
 - RLS is the access boundary. Any new table or column needs a policy; don't
   rely on the client filtering correctly.
 

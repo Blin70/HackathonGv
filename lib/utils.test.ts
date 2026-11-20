@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { cn, getErrorMessage } from "@/lib/utils"
+import { describeError, cn, getErrorMessage } from "@/lib/utils"
 
 describe("cn", () => {
   it("joins class names", () => {
@@ -42,5 +42,38 @@ describe("getErrorMessage", () => {
     expect(getErrorMessage({ status: 500, detail: "internal" }, "Something went wrong.")).toBe(
       "Something went wrong."
     )
+  })
+})
+
+describe("describeError", () => {
+  it("renders a Supabase-style plain object instead of an empty one", () => {
+    // The bug this exists for: `console.error("msg", err)` printed `msg {}`
+    // because Supabase errors are plain objects, not Errors, and the Next dev
+    // overlay renders object arguments as `{}`.
+    const pgError = { code: "42501", message: "row violates row-level security", details: null }
+    const described = describeError(pgError)
+    expect(described).toContain("42501")
+    expect(described).toContain("row-level security")
+    expect(described).not.toBe("{}")
+  })
+
+  it("keeps an Error's name and message", () => {
+    expect(describeError(new TypeError("boom"))).toBe("TypeError: boom")
+  })
+
+  it("passes a string through", () => {
+    expect(describeError("plain failure")).toBe("plain failure")
+  })
+
+  it("survives something that cannot be serialised", () => {
+    const circular: Record<string, unknown> = {}
+    circular.self = circular
+    expect(() => describeError(circular)).not.toThrow()
+  })
+
+  it("does not lose a non-enumerable field", () => {
+    const err = {}
+    Object.defineProperty(err, "code", { value: "23514", enumerable: false })
+    expect(describeError(err)).toContain("23514")
   })
 })

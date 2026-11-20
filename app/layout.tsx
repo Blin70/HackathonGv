@@ -20,7 +20,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Book A Fixer",
-  description: "Find the best local tradesmen for your home projects.",
+  description:
+    "Find local plumbers, electricians, carpenters and painters in North Macedonia.",
 };
 
 export default function RootLayout({

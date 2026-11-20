@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button"
 import {
     Sheet,
     SheetContent,
+    SheetDescription,
+    SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
 import {
@@ -234,20 +236,21 @@ export default function Header() {
                                             height={44}
                                             className="h-10 w-10 object-contain"
                                         />
-                                        <div className="flex flex-col">
+                                        {/* The sheet's accessible name. Radix logs an error
+                                            without it and a screen reader announces the menu
+                                            as an unnamed dialog. */}
+                                        <SheetTitle className="flex flex-col gap-0 text-left">
                                             <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">Book A</span>
                                             <span className="text-xl font-bold text-foreground">Fixer</span>
-                                        </div>
+                                        </SheetTitle>
                                     </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => setIsOpen(false)}
-                                        className="h-9 w-9 rounded-full hover:bg-muted"
-                                    >
-                                        <span className="text-xl font-bold">×</span>
-                                    </Button>
+                                    {/* No close button here. SheetContent renders its own, and
+                                        a second hand-rolled one sat on top of it: every phone
+                                        showed two overlapping crosses. */}
                                 </div>
+                                <SheetDescription className="sr-only">
+                                    Site navigation and account links.
+                                </SheetDescription>
 
                                 {/* Main Mobile Nav Links */}
                                 <div className="px-5 py-6 space-y-2">

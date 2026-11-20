@@ -19,7 +19,7 @@ import {
   type StatusChangeOptions,
 } from "@/lib/bookings"
 import { averageRating, fetchReviews, type ReviewItem } from "@/lib/reviews"
-import { getErrorMessage } from "@/lib/utils"
+import { describeError, getErrorMessage } from "@/lib/utils"
 
 /**
  * Loads everything a signed-in worker needs for their dashboard — their listing,
@@ -70,7 +70,7 @@ export function useWorkerDashboard() {
         setReviews(reviewItems)
       } catch (err) {
         if (active) {
-          console.error("Failed to load dashboard:", err)
+          console.error(`Failed to load dashboard: ${describeError(err)}`)
           setError(getErrorMessage(err, "We couldn't load your dashboard. Please try again."))
         }
       } finally {
@@ -101,7 +101,7 @@ export function useWorkerDashboard() {
         // Refetch: the row now carries milestone timestamps the card renders.
         setRefreshKey((key) => key + 1)
       } catch (err) {
-        console.error("Failed to update booking:", err)
+        console.error(`Failed to update booking: ${describeError(err)}`)
       } finally {
         setBusyId(null)
       }

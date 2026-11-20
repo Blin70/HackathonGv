@@ -53,7 +53,7 @@ export function ProfileWorkspace() {
               <Button
                 asChild
                 size="sm"
-                className="bg-primary text-white font-bold rounded-xl gap-1.5 shadow-sm"
+                className="bg-primary text-primary-foreground font-bold rounded-xl gap-1.5 shadow-sm"
               >
                 <Link href={`/book/${workerId}`} target="_blank">
                   <ExternalLink size={14} /> View Live Profile

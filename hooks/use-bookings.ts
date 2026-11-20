@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 import { createClient } from "@/lib/client"
 import {
@@ -11,7 +12,7 @@ import {
   type BookingStatus,
   type StatusChangeOptions,
 } from "@/lib/bookings"
-import { getErrorMessage } from "@/lib/utils"
+import { describeError, getErrorMessage } from "@/lib/utils"
 
 /**
  * Loads the signed-in user's bookings from both sides — requests they sent (as a
@@ -52,7 +53,7 @@ export function useBookings() {
         setReceived(receivedRows)
       } catch (err) {
         if (active) {
-          console.error("Failed to load bookings:", err)
+          console.error(`Failed to load bookings: ${describeError(err)}`)
           setError(getErrorMessage(err, "We couldn't load your bookings. Please try again."))
         }
       } finally {
@@ -93,7 +94,21 @@ export function useBookings() {
           prev.map((booking) => (booking.id === id ? { ...booking, status } : booking))
         )
       } catch (err) {
-        console.error("Failed to update booking:", err)
+        // Logged as one STRING, not an object. Supabase returns a plain
+        // object rather than an Error, and the Next dev overlay renders any
+        // object argument as `{}` — so both the bare error and a tidy
+        // `{ code, message }` literal printed as `{}` and said nothing.
+        // getOwnPropertyNames also picks up non-enumerable fields, which
+        // JSON.stringify would otherwise drop.
+        console.error(
+          `Failed to update booking ${id} -> ${status}: ` +
+            (err instanceof Error
+              ? `${err.name}: ${err.message}`
+              : JSON.stringify(err, Object.getOwnPropertyNames(Object(err))))
+        )
+        // Without this the card just stops spinning and the row never moves —
+        // the same silent failure the profile form had.
+        toast.error("Couldn't update the booking. Please try again.")
       } finally {
         setBusyId(null)
       }

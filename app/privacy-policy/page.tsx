@@ -1,76 +1,170 @@
+import type { Metadata } from "next"
 import { Lock } from "lucide-react"
 
+import {
+  LegalList,
+  LegalPage,
+  LegalSection,
+  LegalText,
+} from "@/components/legal/LegalPage"
+import { SUPPORT_EMAIL } from "@/lib/contact"
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | Book A Fixer",
+  description:
+    "What Book A Fixer collects, why, who it is shared with, and what you can do about it.",
+}
+
 export default function PrivacyPolicy() {
-    const lastUpdated = "October 3, 2026";
+  return (
+    <LegalPage
+      icon={<Lock className="h-8 w-8 text-primary" />}
+      title="Privacy Policy"
+      lastUpdated="November 19, 2026"
+    >
+      <LegalSection title="1. Who we are">
+        <LegalText>
+          Book A Fixer is a marketplace that introduces people in North Macedonia to local
+          tradespeople. This policy covers the website at bookafixer.vercel.app and describes
+          what we do with the information you give us. We are a small team and we are
+          responsible for the data described below.
+        </LegalText>
+      </LegalSection>
 
-    return (
-        <main className="flex-1 bg-background">
-            {/* Header Area */}
-            <div className="bg-primary/5 py-16 md:py-24 border-b border-border/40 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 pointer-events-none" />
-                <div className="container px-4 md:px-8 mx-auto flex flex-col items-center text-center relative z-10">
-                    <div className="h-16 w-16 bg-primary/10 flex items-center justify-center rounded-2xl -rotate-3 mb-6 shadow-sm">
-                        <Lock className="h-8 w-8 text-primary" />
-                    </div>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-foreground">
-                        Privacy Policy
-                    </h1>
-                    <p className="text-muted-foreground text-lg max-w-2xl font-medium">
-                        Last updated: {lastUpdated}
-                    </p>
-                </div>
-            </div>
+      <LegalSection title="2. What we collect">
+        <LegalText>
+          We only collect what the platform needs in order to work:
+        </LegalText>
+        <LegalList>
+          <li>
+            <strong className="text-foreground">Your account:</strong> the name, email address
+            and phone number you enter when you register.
+          </li>
+          <li>
+            <strong className="text-foreground">Booking requests:</strong> your description of
+            the job, the street address where the work is needed, your phone number, and the
+            date and time you asked for.
+          </li>
+          <li>
+            <strong className="text-foreground">Tradesperson listings:</strong> if you register
+            as a tradesperson or company, your business name, trade, city, services, available
+            days, hourly rate, profile text, banner image, and your business registration
+            number if you choose to provide one.
+          </li>
+          <li>
+            <strong className="text-foreground">The repair assistant:</strong> the description
+            you type, the city you select, and any photo you attach.
+          </li>
+          <li>
+            <strong className="text-foreground">Reviews:</strong> the rating and text you write
+            about a job you booked.
+          </li>
+          <li>
+            <strong className="text-foreground">Server logs:</strong> our hosting provider
+            records standard request information, including your IP address. We use it to keep
+            the repair assistant from being abused.
+          </li>
+        </LegalList>
+        <LegalText>
+          We do not run advertising or analytics trackers on this site, and we do not build a
+          profile of your browsing.
+        </LegalText>
+      </LegalSection>
 
-            {/* Content Area */}
-            <div className="container px-4 md:px-8 mx-auto py-16 max-w-3xl">
-                <div className="space-y-12">
-                    <section className="space-y-4">
-                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">1. Information We Collect</h2>
-                        <p className="text-muted-foreground leading-relaxed text-lg">
-                            At FixForce, your privacy is our priority. We collect information to provide better services to our users. This includes:
-                        </p>
-                        <ul className="list-disc list-outside ml-6 text-muted-foreground text-lg space-y-2">
-                            <li><strong className="text-foreground">Personal Information:</strong> Name, email address, phone number, and physical address provided during registration or booking.</li>
-                            <li><strong className="text-foreground">Job Details:</strong> Descriptions of your home repair issues, the city selected for matching, and photos you choose to upload for AI analysis.</li>
-                            <li><strong className="text-foreground">Usage Data:</strong> Information about how you use our platform, device information, and IP addresses.</li>
-                        </ul>
-                    </section>
+      <LegalSection title="3. Why we use it">
+        <LegalText>Your information is used to:</LegalText>
+        <LegalList>
+          <li>Show you tradespeople in your area and pass your booking request to the one you chose.</li>
+          <li>Let a tradesperson contact you about a job you requested.</li>
+          <li>Run the repair assistant when you ask it something.</li>
+          <li>Show reviews against the tradesperson they were written about.</li>
+          <li>Keep accounts secure and prevent abuse of the platform.</li>
+        </LegalList>
+      </LegalSection>
 
-                    <section className="space-y-4">
-                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">2. How We Use Your Information</h2>
-                        <p className="text-muted-foreground leading-relaxed text-lg">
-                            We use the information we collect primarily to provide, maintain, and improve our services. Specifically, your data is used to:
-                        </p>
-                        <ul className="list-disc list-outside ml-6 text-muted-foreground text-lg space-y-2">
-                            <li>Match you with the appropriate tradespeople using our AI system.</li>
-                            <li>Process your payments securely.</li>
-                            <li>Communicate with you regarding bookings, updates, and customer support.</li>
-                            <li>Ensure the safety and security of both customers and tradespeople.</li>
-                        </ul>
-                    </section>
+      <LegalSection title="4. Who it is shared with">
+        <LegalText>
+          We do not sell your personal information. It reaches four kinds of recipient, and no
+          others:
+        </LegalText>
+        <LegalList>
+          <li>
+            <strong className="text-foreground">The tradesperson you book.</strong> When you
+            send a booking request, they see your name, phone number, the address of the job,
+            your description, and the date and time you asked for. They need all of it to turn
+            up and do the work.
+          </li>
+          <li>
+            <strong className="text-foreground">Supabase</strong>, which hosts our database and
+            handles sign-in.
+          </li>
+          <li>
+            <strong className="text-foreground">Vercel</strong>, which hosts the website.
+          </li>
+          <li>
+            <strong className="text-foreground">OpenAI</strong>, which runs the repair
+            assistant. See the next section.
+          </li>
+        </LegalList>
+        <LegalText>
+          We may also disclose information where the law requires it.
+        </LegalText>
+      </LegalSection>
 
-                    <section className="space-y-4">
-                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">3. Information Sharing</h2>
-                        <p className="text-muted-foreground leading-relaxed text-lg">
-                            We do not sell your personal information to third parties. When you use the repair assistant, your repair description, selected city, text from that conversation, and any photo you attach are sent to OpenAI through its API to generate an assessment. Book A Fixer does not save uploaded repair photos to your account. We also share booking details with tradespeople when you submit a booking request so they can respond to it. We may share data with service providers that help us operate the platform and with legal authorities if required by law.
-                        </p>
-                    </section>
+      <LegalSection title="5. The repair assistant">
+        <LegalText>
+          When you use the repair assistant, the text you write, the city you selected, the rest
+          of that conversation and any photo you attach are sent to OpenAI through its API so it
+          can produce an assessment. We ask OpenAI not to retain those requests, and we do not
+          save your uploaded photos to your account — the conversation lives in your browser
+          until you leave the page.
+        </LegalText>
+        <LegalText>
+          Because the photo leaves our systems, please do not attach pictures containing
+          documents, faces or anything else you would not want sent to a third-party service.
+        </LegalText>
+      </LegalSection>
 
-                    <section className="space-y-4">
-                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">4. Data Security</h2>
-                        <p className="text-muted-foreground leading-relaxed text-lg">
-                            We implement a variety of security measures to maintain the safety of your personal information. All sensitive data transmitted between your browser and our servers is encrypted using standard SSL/TLS technology.
-                        </p>
-                    </section>
+      <LegalSection title="6. How long we keep it">
+        <LegalText>
+          Your account and listing stay for as long as your account exists. A booking and its
+          review are kept as the record of a job that happened, so that ratings continue to
+          reflect real work. Server logs are kept for as long as our hosting provider retains
+          them.
+        </LegalText>
+      </LegalSection>
 
-                    <section className="space-y-4">
-                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">5. Your Rights</h2>
-                        <p className="text-muted-foreground leading-relaxed text-lg">
-                            You have the right to access, update, or delete your personal information at any time through your account settings. If you wish to permanently close your account, please contact our support team.
-                        </p>
-                    </section>
-                </div>
-            </div>
-        </main>
-    )
+      <LegalSection title="7. Your rights">
+        <LegalText>
+          You can see and change the information on your account at any time from your profile
+          page. You also have the right to ask for a copy of your data, to have it corrected,
+          and to have it deleted.
+        </LegalText>
+        <LegalText>
+          Deleting an account is not yet something you can do yourself in the app.{" "}
+          {SUPPORT_EMAIL ? (
+            <>
+              Write to <a className="text-primary underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>{" "}
+              and we will delete your account and the personal details on it.
+            </>
+          ) : (
+            <>
+              We have not published an address for these requests yet, so this is the one right
+              on this page we cannot currently act on. We will add one here before the platform
+              is opened to the public.
+            </>
+          )}
+        </LegalText>
+      </LegalSection>
+
+      <LegalSection title="8. Security">
+        <LegalText>
+          Traffic between your browser and our servers is encrypted with TLS. Access to the
+          database is controlled per-row, so one account cannot read another account&apos;s
+          bookings or contact details. We are a young platform and we do not claim our security
+          has been independently audited.
+        </LegalText>
+      </LegalSection>
+    </LegalPage>
+  )
 }

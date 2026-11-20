@@ -54,7 +54,8 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              The premier platform connecting homeowners and businesses with vetted, top-rated local tradespeople and fixing companies instantly.
+              Find local plumbers, electricians, carpenters and painters in North
+              Macedonia. Compare hourly rates up front, then send a booking request.
             </p>
           </div>
 

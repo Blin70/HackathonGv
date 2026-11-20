@@ -3,6 +3,7 @@ import { formatPriceOrDash, stripCurrency } from "@/lib/currency"
 import { COMPANIES, type Company } from "@/lib/data"
 import { FALLBACK_BANNER_IMAGE, type WorkerProfileForm } from "@/lib/profile"
 import { fetchReviewStats, type ReviewStat } from "@/lib/reviews"
+import { describeError } from "@/lib/utils"
 
 /** Shape of a `public.worker_profiles` row. */
 export interface WorkerProfileRow {
@@ -24,8 +25,42 @@ export interface WorkerProfileRow {
   updated_at: string
 }
 
+/**
+ * The columns a signed-out visitor needs to render a listing.
+ *
+ * Deliberately not `*`. `worker_profiles` is world-readable (its RLS policy is
+ * `USING (true)`, because the marketplace has to work signed out), so every
+ * column in a `select("*")` is shipped to every anonymous visitor — including
+ * `phone`, which no public screen ever displays. Asking for the twelve columns
+ * the UI actually uses keeps tradespeople's numbers out of the page payload.
+ *
+ * This narrows exposure; it does not close it. RLS is row-level, so anyone
+ * with the publishable key can still request `phone` directly. The fix for
+ * that is a column grant on the table — see the note in
+ * supabase/migrations/20261120090000_profiles_rls_policies.sql.
+ */
+export const PUBLIC_WORKER_COLUMNS =
+  "user_id, display_name, business_name, trade_type, tagline, about_us, services, available_days, price, banner_image, city, is_verified"
+
+/** A `worker_profiles` row reduced to the publicly visible columns. */
+export type PublicWorkerProfileRow = Pick<
+  WorkerProfileRow,
+  | "user_id"
+  | "display_name"
+  | "business_name"
+  | "trade_type"
+  | "tagline"
+  | "about_us"
+  | "services"
+  | "available_days"
+  | "price"
+  | "banner_image"
+  | "city"
+  | "is_verified"
+>
+
 /** Maps a DB row onto the `Company` shape the marketplace UI already renders. */
-export function rowToCompany(row: WorkerProfileRow): Company {
+export function rowToCompany(row: PublicWorkerProfileRow): Company {
   return {
     id: row.user_id,
     name: row.display_name || row.business_name || "Fixer",
@@ -154,7 +189,10 @@ export function shouldIncludeDemoListings(realListingCount: number): boolean {
 export async function getMarketplaceCompanies(): Promise<Company[]> {
   const supabase = createClient()
   const [workers, stats] = await Promise.all([
-    supabase.from("worker_profiles").select("*").order("updated_at", { ascending: false }),
+    supabase
+      .from("worker_profiles")
+      .select(PUBLIC_WORKER_COLUMNS)
+      .order("updated_at", { ascending: false }),
     fetchReviewStats(),
   ])
 
@@ -163,7 +201,7 @@ export async function getMarketplaceCompanies(): Promise<Company[]> {
     return applyReviewStats(COMPANIES, stats)
   }
 
-  const real = (workers.data as WorkerProfileRow[]).map(rowToCompany)
+  const real = (workers.data as PublicWorkerProfileRow[]).map(rowToCompany)
   const companies = shouldIncludeDemoListings(real.length) ? [...real, ...COMPANIES] : real
   return applyReviewStats(companies, stats)
 }
@@ -188,14 +226,14 @@ export async function getCompanyById(id: string): Promise<Company | null> {
     const supabase = createClient()
     const { data, error } = await supabase
       .from("worker_profiles")
-      .select("*")
+      .select(PUBLIC_WORKER_COLUMNS)
       .eq("user_id", id)
       .maybeSingle()
 
     if (error) throw error
-    return data ? rowToCompany(data as WorkerProfileRow) : null
+    return data ? rowToCompany(data as PublicWorkerProfileRow) : null
   } catch (err) {
-    console.error("Failed to load worker profile:", err)
+    console.error(`Failed to load worker profile: ${describeError(err)}`)
     return null
   }
 }

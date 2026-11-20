@@ -8,7 +8,7 @@ import { createBooking, hasOpenBooking, DuplicateBookingError } from "@/lib/book
 import { fetchClientContact } from "@/lib/clients"
 import type { Company } from "@/lib/data"
 import { validateBookingRequest, type BookingRequestErrors } from "@/lib/schemas/booking"
-import { getErrorMessage } from "@/lib/utils"
+import { describeError, getErrorMessage } from "@/lib/utils"
 
 export interface BookingRequestForm {
   message: string
@@ -136,7 +136,7 @@ export function useBookingRequest(company: Company | null, user: User | null, op
         setAlreadyOpen(true)
         setSubmitError(err.message)
       } else {
-        console.error("Failed to create booking:", err)
+        console.error(`Failed to create booking: ${describeError(err)}`)
         setSubmitError(getErrorMessage(err, "Couldn't send your request. Please try again."))
       }
     } finally {

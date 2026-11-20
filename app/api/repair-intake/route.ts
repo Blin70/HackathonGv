@@ -98,9 +98,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ assessment: response.output_parsed })
   } catch (error) {
     if (error instanceof OpenAI.APIError) {
+      // name and message are always present; status/code are undefined on a
+      // connection or abort error, which logged as a bare `{}` and told us
+      // nothing. Never the raw error object: it can carry request contents.
       console.error("OpenAI repair-intake request failed:", {
+        name: error.name,
+        message: error.message,
         status: error.status,
         code: error.code,
+        type: error.type,
         requestId: error.requestID,
       })
     } else {
