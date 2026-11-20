@@ -1,6 +1,7 @@
 import { format, parseISO } from "date-fns"
 
 import { createClient } from "@/lib/client"
+import type { Company } from "@/lib/data"
 
 /**
  * Single source of truth for booking statuses. The union type is derived from
@@ -107,6 +108,41 @@ export interface CreateBookingInput {
 /** Postgres unique-violation, raised by `bookings_one_open_request_per_pair`. */
 const UNIQUE_VIOLATION = "23505"
 
+/** Why a booking request cannot be sent to a listing, or null when it can. */
+export type BookingBlockReason = "own-listing" | "example-listing"
+
+/**
+ * Whether this person may send a booking request to this listing.
+ *
+ * Two cases are refused, and both would otherwise look like a working booking
+ * to the person making it:
+ *
+ * - **Your own listing.** Booking yourself is self-dealing, and because a
+ *   review is written by the client on a booking, it is also the route to
+ *   reviewing yourself.
+ * - **An example listing.** Its id is a catalogue number like "1", which
+ *   belongs to no account, so the request reaches nobody — the customer waits
+ *   for a reply that cannot come.
+ *
+ * One function so the marketplace card, the listing page and the data layer
+ * cannot drift apart on what counts as bookable.
+ */
+export function bookingBlockReason(
+  company: Pick<Company, "id" | "isDemo">,
+  userId: string | null
+): BookingBlockReason | null {
+  if (company.isDemo) return "example-listing"
+  if (userId && String(company.id) === userId) return "own-listing"
+  return null
+}
+
+export class SelfBookingError extends Error {
+  constructor() {
+    super("This is your own listing, so you can't book it.")
+    this.name = "SelfBookingError"
+  }
+}
+
 export class DuplicateBookingError extends Error {
   constructor(workerName: string) {
     super(`You already have an open request with ${workerName}.`)
@@ -122,6 +158,10 @@ export class DuplicateBookingError extends Error {
  * a message the client can act on.
  */
 export async function createBooking(input: CreateBookingInput) {
+  // The UI hides the button, but this is the invariant the rest of the app
+  // relies on: a booking has two different people on it.
+  if (input.clientId === input.workerId) throw new SelfBookingError()
+
   const supabase = createClient()
   const { error } = await supabase.from("bookings").insert({
     client_id: input.clientId,
@@ -151,6 +191,30 @@ export async function hasOpenBooking(clientId: string, workerId: string): Promis
     .eq("client_id", clientId)
     .eq("worker_id", workerId)
     .in("status", [...OPEN_BOOKING_STATUSES])
+    .limit(1)
+
+  if (error) return false
+  return (data?.length ?? 0) > 0
+}
+
+/**
+ * True when this client has a completed job with this worker.
+ *
+ * This is what makes "every review comes from a customer who completed a
+ * booking" true rather than decorative: `upsertReview` accepted a review from
+ * anyone signed in, about anyone, with no booking of any kind behind it.
+ *
+ * Same shape as `hasOpenBooking` on purpose — one query pattern for "does this
+ * pair have a booking in state X".
+ */
+export async function hasCompletedBooking(clientId: string, workerId: string): Promise<boolean> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("id")
+    .eq("client_id", clientId)
+    .eq("worker_id", workerId)
+    .eq("status", "completed")
     .limit(1)
 
   if (error) return false

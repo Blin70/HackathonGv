@@ -10,6 +10,8 @@ interface WorkerReviewsProps {
   reviews: ReviewItem[]
   averageRating: string
   hasReviewed: boolean
+  /** False until this viewer has a completed job with this worker. */
+  canReview: boolean
   onWriteReview: () => void
 }
 
@@ -17,8 +19,12 @@ export function WorkerReviews({
   reviews,
   averageRating,
   hasReviewed,
+  canReview,
   onWriteReview,
 }: WorkerReviewsProps) {
+  // Someone who already left a review keeps the ability to edit it, even if
+  // the booking it came from has since been reopened or cancelled.
+  const showWriteButton = canReview || hasReviewed
   return (
     <section className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -36,13 +42,15 @@ export function WorkerReviews({
           </p>
         </div>
 
-        <Button
-          onClick={onWriteReview}
-          className="rounded-2xl h-11 px-5 font-bold text-sm bg-primary text-white hover:opacity-90 transition-all gap-2 self-start sm:self-auto"
-        >
-          <MessageSquarePlus size={18} />
-          {hasReviewed ? "Edit your review" : "Write a Review"}
-        </Button>
+        {showWriteButton && (
+          <Button
+            onClick={onWriteReview}
+            className="rounded-2xl h-11 px-5 font-bold text-sm bg-primary text-primary-foreground hover:opacity-90 transition-all gap-2 self-start sm:self-auto"
+          >
+            <MessageSquarePlus size={18} />
+            {hasReviewed ? "Edit your review" : "Write a Review"}
+          </Button>
+        )}
       </div>
 
       {reviews.length > 0 ? (

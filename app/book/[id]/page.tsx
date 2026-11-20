@@ -13,6 +13,7 @@ import { WorkerHero } from "@/components/book/WorkerHero"
 import { WorkerReviews } from "@/components/book/WorkerReviews"
 import { WriteReviewDialog } from "@/components/book/WriteReviewDialog"
 import { useBookingRequest } from "@/hooks/use-booking-request"
+import { bookingBlockReason } from "@/lib/bookings"
 import { useWorkerDetail } from "@/hooks/use-worker-detail"
 import { useWorkerReviews } from "@/hooks/use-worker-reviews"
 
@@ -34,7 +35,12 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
 
   const reviewerName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || ""
 
+  // Null for a listing anyone may book; otherwise it is your own listing or an
+  // example one, and the panel offers something else instead of a dead button.
+  const blockReason = bookingBlockReason(company, user?.id ?? null)
+
   const handleBook = () => {
+    if (blockReason) return
     if (!user) {
       setShowAuthModal(true)
       return
@@ -49,6 +55,8 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
   }
 
   const handleWriteReview = () => {
+    // Reviewing your own listing is the thing ratings exist to prevent.
+    if (blockReason === "own-listing") return
     if (!user) {
       setShowAuthModal(true)
       return
@@ -57,7 +65,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
   }
 
   return (
-    <main className="min-h-screen bg-muted/40 pb-24">
+    <div className="min-h-screen bg-muted/40 pb-24">
       <WorkerHero company={company} averageRating={reviews.average} reviewCount={reviews.items.length} />
 
       <div className="max-w-5xl mx-auto px-6 mt-8 md:mt-12">
@@ -69,6 +77,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
               reviews={reviews.items}
               averageRating={reviews.average}
               hasReviewed={Boolean(reviews.myReview)}
+              canReview={blockReason !== "own-listing" && reviews.canReview}
               onWriteReview={handleWriteReview}
             />
           </div>
@@ -78,6 +87,7 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
               company={company}
               isLoggedIn={Boolean(user)}
               booked={booking.booked}
+              blockReason={blockReason}
               onBook={handleBook}
             />
           </div>
@@ -118,6 +128,6 @@ export default function TradesmanProfilePage({ params }: { params: Promise<{ id:
         defaultComment={reviews.myReview?.comment ?? ""}
         onSubmit={reviews.submitReview}
       />
-    </main>
+    </div>
   )
 }

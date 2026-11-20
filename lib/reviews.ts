@@ -3,6 +3,7 @@ import type { User } from "@supabase/supabase-js"
 
 import { createClient } from "@/lib/client"
 import type { Company } from "@/lib/data"
+import { describeError } from "@/lib/utils"
 
 export interface ReviewItem {
   id: string
@@ -98,7 +99,7 @@ export async function fetchReviews(workerId: Company["id"]): Promise<ReviewItem[
     .eq("worker_id", String(workerId))
     .order("created_at", { ascending: false })
 
-  if (error) console.error("Failed to load reviews:", error)
+  if (error) console.error(`Failed to load reviews: ${describeError(error)}`)
   return ((data as ReviewRow[] | null) ?? []).map(rowToReviewItem)
 }
 
@@ -107,6 +108,12 @@ export async function fetchReviews(workerId: Company["id"]): Promise<ReviewItem[
  * worker, enforced by a unique constraint). Returns Supabase's `{ error }`.
  */
 export async function upsertReview(input: NewReview, company: Company, user: User) {
+  // A listing owner reviewing themselves is the thing ratings exist to rule
+  // out. The dialog is hidden on your own listing; this is the backstop.
+  if (String(company.id) === user.id) {
+    throw new Error("You can't review your own listing.")
+  }
+
   const supabase = createClient()
   return supabase.from("reviews").upsert(
     {
@@ -126,7 +133,7 @@ export async function fetchReviewStats(): Promise<Map<string, ReviewStat>> {
   const supabase = createClient()
   const { data, error } = await supabase.from("reviews").select("worker_id, rating")
   if (error) {
-    console.error("Failed to load review stats:", error)
+    console.error(`Failed to load review stats: ${describeError(error)}`)
     return new Map()
   }
 

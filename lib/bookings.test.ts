@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   BOOKING_STATUSES,
   BOOKING_TIME_SLOTS,
+  bookingBlockReason,
   monthlyBookingActivity,
   type BookingStatus,
 } from "@/lib/bookings"
@@ -92,5 +93,38 @@ describe("BOOKING_TIME_SLOTS", () => {
   it("covers the working day in half-hour steps", () => {
     expect(BOOKING_TIME_SLOTS[0]).toBe("08:00")
     expect(BOOKING_TIME_SLOTS.at(-1)).toBe("20:00")
+  })
+})
+
+describe("bookingBlockReason", () => {
+  const WORKER_ID = "3f1b9c2e-0000-4000-8000-000000000001"
+  const OTHER_ID = "3f1b9c2e-0000-4000-8000-000000000002"
+
+  it("lets a signed-in client book someone else's real listing", () => {
+    expect(bookingBlockReason({ id: WORKER_ID, isDemo: false }, OTHER_ID)).toBeNull()
+  })
+
+  it("lets a guest through, so the page can ask them to sign in", () => {
+    expect(bookingBlockReason({ id: WORKER_ID, isDemo: false }, null)).toBeNull()
+  })
+
+  it("stops a tradesperson booking their own listing", () => {
+    // Self-dealing: it is also the only route to reviewing yourself, since a
+    // review is written by the client of a completed booking.
+    expect(bookingBlockReason({ id: WORKER_ID, isDemo: false }, WORKER_ID)).toBe("own-listing")
+  })
+
+  it("stops anyone booking an example listing", () => {
+    // Its id belongs to no account, so the request would reach nobody and the
+    // customer would wait for a reply that cannot come.
+    expect(bookingBlockReason({ id: 1, isDemo: true }, OTHER_ID)).toBe("example-listing")
+    expect(bookingBlockReason({ id: 1, isDemo: true }, null)).toBe("example-listing")
+  })
+
+  it("compares a numeric listing id against the user id as text", () => {
+    // Company.id is a number for examples and a uuid string for real rows;
+    // a loose == would make listing 1 "owned" by a user whose id is "1".
+    expect(bookingBlockReason({ id: 7, isDemo: false }, "7")).toBe("own-listing")
+    expect(bookingBlockReason({ id: 7, isDemo: false }, "8")).toBeNull()
   })
 })
