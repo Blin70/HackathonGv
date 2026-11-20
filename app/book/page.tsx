@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Search, MapPin, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,7 @@ import {
 } from "@/components/ui/dialog";
 
 import Link from "next/link";
-import { TYPES, Company } from "@/lib/data";
+import { TYPES, Company, tradeCategoryFromParam } from "@/lib/data";
 import { getMarketplaceCompanies } from "@/lib/workers";
 import { BookingConfirmationDialog } from "@/components/book/BookingConfirmationDialog";
 import { BookingRequestDialog } from "@/components/book/BookingRequestDialog";
@@ -152,9 +153,34 @@ function CompanyCard({
   );
 }
 
-export default function TradesmanMarket() {
-  const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("All Types");
+export default function TradesmanMarketPage() {
+  // useSearchParams needs a Suspense boundary so the page can still prerender.
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f7f6f2]" />}>
+      <TradesmanMarket />
+    </Suspense>
+  );
+}
+
+function TradesmanMarket() {
+  // `?type=Roofer` (footer, home-page categories) and `?search=…` (home-page
+  // search bar) pre-fill the filters.
+  const searchParams = useSearchParams();
+  const urlType = tradeCategoryFromParam(searchParams.get("type")) ?? "All Types";
+  const urlSearch = searchParams.get("search")?.trim() ?? "";
+
+  const [search, setSearch] = useState(urlSearch);
+  const [typeFilter, setTypeFilter] = useState<string>(urlType);
+
+  // Clicking another footer trade while already on /book changes the URL
+  // without remounting the page, so re-apply the filters when the query changes.
+  const paramsKey = searchParams.toString();
+  const [appliedParamsKey, setAppliedParamsKey] = useState(paramsKey);
+  if (paramsKey !== appliedParamsKey) {
+    setAppliedParamsKey(paramsKey);
+    setSearch(urlSearch);
+    setTypeFilter(urlType);
+  }
   const [ratingFilter, setRatingFilter] = useState("0");
   const [cityFilter, setCityFilter] = useState("All Cities");
   const [requestCompany, setRequestCompany] = useState<Company | null>(null);

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { CircleAlert, Clock3, House, ShieldCheck, Wrench } from "lucide-react"
+import { CircleAlert, Clock3, House, ListChecks, ShieldCheck, Wrench } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -58,6 +58,24 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
           </div>
         )}
 
+        {assessment.immediateSteps.length > 0 && (
+          <div className="rounded-2xl border border-primary/15 bg-primary/[0.04] p-4">
+            <p className="flex items-center gap-2 text-sm font-bold text-foreground">
+              <ListChecks className="size-4 shrink-0 text-primary" /> What you can do right now
+            </p>
+            <ol className="mt-3 space-y-2.5">
+              {assessment.immediateSteps.map((step, index) => (
+                <li key={`${index}-${step}`} className="flex gap-3 text-sm leading-relaxed text-foreground">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    {index + 1}
+                  </span>
+                  <span className="pt-0.5">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
         {assessment.followUpQuestion && (
           <div className="rounded-2xl bg-muted/50 p-4">
             <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">One detail that could help</p>
@@ -78,7 +96,7 @@ export function RepairAssessmentPanel({ assessment }: RepairAssessmentPanelProps
 
         {!assessment.isHomeRepair && (
           <Button asChild variant="outline" className="w-full rounded-xl">
-            <Link href="/home"><House className="mr-2 size-4" /> Go to home</Link>
+            <Link href="/"><House className="mr-2 size-4" /> Go to home</Link>
           </Button>
         )}
 

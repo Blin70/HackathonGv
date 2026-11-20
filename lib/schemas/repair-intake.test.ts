@@ -140,6 +140,7 @@ describe("repairAssessmentSchema", () => {
     summary: "A supply line under the sink is leaking.",
     urgencyExplanation: "Active water damage.",
     safetyGuidance: ["Turn off the water at the stopcock."],
+    immediateSteps: ["Close the shut-off valve under the sink.", "Put a bucket under the drip."],
     nextStep: "Book a plumber today.",
     followUpQuestion: "",
   }
@@ -180,6 +181,21 @@ describe("repairAssessmentSchema", () => {
     ).toBe(true)
     expect(
       repairAssessmentSchema.safeParse({ ...assessment, safetyGuidance: "be careful" }).success
+    ).toBe(false)
+  })
+
+  it("requires immediateSteps and caps how many the UI has to render", () => {
+    const { immediateSteps: _omitted, ...withoutSteps } = assessment
+    void _omitted
+    expect(repairAssessmentSchema.safeParse(withoutSteps).success).toBe(false)
+    expect(
+      repairAssessmentSchema.safeParse({ ...assessment, immediateSteps: [] }).success
+    ).toBe(true)
+    expect(
+      repairAssessmentSchema.safeParse({
+        ...assessment,
+        immediateSteps: Array.from({ length: 7 }, (_, i) => `Step ${i + 1}`),
+      }).success
     ).toBe(false)
   })
 })

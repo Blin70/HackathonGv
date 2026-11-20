@@ -20,7 +20,7 @@ Set urgency as follows: routine means it can be scheduled normally; soon means i
 
 Safety comes first. If the user reports or the image strongly suggests gas smell, fire, smoke, sparking, exposed live wiring, structural collapse, or another immediate hazard, classify as emergency and give short, conservative guidance such as moving away, leaving the area, and contacting local emergency services or a qualified professional. Never tell the user to touch live wiring, enter a dangerous area, or perform hazardous repairs. If the image is unclear, say so in the summary or follow-up question and do not invent details.
 
-Return concise, plain-language content. summary explains what the customer described or what is visibly apparent without claiming certainty. urgencyExplanation explains the urgency level. safetyGuidance contains only practical precautions relevant to this case and may be empty when none are needed. nextStep tells the customer what to do next. followUpQuestion should be an empty string when no clarification is needed. Respond in the language the customer used when you can.`
+Return concise, plain-language content. summary explains what the customer described or what is visibly apparent without claiming certainty. urgencyExplanation explains the urgency level. safetyGuidance contains only practical precautions relevant to this case and may be empty when none are needed. immediateSteps is an ordered list of at most 5 short, concrete instructions the customer can safely follow themselves right now to limit damage or prepare for the professional (for example: close the shut-off valve under the sink, place a bucket under the drip, move belongings away, take a few clear photos for the tradesperson). Only include steps that need no special tools or skills; never include steps that involve electrical components beyond switching off the main breaker, gas fittings, working at height, structural elements, or anything else hazardous. For an emergency, limit immediateSteps to getting to safety. Leave it empty for non-repair requests. nextStep tells the customer what to do next; for a home repair it should recommend booking a professional in the chosen trade category on Book A Fixer, where matching local listings are shown alongside your assessment. followUpQuestion should be an empty string when no clarification is needed. Respond in the language the customer used when you can.`
 
 export async function POST(request: Request) {
   const { allowed, retryAfter } = checkAiRateLimit(getClientIp(request))
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
       text: {
         format: zodTextFormat(repairAssessmentSchema, "repair_assessment"),
       },
-      max_output_tokens: 900,
+      max_output_tokens: 1200,
       store: false,
     })
 

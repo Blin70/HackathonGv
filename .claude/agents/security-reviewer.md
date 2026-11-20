@@ -18,8 +18,8 @@ read or write another user's rows. For every changed query in `lib/*.ts`, ask
 what stops user A reading user B's data, and answer it by pointing at a policy
 in `supabase/migrations/`, not at client-side filtering.
 
-**Public AI endpoints cost money per request.** `app/api/ai/route.ts` and
-`app/api/repair-intake/route.ts` are unauthenticated and accept image uploads.
+**Public AI endpoints cost money per request.** `app/api/repair-intake/route.ts`
+is unauthenticated and accepts image uploads.
 `lib/ai/rate-limit.ts` is an in-memory `Map`: it resets on deploy and is
 per-instance, so it does not throttle anything on serverless. Treat any new
 public model call as an open spend endpoint until proven otherwise.

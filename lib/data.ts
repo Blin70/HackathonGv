@@ -224,7 +224,19 @@ export const TRADE_CATEGORIES = [
   "Flooring",
 ] as const;
 
-export const TYPES = ["All Types", ...TRADE_CATEGORIES];
+export type TradeCategory = (typeof TRADE_CATEGORIES)[number];
+
+export const TYPES =["All Types", ...TRADE_CATEGORIES];
+
+/**
+ * Maps a `?type=` URL value (e.g. from a footer or home-page link) to a known
+ * trade category, case-insensitively. Unknown or missing values mean no filter.
+ */
+export function tradeCategoryFromParam(value: string | null | undefined): TradeCategory | null {
+  const normalized = value?.trim().toLowerCase()
+  if (!normalized) return null
+  return TRADE_CATEGORIES.find((trade) => trade.toLowerCase() === normalized) ?? null
+}
 
 export const CITIES = [
   "Skopje",

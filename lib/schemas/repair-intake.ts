@@ -30,6 +30,7 @@ export const repairAssessmentSchema = z.object({
   summary: z.string(),
   urgencyExplanation: z.string(),
   safetyGuidance: z.array(z.string()),
+  immediateSteps: z.array(z.string()).max(6),
   nextStep: z.string(),
   followUpQuestion: z.string(),
 })

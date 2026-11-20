@@ -4,11 +4,11 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
-import { Menu, Sparkles, UserPlus, Briefcase, LogOut, User, CalendarCheck, LayoutDashboard, Home, ArrowRight } from "lucide-react"
-
-import type { User as SupabaseUser } from "@supabase/supabase-js"
+import { Menu, UserPlus, Briefcase, LogOut, User, CalendarCheck, LayoutDashboard, Home, ArrowRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useAuthUser } from "@/hooks/use-auth-user"
+import { Bot, Info } from "lucide-react"
 import { createClient } from "@/lib/client"
 import {
     NavigationMenu,
@@ -37,54 +37,30 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 const navLinks = [
-    { title: "Home", href: "/home", icon: <Home className="h-4 w-4" /> },
+    { title: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
     { title: "Book a Fixer", href: "/book", icon: <CalendarCheck className="h-4 w-4" /> },
     { 
         title: "AI Concierge", 
         href: "/ai", 
-        icon: <Sparkles className="h-4 w-4 text-primary animate-pulse" />,
-        badge: "AI Powered"
-    }
+        icon: <Bot className="h-4 w-4" />,
+    },
+    { title: "How it works", href: "/how-it-works", icon: <Info className="h-4 w-4" /> },
 ]
 
 export default function Header() {
     const router = useRouter()
     const pathname = usePathname()
     const [isOpen, setIsOpen] = React.useState(false)
-    const [user, setUser] = React.useState<SupabaseUser | null>(null)
-    const [loading, setLoading] = React.useState(true)
-
-    React.useEffect(() => {
-        const supabase = createClient()
-
-        // Fetch current session and user
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            setUser(user)
-            setLoading(false)
-        })
-
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null)
-            setLoading(false)
-        })
-
-        return () => {
-            subscription.unsubscribe()
-        }
-    }, [])
+    const { user, loading, isWorker } = useAuthUser()
 
     const handleSignOut = async () => {
         const supabase = createClient()
+        // onAuthStateChange in useAuthUser clears the user.
         await supabase.auth.signOut()
-        setUser(null)
         setIsOpen(false)
         router.push('/')
         router.refresh()
     }
-
-    const isWorker =
-        user?.user_metadata?.role === "tradesman" || user?.user_metadata?.role === "worker"
 
     if (pathname?.startsWith('/auth')) return null
 
@@ -133,11 +109,7 @@ export default function Header() {
                                             >
                                                 {link.icon}
                                                 <span>{link.title}</span>
-                                                {link.badge && (
-                                                    <span className="ml-1 rounded-full bg-primary/15 text-primary text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider border border-primary/20">
-                                                        {link.badge}
-                                                    </span>
-                                                )}
+                                                
                                             </Link>
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
@@ -300,11 +272,7 @@ export default function Header() {
                                                         {link.icon}
                                                     </div>
                                                     <span>{link.title}</span>
-                                                    {link.badge && (
-                                                        <span className="ml-auto rounded-full bg-primary/15 text-primary text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider">
-                                                            {link.badge}
-                                                        </span>
-                                                    )}
+                                                   
                                                 </Link>
                                             )
                                         })}

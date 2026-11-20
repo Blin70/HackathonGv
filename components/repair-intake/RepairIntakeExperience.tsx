@@ -44,18 +44,11 @@ export function RepairIntakeExperience() {
     <div className="min-h-[70vh] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/[0.07] via-background to-background">
       <div className="container mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <section className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-white/80 px-3.5 py-1.5 text-xs font-bold text-primary shadow-sm">
-            <Sparkles className="size-3.5" /> AI repair assistant
-          </div>
+          
           <h1 className="text-balance text-3xl font-black tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Tell us what needs fixing.
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Get a practical repair summary, safety guidance, and local tradespeople matched to the work and city.
-          </p>
-          <Button asChild variant="outline" size="sm" className="mt-5 rounded-full bg-white">
-            <Link href="/home"><House className="mr-2 size-4" /> Go to home</Link>
-          </Button>
+          
         </section>
 
         <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.12fr)_minmax(360px,0.88fr)] lg:gap-6">
@@ -92,9 +85,10 @@ export function RepairIntakeExperience() {
                     <h2 className="text-base font-bold text-foreground">What you&apos;ll get</h2>
                     <ul className="mt-4 space-y-4">
                       {[
-                        ["A useful first assessment", "Your description is organized into a trade and urgency level."],
+                        ["A first assessment from your photo", "The AI looks at your photo and description to identify the trade and how urgent it is."],
+                        ["Step-by-step instructions", "Safe things you can do right now to limit the damage until a professional arrives."],
                         ["Safety guidance", "The assistant highlights practical precautions when they matter."],
-                        ["Relevant local listings", "We match the trade and city against current marketplace listings."],
+                        ["A Fixer recommendation", "We match the trade and your city against Fixers listed on Book A Fixer."],
                       ].map(([title, description]) => (
                         <li key={title} className="flex gap-3">
                           <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"><ArrowUpRight className="size-4" /></span>

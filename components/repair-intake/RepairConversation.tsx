@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ImagePlus, LoaderCircle, MapPin, MessageCircle, RotateCcw, Send, X } from "lucide-react"
+import { Camera, ImagePlus, LoaderCircle, MapPin, MessageCircle, RotateCcw, Send, X } from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -11,8 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { CameraCaptureDialog } from "@/components/repair-intake/CameraCaptureDialog"
 import { CITIES } from "@/lib/data"
-import { MAX_REPAIR_IMAGE_BYTES } from "@/lib/schemas/repair-intake"
+import { prepareRepairPhoto } from "@/lib/image"
 import type { RepairChatMessage } from "@/hooks/use-repair-intake"
 
 const EXAMPLE_PROMPTS = [
@@ -21,7 +22,13 @@ const EXAMPLE_PROMPTS = [
   "I need help repairing a cracked bathroom tile",
 ]
 
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"]
+/** Rejects absurd files before decoding them; anything accepted is downscaled well under the 3 MB API cap. */
+const MAX_SOURCE_IMAGE_BYTES = 25 * 1024 * 1024
+
+function prefersNativeCamera() {
+  // Phones and tablets open their own camera app from a `capture` file input, which beats an in-page viewfinder.
+  return window.matchMedia("(pointer: coarse)").matches || !navigator.mediaDevices?.getUserMedia
+}
 
 interface RepairConversationProps {
   messages: RepairChatMessage[]
@@ -47,9 +54,13 @@ export function RepairConversation({ messages, loading, error, onSubmit, onReset
   const [message, setMessage] = useState("")
   const [city, setCity] = useState("")
   const [image, setImage] = useState<File | null>(null)
+  const [imageLabel, setImageLabel] = useState("")
+  const [preparingImage, setPreparingImage] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
   const previewUrlRef = useRef<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
@@ -67,23 +78,39 @@ export function RepairConversation({ messages, loading, error, onSubmit, onReset
     if (imageInputRef.current) imageInputRef.current.value = ""
   }
 
-  const chooseImage = (file: File | undefined) => {
+  const chooseImage = async (file: Blob | undefined, label: string) => {
     setImageError(null)
     if (!file) return
 
-    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-      setImageError("Choose a JPEG, PNG, or WebP photo.")
+    if (file.type && !file.type.startsWith("image/")) {
+      setImageError("Choose a photo (JPEG, PNG, or WebP).")
       return
     }
-    if (file.size > MAX_REPAIR_IMAGE_BYTES) {
-      setImageError("Photos must be 3 MB or smaller.")
+    if (file.size > MAX_SOURCE_IMAGE_BYTES) {
+      setImageError("That photo is too large. Choose one under 25 MB.")
       return
     }
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
-    const nextPreviewUrl = URL.createObjectURL(file)
-    previewUrlRef.current = nextPreviewUrl
-    setPreviewUrl(nextPreviewUrl)
-    setImage(file)
+
+    setPreparingImage(true)
+    try {
+      const photo = await prepareRepairPhoto(file)
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
+      const nextPreviewUrl = URL.createObjectURL(photo)
+      previewUrlRef.current = nextPreviewUrl
+      setPreviewUrl(nextPreviewUrl)
+      setImage(photo)
+      setImageLabel(label)
+    } catch (caught) {
+      setImageError(caught instanceof Error ? caught.message : "We couldn't read that photo.")
+    } finally {
+      setPreparingImage(false)
+    }
+  }
+
+  const openCamera = () => {
+    setImageError(null)
+    if (prefersNativeCamera()) cameraInputRef.current?.click()
+    else setCameraOpen(true)
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -130,7 +157,7 @@ export function RepairConversation({ messages, loading, error, onSubmit, onReset
             </span>
             Describe the repair
           </CardTitle>
-          <p className="pl-11 text-sm text-muted-foreground">A photo is optional. A few details are enough to start.</p>
+          <p className="pl-11 text-sm text-muted-foreground">Snap a photo of the problem, describe it, or both.</p>
         </div>
         {messages.length > 0 && (
           <Button type="button" variant="ghost" size="sm" onClick={handleReset} className="shrink-0 gap-1.5 rounded-xl text-xs">
@@ -209,7 +236,7 @@ export function RepairConversation({ messages, loading, error, onSubmit, onReset
                 <Image src={previewUrl} alt="Selected repair photo" fill unoptimized sizes="56px" className="object-cover" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{image.name}</p>
+                <p className="truncate text-sm font-medium">{imageLabel}</p>
                 <p className="text-xs text-muted-foreground">{(image.size / (1024 * 1024)).toFixed(1)} MB</p>
               </div>
               <Button type="button" variant="ghost" size="icon" onClick={clearImage} aria-label="Remove photo" className="size-9 shrink-0 rounded-full">
@@ -229,26 +256,58 @@ export function RepairConversation({ messages, loading, error, onSubmit, onReset
               <input
                 ref={imageInputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/*"
                 className="sr-only"
-                aria-label="Attach a repair photo"
+                tabIndex={-1}
+                aria-label="Upload a repair photo"
                 onChange={(event) => {
-                  chooseImage(event.target.files?.[0])
+                  const file = event.target.files?.[0]
                   event.currentTarget.value = ""
+                  void chooseImage(file, file?.name ?? "Uploaded photo")
                 }}
               />
-              <Button type="button" variant="outline" onClick={() => imageInputRef.current?.click()} disabled={loading} className="w-full gap-2 rounded-xl sm:w-auto">
-                <ImagePlus className="size-4" /> Add a photo
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="sr-only"
+                tabIndex={-1}
+                aria-label="Take a repair photo"
+                onChange={(event) => {
+                  const file = event.target.files?.[0]
+                  event.currentTarget.value = ""
+                  void chooseImage(file, "Camera photo")
+                }}
+              />
+              <Button type="button" variant="outline" onClick={openCamera} disabled={loading || preparingImage} className="w-full gap-2 rounded-xl sm:w-auto">
+                <Camera className="size-4" /> Take a photo
               </Button>
-              <Button type="submit" disabled={loading || (!message.trim() && !image)} className="w-full gap-2 rounded-xl bg-primary font-semibold text-primary-foreground sm:w-auto">
+              <Button type="button" variant="outline" onClick={() => imageInputRef.current?.click()} disabled={loading || preparingImage} className="w-full gap-2 rounded-xl sm:w-auto">
+                {preparingImage ? <LoaderCircle className="size-4 animate-spin" /> : <ImagePlus className="size-4" />} Upload
+              </Button>
+              <Button type="submit" disabled={loading || preparingImage || (!message.trim() && !image)} className="w-full gap-2 rounded-xl bg-primary font-semibold text-primary-foreground sm:w-auto">
                 {loading ? <LoaderCircle className="size-4 animate-spin" /> : <Send className="size-4" />}
                 {loading ? "Reviewing…" : "Get repair guidance"}
               </Button>
             </div>
           </div>
 
+          <CameraCaptureDialog
+            open={cameraOpen}
+            onOpenChange={setCameraOpen}
+            onCapture={(photo) => {
+              setCameraOpen(false)
+              void chooseImage(photo, "Camera photo")
+            }}
+            onUnavailable={() => {
+              setCameraOpen(false)
+              imageInputRef.current?.click()
+            }}
+          />
+
           <p className="text-xs leading-relaxed text-muted-foreground">
-            Photos are sent to OpenAI for analysis and aren&apos;t saved to your Book A Fixer account. Avoid including faces, documents, or sensitive details. See our{" "}
+            Photos are resized and stripped of location data on your device, then sent to OpenAI for analysis and aren&apos;t saved to your Book A Fixer account. Avoid including faces, documents, or sensitive details. See our{" "}
             <Link href="/privacy-policy" className="font-medium text-primary underline underline-offset-2">privacy policy</Link>.
           </p>
         </form>

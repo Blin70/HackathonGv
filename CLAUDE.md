@@ -111,9 +111,12 @@ which is the only place the market's currency is defined.
 
 ## Other things worth knowing
 
-- `app/ai/page.tsx` — a second AI surface, off the shared design system, that
-  builds HTML from regex. Prefer `components/repair-intake/` and don't extend
-  this page.
+- `/` is the marketing landing page (`app/page.tsx`); `/home` redirects there
+  (`next.config.ts`). The AI Concierge at `/ai` is the repair intake in
+  `components/repair-intake/` — the only AI surface.
+- Repair photos (camera or upload) go through `prepareRepairPhoto` in
+  `lib/image.ts` before upload: downscaled to 1600px JPEG, which keeps phone
+  photos under the 3 MB cap and strips EXIF/GPS. Don't bypass it.
 - The repair assessment returns no cost estimate. Don't let copy promise one.
 
 ## Testing

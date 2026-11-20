@@ -11,12 +11,11 @@ import { NextResponse, type NextRequest } from 'next/server'
  */
 const PUBLIC_ROUTES = [
   '/',         // landing page
-  '/home',     // marketplace overview
   '/auth',     // login, signup, callback, error
-  '/ai',       // AI Concierge diagnostics
-  '/api/ai',   // AI Concierge endpoint (guests can use the concierge)
+  '/ai',       // AI Concierge (photo + description repair intake)
   '/api/repair-intake', // AI repair triage endpoint (guests can use the intake)
   '/book',     // worker market & worker profiles
+  '/how-it-works', // about the platform, for customers and workers
   '/terms-of-service',
   '/privacy-policy'
 ]
