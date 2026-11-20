@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 
 import { createClient } from "@/lib/client"
 import {
@@ -16,7 +17,7 @@ import {
   type WorkerProfileForm,
 } from "@/lib/profile"
 import { fetchWorkerRow, rowToWorkerForm, saveWorkerRow } from "@/lib/workers"
-import { getErrorMessage } from "@/lib/utils"
+import { describeError, getErrorMessage } from "@/lib/utils"
 
 const WORKER_ROLES = new Set(["tradesman", "worker"])
 
@@ -122,7 +123,7 @@ export function useProfile() {
           }
         }
       } catch (error) {
-        console.error("Failed to load profile:", error)
+        console.error(`Failed to load profile: ${describeError(error)}`)
       } finally {
         if (active) setLoading(false)
       }
@@ -182,9 +183,15 @@ export function useProfile() {
       if (error) throw error
 
       setStatus({ type: "success", text: "Client profile updated successfully!" })
+      toast.success("Profile saved")
     } catch (error) {
-      console.error("Failed to update client profile:", error)
-      setStatus({ type: "error", text: getErrorMessage(error, "Failed to update profile.") })
+      console.error(`Failed to update client profile: ${describeError(error)}`)
+      const text = getErrorMessage(error, "Failed to update profile.")
+      setStatus({ type: "error", text })
+      // The status banner renders above the form, so on a phone it appears
+      // off-screen from the Save button. The toast is what the person
+      // actually sees — without it a failed save looks like nothing happened.
+      toast.error(text)
     } finally {
       setSaving(false)
     }
@@ -204,9 +211,12 @@ export function useProfile() {
         type: "success",
         text: `Worker profile saved & published live! Click "View Live Public Profile" below to see how it looks to clients.`,
       })
+      toast.success("Listing published")
     } catch (error) {
-      console.error("Failed to publish worker profile:", error)
-      setStatus({ type: "error", text: getErrorMessage(error, "Failed to publish worker profile.") })
+      console.error(`Failed to publish worker profile: ${describeError(error)}`)
+      const text = getErrorMessage(error, "Failed to publish worker profile.")
+      setStatus({ type: "error", text })
+      toast.error(text)
     } finally {
       setSaving(false)
     }
