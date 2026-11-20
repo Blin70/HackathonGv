@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { Search, MapPin, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Search, SearchX, MapPin, Lock, UserPlus, BadgeCheck, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DemoBadge } from "@/components/DemoBadge";
-import { createClient } from "@/lib/client";
+import { EmptyState } from "@/components/EmptyState";
+import { LoadingState } from "@/components/LoadingState";
 import {
   Select,
   SelectContent,
@@ -26,12 +27,13 @@ import {
 
 import Link from "next/link";
 import { TYPES, Company } from "@/lib/data";
-import { getMarketplaceCompanies } from "@/lib/workers";
 import { BookingConfirmationDialog } from "@/components/book/BookingConfirmationDialog";
 import { BookingRequestDialog } from "@/components/book/BookingRequestDialog";
+import { useAuthUser } from "@/hooks/use-auth-user";
 import { useBookingRequest } from "@/hooks/use-booking-request";
+import { useMarketplace } from "@/hooks/use-marketplace";
+import { bookingBlockReason, type BookingBlockReason } from "@/lib/bookings";
 import { StarRating } from "@/components/StarRating";
-import type { User } from "@supabase/supabase-js";
 
 const RATINGS = [
   { label: "All Ratings", value: "0" },
@@ -45,10 +47,13 @@ function CompanyCard({
   onBook,
   booking,
   isLoggedIn,
+  blockReason,
 }: {
   company: Company;
   onBook: (company: Company) => void;
   booking: boolean;
+  /** Set when this listing takes no bookings — your own, or an example. */
+  blockReason: BookingBlockReason | null;
   isLoggedIn: boolean;
 }) {
   return (
@@ -134,18 +139,24 @@ function CompanyCard({
           <span className="text-xs text-muted-foreground">/hr</span>
         </div>
 
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onBook(company);
-          }}
-          disabled={booking}
-          className="rounded-2xl px-4 h-10 font-semibold text-xs bg-primary text-primary-foreground hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
-        >
-          {!isLoggedIn && <Lock size={12} className="opacity-80" />}
-          {booking ? "Sending..." : "Book Now"}
-        </Button>
+        {blockReason ? (
+          <span className="rounded-2xl px-4 h-10 inline-flex items-center font-semibold text-xs text-muted-foreground bg-secondary/60 border border-border/60">
+            {blockReason === "own-listing" ? "Your listing" : "Example only"}
+          </span>
+        ) : (
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onBook(company);
+            }}
+            disabled={booking}
+            className="rounded-2xl px-4 h-10 font-semibold text-xs bg-primary text-primary-foreground hover:opacity-90 transition-opacity gap-1.5 shadow-sm"
+          >
+            {!isLoggedIn && <Lock size={12} className="opacity-80" />}
+            {booking ? "Sending..." : "Book Now"}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
@@ -157,30 +168,15 @@ export default function TradesmanMarket() {
   const [ratingFilter, setRatingFilter] = useState("0");
   const [cityFilter, setCityFilter] = useState("All Cities");
   const [requestCompany, setRequestCompany] = useState<Company | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const [showAuthRequiredModal, setShowAuthRequiredModal] = useState<string | null>(null);
-  const [companiesList, setCompaniesList] = useState<Company[]>([]);
+  const { companies, loading: loadingCompanies } = useMarketplace();
+  const { user } = useAuthUser();
   const booking = useBookingRequest(requestCompany, user, Boolean(requestCompany));
-
-  useEffect(() => {
-    getMarketplaceCompanies().then(setCompaniesList);
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
   // Booking now needs job details, so the button opens the shared request form
   // rather than firing a blank request.
   const handleBook = (company: Company) => {
+    if (bookingBlockReason(company, user?.id ?? null)) return;
     if (!user) {
       setShowAuthRequiredModal(company.name);
       return;
@@ -193,9 +189,9 @@ export default function TradesmanMarket() {
     booking.reset();
   };
 
-  const cityOptions = [...new Set(companiesList.map((c) => c.city).filter(Boolean))].sort();
+  const cityOptions = [...new Set(companies.map((c) => c.city).filter(Boolean))].sort();
 
-  const filtered = companiesList.filter((c) => {
+  const filtered = companies.filter((c) => {
     const q = search.toLowerCase();
     const matchSearch =
       !q ||
@@ -223,10 +219,10 @@ export default function TradesmanMarket() {
         {/* Header - Not Sticky */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-            Find a Tradesman
+            Find a Tradesperson
           </h1>
           <p className="text-base text-muted-foreground mt-2 max-w-xl mx-auto">
-            Browse trusted local professionals, compare ratings & transparent prices. {!user && "(Sign in to book or message fixers)"}
+            Browse local tradespeople, compare hourly rates, and send a booking request. {!user && "(Sign in to book or message fixers)"}
           </p>
         </div>
 
@@ -259,33 +255,35 @@ export default function TradesmanMarket() {
 
             {/* Search results summary */}
             <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground font-bold uppercase tracking-wider">
-                {filtered.length} {filtered.length === 1 ? "Fixer" : "Fixers"} Available
+              <p className="text-sm text-muted-foreground font-semibold uppercase tracking-wider">
+                {loadingCompanies
+                  ? "Loading fixers..."
+                  : `${filtered.length} ${filtered.length === 1 ? "Fixer" : "Fixers"} Available`}
               </p>
             </div>
 
-            {filtered.length > 0 ? (
+            {loadingCompanies ? (
+              <LoadingState label="Loading fixers..." className="min-h-[40vh]" />
+            ) : filtered.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filtered.map((company) => (
                   <CompanyCard
                     key={company.id}
                     company={company}
                     onBook={handleBook}
+                    blockReason={bookingBlockReason(company, user?.id ?? null)}
                     booking={requestCompany?.id === company.id && booking.submitting}
                     isLoggedIn={!!user}
                   />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20 text-muted-foreground bg-white border border-border/60 rounded-2xl max-w-md mx-auto p-8 shadow-sm">
-                <div className="text-5xl mb-4">🔍</div>
-                <p className="text-base font-bold text-foreground mb-1">
-                  No matching fixers found
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Try adjusting the filter options in the sidebar or change your search keywords.
-                </p>
-              </div>
+              <EmptyState
+                className="max-w-md mx-auto"
+                icon={<SearchX className="h-8 w-8" />}
+                title="No matching fixers found"
+                description="Try adjusting the filters in the sidebar, or change your search keywords."
+              />
             )}
           </div>
 
